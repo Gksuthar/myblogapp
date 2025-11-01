@@ -1,5 +1,5 @@
 'use client'
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import dynamic from "next/dynamic";
 
 // Load CKEditor only on the client to avoid "window is not defined" during SSR
@@ -22,14 +22,18 @@ const TextEditor: React.FC<WpCKEditorProps> = ({
   required,
 }) => {
   const [content, setContent] = useState<string>(initialContent);
-  const [Editor, setEditor] = useState<any>(null);
+  const [editorLoaded, setEditorLoaded] = useState(false);
+  const editorRef = useRef<any>(null);
 
   // Dynamically import ClassicEditor only on the client
   useEffect(() => {
     let mounted = true;
     import("@ckeditor/ckeditor5-build-classic")
       .then((mod) => {
-        if (mounted) setEditor(() => mod.default);
+        if (mounted) {
+          editorRef.current = mod.default;
+          setEditorLoaded(true);
+        }
       })
       .catch(() => {
         // no-op: keep editor null to avoid crashing render on server
@@ -39,7 +43,7 @@ const TextEditor: React.FC<WpCKEditorProps> = ({
     };
   }, []);
 
-  const handleChange = (_event: any, editorInstance: any) => {
+  const handleChange = (_event: unknown, editorInstance: { getData: () => string }) => {
     const data = editorInstance.getData();
     setContent(data);
     onContentChange?.(data);
@@ -57,8 +61,8 @@ const TextEditor: React.FC<WpCKEditorProps> = ({
       )}
 
       <div className="wp-ckeditor-container">
-        {Editor ? (
-          <CKEditor editor={Editor} data={content} onChange={handleChange} />
+        {editorLoaded && editorRef.current ? (
+          <CKEditor editor={editorRef.current} data={content} onChange={handleChange} />
         ) : (
           <div className="p-4 text-sm text-gray-500">Loading editor…</div>
         )}

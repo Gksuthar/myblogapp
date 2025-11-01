@@ -1,8 +1,9 @@
 'use client';
 
-import React, { Suspense, lazy } from 'react';
+import React, { Suspense, lazy, useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import ComponentLoader from '@/components/ComponentLoader';
+import axios from 'axios';
 
 // Lazy load components
 const ServiceCard = lazy(() => import('@/components/ServiceCard'));
@@ -15,89 +16,95 @@ const fadeIn = (delay = 0, y = 40) => ({
   viewport: { once: true },
 });
 
-// Service data based on the design
-const services = [
-  {
-    id: 1,
-    title: "Ledger Management",
-    description: "Comprehensive ledger management to maintain accurate financial records and ensure proper categorization of all transactions.",
-    icon: "⚙️"
-  },
-  {
-    id: 2,
-    title: "Transactions Recording",
-    description: "Detailed recording of all financial transactions with proper documentation and systematic organization.",
-    icon: "🔍"
-  },
-  {
-    id: 3,
-    title: "Bank Reconciliations",
-    description: "Regular bank reconciliation services to ensure your books match your bank statements perfectly.",
-    icon: "💰"
-  },
-  {
-    id: 4,
-    title: "Accounts Payable And Receivable",
-    description: "Complete management of accounts payable and receivable to maintain healthy cash flow and vendor relationships.",
-    icon: "💳"
-  },
-  {
-    id: 5,
-    title: "Expense Tracking & Categorization",
-    description: "Systematic expense tracking and categorization to provide clear insights into your business spending patterns.",
-    icon: "📊"
-  },
-  {
-    id: 6,
-    title: "Financial Reporting",
-    description: "Comprehensive financial reporting including P&L statements, balance sheets, and cash flow statements.",
-    icon: "📈"
-  }
-];
-
-// Benefits data
-const benefits = [
-  {
-    id: 1,
-    title: "Certified & Experienced Bookkeepers",
-    description: "Our team consists of certified professionals with extensive experience in various industries and accounting software.",
-    icon: "✅"
-  },
-  {
-    id: 2,
-    title: "Prepare Seamless Reports",
-    description: "We generate comprehensive financial reports that provide clear insights into your business performance and financial health.",
-    icon: "📈"
-  },
-  {
-    id: 3,
-    title: "Complete Record Keeping",
-    description: "Maintain complete and accurate financial records with proper documentation and systematic organization.",
-    icon: "📋"
-  },
-  {
-    id: 4,
-    title: "Tech-Savvy Bookkeepers At Hand",
-    description: "Our team is proficient in the latest accounting software and technology to provide efficient and modern bookkeeping services.",
-    icon: "💻"
-  }
-];
-
-// Expert profiles for floating cards
-const experts = [
-  {
-    name: "Kajol Shah",
-    role: "Bookkeeper",
-    image: "/experts/kajol-shah.jpg"
-  },
-  {
-    name: "Soham Mohe", 
-    role: "Fractional CFO",
-    image: "/experts/soham-mohe.jpg"
-  }
-];
+interface ServiceData {
+  _id: string;
+  heroSection?: {
+    title: string;
+    description: string;
+  };
+  cardSections?: Array<{
+    sectionTitle: string;
+    sectionDescription?: string;
+    cards: Array<{
+      title: string;
+      description: string;
+      icon?: string;
+    }>;
+  }>;
+  slug?: string;
+}
 
 export default function BookkeepingServices() {
+  const [serviceData, setServiceData] = useState<ServiceData | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchServiceData = async () => {
+      try {
+        const apiToken = process.env.NEXT_PUBLIC_API_TOKEN;
+        const response = await axios.get('/api/service', {
+          headers: apiToken ? { 'x-api-token': apiToken } : {}
+        });
+
+        if (response.status === 200 && response.data) {
+          const services = response.data.data || response.data;
+          // Find bookkeeping service by slug
+          const bookkeepingService = services.find((s: ServiceData) => 
+            s.slug === 'bookkeeping-services' || 
+            s.heroSection?.title?.toLowerCase().includes('bookkeeping')
+          );
+          setServiceData(bookkeepingService || null);
+        }
+      } catch (error) {
+        console.error('Failed to fetch service data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchServiceData();
+  }, []);
+
+  if (loading) {
+    return <ComponentLoader height="h-screen" message="Loading bookkeeping services..." />;
+  }
+
+  // Extract card sections from service data
+  const servicesSection = serviceData?.cardSections?.find(section => 
+    section.sectionTitle?.toLowerCase().includes('tailored') || 
+    section.sectionTitle?.toLowerCase().includes('services')
+  );
+  
+  const benefitsSection = serviceData?.cardSections?.find(section => 
+    section.sectionTitle?.toLowerCase().includes('benefit')
+  );
+
+  const services = servicesSection?.cards?.map((card, index) => ({
+    id: index + 1,
+    title: card.title,
+    description: card.description,
+    icon: card.icon || "📊"
+  })) || [];
+
+  const benefits = benefitsSection?.cards?.map((card, index) => ({
+    id: index + 1,
+    title: card.title,
+    description: card.description,
+    icon: card.icon || "✅"
+  })) || [];
+
+  const heroTitle = serviceData?.heroSection?.title || "Complete Bookkeeping Services.";
+  const heroDescription = serviceData?.heroSection?.description || 
+    "Stanfox provides comprehensive bookkeeping services designed to give your business financial clarity and efficiency.";
+  
+  const servicesTitle = servicesSection?.sectionTitle || "Tailored Bookkeeping Services";
+  const servicesDescription = servicesSection?.sectionDescription || 
+    "Stanfox provides customized bookkeeping services tailored to meet the unique needs of your business.";
+  
+  const benefitsTitle = benefitsSection?.sectionTitle || "Benefits Of Outsourcing Bookkeeping To Stanfox";
+  const benefitsDescription = benefitsSection?.sectionDescription || 
+    "Experience the advantages of partnering with Stanfox for your bookkeeping needs.";
+
   return (
     <Suspense fallback={<ComponentLoader height="h-screen" message="Loading bookkeeping services..." />}>
       <main className="bg-gray-50 min-h-screen">
@@ -111,11 +118,11 @@ export default function BookkeepingServices() {
                 className="space-y-8"
               >
                 <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 leading-tight">
-                  Complete Bookkeeping Services.
+                  {heroTitle}
                 </h1>
                 
                 <p className="text-lg md:text-xl text-gray-600 leading-relaxed">
-                  Stanfox provides comprehensive bookkeeping services designed to give your business financial clarity and efficiency. Our expert team handles all aspects of your financial record-keeping with precision and professionalism.
+                  {heroDescription}
                 </p>
                 
                 <motion.button
@@ -159,8 +166,8 @@ export default function BookkeepingServices() {
                       <span className="text-gray-600 font-semibold">KS</span>
                     </div>
                     <div>
-                      <p className="font-semibold text-gray-900">{experts[0].name}</p>
-                      <p className="text-sm text-gray-600">{experts[0].role}</p>
+                      <p className="font-semibold text-gray-900">Kajol Shah</p>
+                      <p className="text-sm text-gray-600">Bookkeeper</p>
                     </div>
                   </div>
                 </motion.div>
@@ -183,8 +190,8 @@ export default function BookkeepingServices() {
                       <span className="text-gray-600 font-semibold">SM</span>
                     </div>
                     <div>
-                      <p className="font-semibold text-gray-900">{experts[1].name}</p>
-                      <p className="text-sm text-gray-600">{experts[1].role}</p>
+                      <p className="font-semibold text-gray-900">Soham Mohe</p>
+                      <p className="text-sm text-gray-600">Fractional CFO</p>
                     </div>
                   </div>
                 </motion.div>
@@ -194,6 +201,7 @@ export default function BookkeepingServices() {
         </section>
 
         {/* Tailored Bookkeeping Services Section */}
+        {services.length > 0 && (
         <section className="py-20 bg-white">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <motion.div
@@ -201,10 +209,10 @@ export default function BookkeepingServices() {
               className="text-center mb-16"
             >
               <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-                Tailored Bookkeeping Services
+                {servicesTitle}
               </h2>
               <p className="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto">
-                Stanfox provides customized bookkeeping services tailored to meet the unique needs of your business, ensuring accuracy and compliance with industry standards.
+                {servicesDescription}
               </p>
             </motion.div>
 
@@ -224,8 +232,10 @@ export default function BookkeepingServices() {
             </div>
           </div>
         </section>
+        )}
 
         {/* Benefits Section */}
+        {benefits.length > 0 && (
         <section className="py-20 bg-gray-50">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <motion.div
@@ -233,10 +243,10 @@ export default function BookkeepingServices() {
               className="text-center mb-16"
             >
               <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-                Benefits Of Outsourcing Bookkeeping To Stanfox
+                {benefitsTitle}
               </h2>
               <p className="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto">
-                Experience the advantages of partnering with Stanfox for your bookkeeping needs. We provide accuracy, efficiency, and peace of mind through our professional services.
+                {benefitsDescription}
               </p>
             </motion.div>
 
@@ -256,6 +266,7 @@ export default function BookkeepingServices() {
             </div>
           </div>
         </section>
+        )}
 
         {/* CTA Section */}
         <section className="py-20 bg-blue-600">
