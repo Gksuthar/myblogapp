@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, type MouseEvent } from "react";
 import Link from "next/link";
 import { FaBars, FaTimes } from "react-icons/fa";
 import { MdExpandMore } from "react-icons/md";
@@ -85,7 +85,7 @@ export default function Header() {
   const List = [
     { id: "1", link: "Home", path: "/" },
     { id: "2", link: "About Us", path: "/about" },
-    { id: "3", link: "Services", path: "/", isDropdown: true },
+    { id: "3", link: "Services", path: "/services", isDropdown: true },
     { id: "4", link: "Blogs", path: "/blogs" },
     { id: "5", link: "Contact Us", path: "/Contactus" },
   ];
@@ -113,15 +113,29 @@ export default function Header() {
               className="relative"
               onMouseEnter={() => item.isDropdown && setServicesOpen(true)}
             >
-              <Link
-                href={item.path}
-                className="text-gray-700 font-medium hover:text-blue-600 flex items-center gap-1"
-              >
-                {item.link}
+              <div className="flex items-center gap-1">
+                <Link
+                  href={item.path}
+                  className="text-gray-700 font-medium hover:text-blue-600"
+                >
+                  {item.link}
+                </Link>
                 {item.isDropdown && (
-                 <MdExpandMore />
+                  <button
+                    type="button"
+                    aria-label="Toggle services menu"
+                    aria-expanded={servicesOpen}
+                    onClick={(e: MouseEvent<HTMLButtonElement>) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      setServicesOpen((prev: boolean) => !prev);
+                    }}
+                    className="p-1 rounded hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+                  >
+                    <MdExpandMore className={`transition-transform ${servicesOpen ? 'rotate-180' : ''}`} />
+                  </button>
                 )}
-              </Link>
+              </div>
 
               {/* Mega Menu - Stanfox Style */}
               {item.isDropdown && servicesOpen && (
@@ -139,7 +153,7 @@ export default function Header() {
                           No categories
                         </div>
                       ) : (
-                        categories.map((category) => (
+                        categories.map((category: Category) => (
                           <button
                             key={category._id}
                             onClick={() => setActiveTab(category._id)}
@@ -162,7 +176,7 @@ export default function Header() {
                           Loading services...
                         </div>
                       ) : (() => {
-                          const filteredServices = services.filter((svc) => svc.categoryId === activeTab);
+                          const filteredServices = services.filter((svc: ServiceItem) => svc.categoryId === activeTab);
                           return filteredServices.length === 0 ? (
                             <div className="flex justify-center items-center h-full text-gray-400">
                               No services in this category
