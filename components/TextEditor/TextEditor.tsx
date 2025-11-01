@@ -29,7 +29,7 @@ const TextEditor: React.FC<WpCKEditorProps> = ({
     let mounted = true;
     import("@ckeditor/ckeditor5-build-classic")
       .then((mod) => {
-        if (mounted) setEditor(mod.default);
+        if (mounted) setEditor(() => mod.default);
       })
       .catch(() => {
         // no-op: keep editor null to avoid crashing render on server
@@ -58,7 +58,7 @@ const TextEditor: React.FC<WpCKEditorProps> = ({
 
       <div className="wp-ckeditor-container">
         {Editor ? (
-          <CKEditor editor={Editor as any} data={content} onChange={handleChange} />
+          <CKEditor editor={Editor} data={content} onChange={handleChange} />
         ) : (
           <div className="p-4 text-sm text-gray-500">Loading editor…</div>
         )}
