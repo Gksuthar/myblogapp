@@ -6,6 +6,7 @@ interface CaseStudyItem {
   _id: string;
   title: string;
   content?: string; // made optional for safety
+  slug?: string;
 }
 
 const CaseStudiesAndConnect: React.FC = () => {
@@ -62,22 +63,26 @@ const CaseStudiesAndConnect: React.FC = () => {
           </p>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-            {caseStudies?.map((study) => (
-              <div
-                key={study?._id}
-                className="border rounded-md p-4 shadow-sm hover:shadow-md transition-all"
-              >
-                <h3 className="font-medium text-[#3d466e] text-sm sm:text-base mb-2 line-clamp-2">
-                  {study?.title || "Untitled Case Study"}
-                </h3>
-                <a
-                  href={`/case-studies/${study?._id}`}
-                  className="text-xs sm:text-sm text-[#3d466e] font-semibold hover:underline"
+            {caseStudies?.map((study) => {
+              // Use slug if available, otherwise generate from title
+              const urlSlug = study?.slug || study?.title.toLowerCase().replace(/[^a-z0-9\s-]/g, '').replace(/\s+/g, '-');
+              return (
+                <div
+                  key={study?._id}
+                  className="border rounded-md p-4 shadow-sm hover:shadow-md transition-all"
                 >
-                  View Case Study →
-                </a>
-              </div>
-            ))}
+                  <h3 className="font-medium text-[#3d466e] text-sm sm:text-base mb-2 line-clamp-2">
+                    {study?.title || "Untitled Case Study"}
+                  </h3>
+                  <a
+                    href={`/case-studies/${urlSlug}`}
+                    className="text-xs sm:text-sm text-[#3d466e] font-semibold hover:underline"
+                  >
+                    View Case Study →
+                  </a>
+                </div>
+              );
+            })}
           </div>
         )}
       </div>
