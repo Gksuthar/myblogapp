@@ -85,7 +85,7 @@ export default function Header() {
   const List = [
     { id: "1", link: "Home", path: "/" },
     { id: "2", link: "About Us", path: "/about" },
-    { id: "3", link: "Services", path: "/services", isDropdown: true },
+    { id: "3", link: "Services", path: "/", isDropdown: true },
     { id: "4", link: "Blogs", path: "/blogs" },
     { id: "5", link: "Contact Us", path: "/Contactus" },
   ];
