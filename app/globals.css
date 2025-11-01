@@ -1,0 +1,72 @@
+@import "tailwindcss";
+
+/* Font configuration */
+.font-lexend {
+  font-family: var(--font-lexend), system-ui, -apple-system, sans-serif;
+}
+
+@keyframes marquee {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee {
+  display: flex;
+  animation: marquee 20s linear infinite;
+}
+
+/* Blog article prose styling */
+.prose {
+  color: #374151;
+  line-height: 1.75;
+  font-family: var(--font-lexend), system-ui, -apple-system, sans-serif;
+}
+
+.prose h2 {
+  color: #111827;
+  font-size: 1.875rem;
+  font-weight: 700;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+}
+
+.prose h3 {
+  color: #111827;
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.prose p {
+  margin-bottom: 1.25rem;
+}
+
+.prose ul, .prose ol {
+  margin-bottom: 1.25rem;
+  padding-left: 1.5rem;
+}
+
+.prose li {
+  margin-bottom: 0.5rem;
+}
+
+.prose strong {
+  font-weight: 600;
+  color: #111827;
+}
+/* CKEditor sizing inside modal */
+.ck-editor__editable_inline {
+  min-height: 220px;
+  max-height: 45vh; /* keep it within modal body */
+  overflow-y: auto;
+}
+
+/* Make CKEditor floating panels/tooltips appear above modal/backdrop */
+.ck-body {
+  z-index: 70 !important;
+}

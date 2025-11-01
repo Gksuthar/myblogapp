@@ -1,0 +1,158 @@
+'use client';
+
+import React, { useEffect, useState } from 'react';
+import Image from 'next/image';
+import ComponentLoader from '@/components/ComponentLoader';
+import HeroSection from '@/components/HeroSection/HeroSection';
+
+interface TeamMember {
+  name: string;
+  position: string;
+  bio: string;
+  image: string;
+}
+
+interface Value {
+  title: string;
+  description: string;
+}
+
+interface AboutData {
+  title: string;
+  description: string;
+  mission: string;
+  vision: string;
+  team: TeamMember[];
+  companyHistory: string;
+  values: Value[];
+}
+
+interface HeroType {
+  title: string;
+  disc: string;
+  image: string;
+}
+
+const AboutPage: React.FC = () => {
+  const [aboutData, setAboutData] = useState<AboutData | null>(null);
+  const [heroAbout, setHeroAbout] = useState<HeroType | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+
+  // Fetch About Data
+  const fetchAboutData = async () => {
+    try {
+      const res = await fetch('/api/about', { cache: 'no-store' });
+      if (!res.ok) throw new Error('Failed to fetch about data');
+      const data = await res.json();
+      setAboutData(data);
+    } catch (error) {
+      console.error('Error loading about data:', error);
+    }
+  };
+
+  // Fetch Hero Data
+  const fetchHero = async () => {
+    try {
+      const res = await fetch('/api/heroabout', { cache: 'no-store' });
+      if (!res.ok) throw new Error('Failed to fetch hero data');
+      const data = await res.json();
+      setHeroAbout(data.error ? null : data);
+    } catch (error) {
+      console.error('Error loading hero section:', error);
+    }
+  };
+
+  // Load both on mount
+  useEffect(() => {
+    (async () => {
+      await Promise.all([fetchAboutData(), fetchHero()]);
+      setLoading(false);
+    })();
+  }, []);
+
+  if (loading) return <ComponentLoader height="h-64" message="Loading about page..." />;
+
+  return (
+    <div>
+      {/* Hero Section */}
+      {heroAbout && (
+        <HeroSection
+          title={heroAbout.title || 'About Us'}
+          disc={heroAbout.disc || ''}
+          image={heroAbout.image || '/fallback-image.jpg'}
+        />
+      )}
+
+      {/* Mission & Vision */}
+      <section className="py-16 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-8">
+          <div className="bg-white p-8 rounded-xl shadow-sm">
+            <h2 className="text-2xl font-bold mb-3">Our Mission</h2>
+            <p>{aboutData?.mission || 'Our mission is to deliver excellence.'}</p>
+          </div>
+          <div className="bg-white p-8 rounded-xl shadow-sm">
+            <h2 className="text-2xl font-bold mb-3">Our Vision</h2>
+            <p>{aboutData?.vision || 'We envision a future built on innovation and trust.'}</p>
+          </div>
+        </div>
+      </section>
+
+      {/* Company History */}
+      <section className="py-16 bg-white">
+        <div className="max-w-4xl mx-auto px-6 text-center">
+          <h2 className="text-3xl font-bold mb-6">Our History</h2>
+          <div
+            className="prose max-w-none text-gray-700"
+            dangerouslySetInnerHTML={{
+              __html: aboutData?.companyHistory || '<p>Our story began with a passion for innovation.</p>',
+            }}
+          />
+        </div>
+      </section>
+
+      {/* Team Section */}
+      {aboutData?.team?.length ? (
+        <section className="py-16 bg-gray-50">
+          <div className="max-w-7xl mx-auto px-6">
+            <h2 className="text-3xl font-bold text-center mb-8">Our Team</h2>
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {aboutData.team.map((member, idx) => (
+                <div key={idx} className="bg-white p-6 rounded-lg shadow-md text-center">
+                  <Image
+                    src={member.image || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=300'}
+                    alt={member.name}
+                    width={120}
+                    height={120}
+                    className="mx-auto rounded-full mb-4 object-cover"
+                  />
+                  <h3 className="text-xl font-bold">{member.name}</h3>
+                  <p className="text-indigo-600">{member.position}</p>
+                  <p className="text-gray-600 text-sm mt-2">{member.bio}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      ) : null}
+
+      {/* Values Section */}
+      {aboutData?.values?.length ? (
+        <section className="py-16 bg-white">
+          <div className="max-w-7xl mx-auto px-6 text-center">
+            <h2 className="text-3xl font-bold mb-8">Our Values</h2>
+            <div className="grid md:grid-cols-3 gap-6">
+              {aboutData.values.map((val, idx) => (
+                <div key={idx} className="bg-gray-50 p-6  shadow-sm">
+                  <h3 className="text-xl font-bold mb-3">{val.title}</h3>
+                  <p className="text-gray-600">{val.description}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      ) : null}
+    </div>
+  );
+};
+
+export default AboutPage;

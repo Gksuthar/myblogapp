@@ -1,0 +1,199 @@
+'use client'
+// components/Footer.tsx
+// import Image from 'next/image';
+import Link from 'next/link';
+
+const FooterLink = ({ href, children }: { href: string; children: React.ReactNode }) => (
+  <li>
+    <Link href={href} className="text-gray-400 hover:text-white transition text-sm">
+      {children}
+    </Link>
+  </li>
+);
+
+
+const Footer: React.FC = () => {
+  return (
+    <footer className="bg-[#1e1e1e] text-white py-12 px-6 md:px-16">
+      <div className="max-w-7xl mx-auto">
+        {/* Top Section: Logo, Company Links, Certification */}
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-12 border-b border-gray-700/50 pb-10 mb-10">
+          
+          {/* Logo & Tagline (Col 1-4) */}
+          <div className="md:col-span-4">
+            <div className="flex items-center space-x-2 mb-4">
+              {/* Assuming Stanfox logo is an SVG or simple text, using text here */}
+              <span className="text-2xl font-bold text-white">STANFOX</span>
+              <span className="text-xs font-light text-gray-400">EXPERT PARTNER</span>
+            </div>
+            <p className="text-gray-400 text-sm max-w-xs">
+              Maximize Efficiency, Minimize Costs - Your Trusted Outsourcing Accounting Services.
+            </p>
+          </div>
+
+          {/* Company Links (Col 5-7) */}
+          <div className="md:col-span-3">
+            <h4 className="font-bold text-base mb-4">Company</h4>
+            <div className="grid grid-cols-2 gap-4">
+              <ul className="space-y-3">
+                <FooterLink href="/">Home</FooterLink>
+                <FooterLink href="/about">About Us</FooterLink>
+                <FooterLink href="/how-we-work">How We Work</FooterLink>
+                <FooterLink href="/why-stanfox">Why Stanfox</FooterLink>
+                <FooterLink href="/contact">Contact Us</FooterLink>
+              </ul>
+              <ul className="space-y-3">
+                <FooterLink href="/locations">Locations</FooterLink>
+                <FooterLink href="/career">Career</FooterLink>
+                <FooterLink href="/blog">Blog</FooterLink>
+                <FooterLink href="/engagement">Engagement Model</FooterLink>
+                <FooterLink href="/privacy">Privacy Policy</FooterLink>
+              </ul>
+            </div>
+          </div>
+
+          {/* Certification (Col 8-12) */}
+          <div className="md:col-span-5">
+            <h4 className="font-bold text-base mb-4">Certification</h4>
+            <div className="flex space-x-3 mb-4">
+              {/* Placeholder for Certification Badges */}
+              <div className="w-16 h-16 bg-gray-700 rounded flex items-center justify-center text-xs text-gray-400">Badge 1</div>
+              <div className="w-16 h-16 bg-gray-700 rounded flex items-center justify-center text-xs text-gray-400">Badge 2</div>
+              <div className="w-16 h-16 bg-gray-700 rounded flex items-center justify-center text-xs text-gray-400">Badge 3</div>
+            </div>
+            <h4 className="font-bold text-base mb-2">Associate Partner:</h4>
+            {/* Placeholder for TaxApro Logo */}
+            <div className="text-3xl font-extrabold tracking-widest text-white/90">TaxApro</div>
+          </div>
+        </div>
+
+        {/* Middle Section: Business Owners & Accounting/CPA Firms */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 border-b border-gray-700/50 pb-10 mb-10">
+          
+          {/* Business Owners */}
+          <div>
+            <h4 className="font-bold text-base mb-4">Business Owners</h4>
+            <div className="grid grid-cols-2 gap-x-8 gap-y-3">
+              <ul className="space-y-2">
+                <FooterLink href="#">Accounting Outsourcing Services</FooterLink>
+                <FooterLink href="#">Bookkeeping Services</FooterLink>
+                <FooterLink href="#">Outsourced Tax Preparation</FooterLink>
+                <FooterLink href="#">AR & AP Management</FooterLink>
+                <FooterLink href="#">Accounting Software Consulting</FooterLink>
+                <FooterLink href="#">Payroll Management</FooterLink>
+              </ul>
+              <ul className="space-y-2">
+                <FooterLink href="#">Xero & QuickBooks Accounting</FooterLink>
+                <FooterLink href="#">Audit Support Services</FooterLink>
+                <FooterLink href="#">Cost & Operation Analysis</FooterLink>
+                <FooterLink href="#">Year End Services</FooterLink>
+                <FooterLink href="#">Preparation Of Financial Statements</FooterLink>
+              </ul>
+            </div>
+          </div>
+
+          {/* Accounting/CPA Firms */}
+          <div>
+            <h4 className="font-bold text-base mb-4">Accounting/CPA Firms</h4>
+            <div className="grid grid-cols-2 gap-x-8 gap-y-3">
+              <ul className="space-y-2">
+                <FooterLink href="#">Hire Accountant</FooterLink>
+                <FooterLink href="#">Hire Bookkeeper</FooterLink>
+                <FooterLink href="#">Hire Fractional CFO</FooterLink>
+                <FooterLink href="#">Hire Tax Preparer</FooterLink>
+                <FooterLink href="#">Hire Tax Reviewer</FooterLink>
+                <FooterLink href="#">Hire Account Supervisor</FooterLink>
+                <FooterLink href="#">Hire Payroll Expert</FooterLink>
+              </ul>
+              <ul className="space-y-2">
+                <FooterLink href="#">Hire Staff Accountant</FooterLink>
+                <FooterLink href="#">Hire AR/AP Billing Executive</FooterLink>
+                <FooterLink href="#">Hire Audit Support Staff</FooterLink>
+                <FooterLink href="#">Hire QuickBooks Expert</FooterLink>
+                <FooterLink href="#">Hire Virtual CFO</FooterLink>
+                <FooterLink href="#">Hire Virtual Assistant</FooterLink>
+              </ul>
+            </div>
+          </div>
+        </div>
+        
+        {/* Bottom Section: Contact & Addresses */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-10 mb-10">
+          
+          {/* Contact Information */}
+          <div>
+            <h4 className="font-bold text-base mb-4">Contact</h4>
+            <ul className="space-y-2 text-sm">
+              <li className="text-gray-400">
+                <span className="font-semibold text-white">USA </span>+1 407-486-8620
+              </li>
+              <li className="text-gray-400">
+                <span className="font-semibold text-white">IND </span>+91 99740-40370
+              </li>
+              <li className="text-gray-400">
+                <span className="font-semibold text-white">Email </span>
+                <Link href="mailto:info@stanfox.com" className="hover:underline">
+                  info@stanfox.com
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* USA Office */}
+          <div>
+            <h4 className="font-bold text-base mb-4">🇺🇸 USA Office</h4>
+            <p className="text-gray-400 text-sm">
+              1000 Bristol Bay Dr, Suite 2100,<br />
+              Miami, IL 33138<br />
+              United States
+            </p>
+          </div>
+
+          {/* India Office */}
+          <div>
+            <h4 className="font-bold text-base mb-4">🇮🇳 India Office</h4>
+            <p className="text-gray-400 text-sm">
+              E 404, GCF Business Centre,<br />
+              Vijay Cross Road,<br />
+              Ahmedabad - 380004
+            </p>
+          </div>
+
+          {/* Canada Office */}
+          <div>
+            <h4 className="font-bold text-base mb-4">🇨🇦 Canada Office</h4>
+            <p className="text-gray-400 text-sm">
+              15 Brucewood Road,<br />
+              Brampton, L6R 3M1<br />
+              Ontario
+            </p>
+          </div>
+        </div>
+
+        {/* Footer Bar: Copyright and Social Icons */}
+        <div className="flex flex-col md:flex-row justify-between items-center pt-4 border-t border-gray-700/50">
+          <p className="text-gray-500 text-xs mb-4 md:mb-0">
+            © 2025 Stanfox. All rights reserved.
+          </p>
+          <div className="flex space-x-4">
+            {/* Social Icons Placeholder */}
+            <Link href="#" className="text-gray-500 hover:text-white transition">
+              {/* LinkedIn Icon */}
+              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.366-4.041-3.238-4.041 0v5.604h-3v-11h3v1.765c1.396-2.586 7.041-2.793 7.041 2.072v7.163z"/></svg>
+            </Link>
+            <Link href="#" className="text-gray-500 hover:text-white transition">
+              {/* Instagram Icon */}
+              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07c3.275.148 4.772 1.637 4.909 4.909.058 1.265.07 1.646.07 4.85s-.012 3.584-.07 4.85c-.147 3.276-1.636 4.773-4.909 4.91-.976.058-1.357.07-4.85.07s-3.584-.012-4.85-.07c-3.275-.148-4.772-1.637-4.909-4.909-.058-1.265-.07-1.646-.07-4.85s.012-3.584.07-4.85c.148-3.276 1.637-4.773 4.909-4.91 1.1-.057 1.35-.07 3.522-.07h.046zm0 2.242c-3.181 0-3.578.012-4.721.069-2.923.132-3.951 1.157-4.08 4.08-.058 1.144-.069 1.542-.069 4.722s.012 3.578.069 4.721c.129 2.923 1.157 3.951 4.08 4.08.76.035 1.05.042 2.37.042s1.61-.007 2.37-.042c2.923-.129 3.951-1.157 4.08-4.08.057-1.143.069-1.542.069-4.721s-.012-3.578-.069-4.721c-.129-2.923-1.157-3.951-4.08-4.08-1.143-.057-1.542-.069-4.721-.069zm0 5.86c-2.063 0-3.737 1.674-3.737 3.737s1.674 3.737 3.737 3.737 3.737-1.674 3.737-3.737-1.674-3.737-3.737-3.737zm0 6.242c-1.385 0-2.505-1.12-2.505-2.505s1.12-2.505 2.505-2.505 2.505 1.12 2.505 2.505-1.12 2.505-2.505 2.505zm4.845-8.527c.483 0 .874.391.874.874s-.391.874-.874.874-.874-.391-.874-.874.391-.874.874-.874z"/></svg>
+            </Link>
+             <Link href="#" className="text-gray-500 hover:text-white transition">
+              {/* Other social icon (e.g., X / Twitter) */}
+              <span className="w-5 h-5 text-lg">X</span>
+            </Link>
+          </div>
+        </div>
+      </div>
+    </footer>
+  );
+};
+
+export default Footer;

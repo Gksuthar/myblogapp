@@ -1,0 +1,93 @@
+.css-bchax1-control {
+    box-shadow: none !important;
+    border-color: var(--primaryColor) !important;
+}
+
+.css-8dfmx5-option {
+    background-color: var(--primaryColor) !important;
+    color: var(--whiteColor) !important;
+}
+
+.css-d7l1ni-option {
+    background-color: var(--slate500Color20) !important;
+}
+
+.css-tr4s17-option {
+    background-color: var(--primaryColor) !important;
+    color: var(--whiteColor) !important;
+}
+
+.select-form {
+    font-size: 14px;
+}
+
+.css-13cymwt-control,
+.css-16xfy0z-control {
+    min-height: 40px !important;
+    border-radius: 8px !important;
+    box-shadow: 0px 1px 2px rgba(10, 13, 18, 0.05);
+    border-color: var(--slate500Color40) !important;
+}
+
+.css-t3ipsp-control {
+    box-shadow: none !important;
+    border-color: var(--primaryColor) !important;
+}
+
+.css-1u9des2-indicatorSeparator {
+    display: none !important;
+}
+
+.css-t3ipsp-control {
+    min-height: 40px !important;
+    border-radius: 8px !important;
+    flex-wrap: nowrap !important;
+}
+
+.css-1fdsijx-ValueContainer,
+.css-hlgwow {
+    padding: 0 8px !important;
+}
+
+.css-1xc3v61-indicatorContainer,
+.css-15lsz6c-indicatorContainer {
+    padding: 3px !important;
+    padding-right: 10px !important;
+}
+
+.input-label {
+    color: var(--slate500Color);
+}
+
+.textfield .form-select:focus {
+    box-shadow: none;
+}
+
+.textfield select:focus {
+    border-color: var(--primaryColor);
+}
+
+.css-1jqq78o-placeholder {
+    font-size: 12px;
+    color: hsl(0deg 0% 64.47%) !important;
+    margin-left: 9px !important;
+}
+
+.css-1p3m7a8-multiValue {
+    border-radius: 7px !important;
+    background-color: var(--lightprimaryColor) !important;
+}
+
+.css-v7duua {
+    border-radius: 7px !important;
+}
+
+.css-tj5bde-Svg {
+    height: 13px;
+    width: 13px;
+}
+
+.css-1dimb5e-singleValue {
+    margin-left: 9px !important;
+    font-size: 12px;
+}
