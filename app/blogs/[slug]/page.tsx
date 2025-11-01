@@ -30,11 +30,37 @@ export default function BlogPage() {
     const fetchBlog = async () => {
       setLoading(true);
       try {
-        const res = await fetch(`/api/blogs?slug=${slug}`);
+        // First try the main blogs API
+        let res = await fetch(`/api/blogs?slug=${slug}`);
+        
+        // If not found in main blogs, try BlogSection API
         if (!res.ok) {
-          const errorData = await res.json();
-          throw new Error(errorData.error || 'Failed to fetch blog');
+          const blogSectionRes = await fetch('/api/BlogSection');
+          if (blogSectionRes.ok) {
+            const blogSectionData = await blogSectionRes.json();
+            const foundBlog = blogSectionData.find((b: any) => b.slug === slug);
+            
+            if (foundBlog) {
+              // Transform BlogSection format to Blog format
+              setBlog({
+                _id: foundBlog._id,
+                title: foundBlog.title,
+                content: foundBlog.disc || '',
+                excerpt: foundBlog.disc || '',
+                author: 'Stanfox',
+                image: foundBlog.image,
+                tags: [],
+                slug: foundBlog.slug,
+                published: true,
+                createdAt: foundBlog.createdAt || new Date().toISOString()
+              });
+              setLoading(false);
+              return;
+            }
+          }
+          throw new Error('Blog not found');
         }
+        
         const data: Blog = await res.json();
         setBlog(data);
       } catch (err: any) {

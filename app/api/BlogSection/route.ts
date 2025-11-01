@@ -2,6 +2,16 @@ import { connectDB } from "@/lib/mongodb";
 import { NextResponse } from "next/server";
 import { BlogSectionlatest } from "../model/BlogSection";
 
+// Utility function to create a slug
+const createSlug = (title: string) => {
+  return title
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9\s-]/g, '')
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '-');
+};
+
 // ✅ GET - Fetch all blogs
 export async function GET() {
   try {
@@ -23,7 +33,18 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "All fields required" }, { status: 400 });
     }
 
-    const newBlog = await BlogSectionlatest.create({ title, image, disc });
+    // Generate slug from title
+    let slug = createSlug(title);
+    
+    // Ensure slug is unique by appending a number if needed
+    let counter = 1;
+    let uniqueSlug = slug;
+    while (await BlogSectionlatest.findOne({ slug: uniqueSlug })) {
+      uniqueSlug = `${slug}-${counter}`;
+      counter++;
+    }
+
+    const newBlog = await BlogSectionlatest.create({ title, image, disc, slug: uniqueSlug });
     return NextResponse.json(newBlog, { status: 201 });
   } catch (error) {
     console.error("POST Error:", error);
@@ -37,14 +58,30 @@ export async function PATCH(req: Request) {
     await connectDB();
     const { id, title, image, disc } = await req.json();
 
+    // Get existing blog to check if title changed
+    const existingBlog = await BlogSectionlatest.findById(id);
+    if (!existingBlog) {
+      return NextResponse.json({ error: "Blog not found" }, { status: 404 });
+    }
+
+    // If title changed, regenerate slug
+    let updateData: any = { title, image, disc };
+    if (title !== existingBlog.title) {
+      const baseSlug = createSlug(title);
+      let counter = 1;
+      let uniqueSlug = baseSlug;
+      while (await BlogSectionlatest.findOne({ slug: uniqueSlug, _id: { $ne: id } })) {
+        uniqueSlug = `${baseSlug}-${counter}`;
+        counter++;
+      }
+      updateData.slug = uniqueSlug;
+    }
+
     const updated = await BlogSectionlatest.findByIdAndUpdate(
       id,
-      { title, image, disc },
+      updateData,
       { new: true }
     );
-
-    if (!updated)
-      return NextResponse.json({ error: "Blog not found" }, { status: 404 });
 
     return NextResponse.json(updated);
   } catch (error) {

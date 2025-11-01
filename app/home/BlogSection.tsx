@@ -9,6 +9,7 @@ interface Blog {
   title: string;
   image: string;
   disc: string;
+  slug?: string;
 }
 
 const BlogSection: React.FC = () => {
@@ -50,6 +51,7 @@ const BlogSection: React.FC = () => {
             key={blog._id}
             title={blog.title}
             imageUrl={blog.image}
+            slug={blog.slug || blog.title.toLowerCase().replace(/[^a-z0-9\s-]/g, '').replace(/\s+/g, '-')}
           />
         ))}
       </div>
