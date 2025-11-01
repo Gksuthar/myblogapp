@@ -88,10 +88,31 @@ const ContactForm: React.FC = () => {
     privacyPolicy: false,
   };
 
-  const onSubmit = (values: ContactFormData, { resetForm }: any) => {
-    console.log('Form Submitted (Formik):', values);
-    alert('Form submitted successfully! Check the console for data.');
-    resetForm(); // Reset form after successful submission
+  const onSubmit = async (values: ContactFormData, { resetForm, setSubmitting }: any) => {
+    try {
+      setSubmitting(true);
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(values),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to submit form');
+      }
+
+      alert('✅ Thank you! Your message has been sent successfully. We\'ll get back to you soon.');
+      resetForm();
+    } catch (error) {
+      console.error('Form submission error:', error);
+      alert('❌ Oops! Something went wrong. Please try again or contact us directly at info@stantaxes.com');
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
