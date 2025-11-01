@@ -2,28 +2,60 @@ import { connectDB } from "@/lib/mongodb";
 import { NextResponse } from "next/server";
 import { caseStudyschema } from "@/app/api/model/casestudy";
 
+// Utility function to create a slug
+const createSlug = (title: string) => {
+  return title
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9\s-]/g, '')
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '-');
+};
+
 export async function GET(req: Request) {
   try {
     await connectDB();
     const { searchParams } = new URL(req.url);
     const id = searchParams.get('id');
+    const slug = searchParams.get('slug');
+    const title = searchParams.get('title');
 
-    // If ?slug=... is passed → return one blog
+    // If id, slug, or title is passed → return one case study
     if (id) {
-      const blog = await caseStudyschema.findOne({ id }).lean();
-      if (!blog) {
-        return NextResponse.json({ error: "case studies not found" }, { status: 404 });
+      const caseStudy = await caseStudyschema.findById(id).lean();
+      if (!caseStudy) {
+        return NextResponse.json({ error: "case study not found" }, { status: 404 });
       }
-      return NextResponse.json(blog);
+      return NextResponse.json(caseStudy);
     }
 
-    // Otherwise → return all blogs
-    const blogs = await caseStudyschema.find().sort({ createdAt: -1 }).lean();
-    if (!blogs || blogs.length === 0) {
+    if (slug) {
+      const caseStudy = await caseStudyschema.findOne({ slug }).lean();
+      if (!caseStudy) {
+        return NextResponse.json({ error: "case study not found" }, { status: 404 });
+      }
+      return NextResponse.json(caseStudy);
+    }
+
+    if (title) {
+      // Try to find by exact title or by generated slug from title
+      const generatedSlug = createSlug(title);
+      const caseStudy = await caseStudyschema.findOne({
+        $or: [{ title }, { slug: generatedSlug }]
+      }).lean();
+      if (!caseStudy) {
+        return NextResponse.json({ error: "case study not found" }, { status: 404 });
+      }
+      return NextResponse.json(caseStudy);
+    }
+
+    // Otherwise → return all case studies
+    const caseStudies = await caseStudyschema.find().sort({ createdAt: -1 }).lean();
+    if (!caseStudies || caseStudies.length === 0) {
       return NextResponse.json({ error: "No case studies found" }, { status: 404 });
     }
 
-    return NextResponse.json(blogs);
+    return NextResponse.json(caseStudies);
   } catch (error) {
     console.error(error);
     return NextResponse.json(
@@ -52,8 +84,18 @@ export async function POST(req: Request) {
       }
     }
 
+    // Generate unique slug
+    const baseSlug = createSlug(title);
+    let counter = 1;
+    let uniqueSlug = baseSlug;
+    while (await caseStudyschema.findOne({ slug: uniqueSlug })) {
+      uniqueSlug = `${baseSlug}-${counter}`;
+      counter++;
+    }
+
     const newCaseStudy = new caseStudyschema({
       title,
+      slug: uniqueSlug,
       content,
       headerTitle,
       headerDescription,
@@ -85,9 +127,22 @@ export async function PATCH(req: Request) {
       return NextResponse.json({ error: "Case study not found" }, { status: 404 });
     }
 
+    // If title changed, regenerate slug
+    const updateData: any = { title, content, headerTitle, headerDescription, cards };
+    if (title !== existing.title) {
+      const baseSlug = createSlug(title);
+      let counter = 1;
+      let uniqueSlug = baseSlug;
+      while (await caseStudyschema.findOne({ slug: uniqueSlug, _id: { $ne: id } })) {
+        uniqueSlug = `${baseSlug}-${counter}`;
+        counter++;
+      }
+      updateData.slug = uniqueSlug;
+    }
+
     const updatedCase = await caseStudyschema.findByIdAndUpdate(
       id,
-      { title, content, headerTitle, headerDescription, cards },
+      updateData,
       { new: true }
     );
 
@@ -95,10 +150,10 @@ export async function PATCH(req: Request) {
       { message: "Case study updated successfully", data: updatedCase },
       { status: 200 }
     );
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("PATCH Error:", error);
     return NextResponse.json(
-      { error: "Failed to update case study", details: error.message },
+      { error: "Failed to update case study", details: error instanceof Error ? error.message : 'Unknown error' },
       { status: 500 }
     );
   }

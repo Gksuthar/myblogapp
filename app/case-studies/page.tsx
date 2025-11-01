@@ -8,6 +8,7 @@ interface CaseStudyItem {
   _id: string;
   title: string;
   content: string;
+  slug?: string;
 }
 
 export default function CaseStudiesPage() {
@@ -69,23 +70,27 @@ export default function CaseStudiesPage() {
       {/* Case Study Grid */}
       {!loading && !error && items.length > 0 && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {items.map((item) => (
-            <Link
-              key={item._id}
-              href={`/case-study/${item._id}`}
-              className="group block bg-white rounded-2xl shadow-md hover:shadow-xl overflow-hidden border border-gray-100 transition-all duration-300 hover:-translate-y-1"
-            >
-              <article className="p-5">
-                <h2 className="text-lg font-semibold text-gray-900 mb-3 line-clamp-2">
-                  {item.title}
-                </h2>
-                <div
-                  className="prose prose-sm text-gray-700 line-clamp-5 max-w-none"
-                  dangerouslySetInnerHTML={{ __html: item.content }}
-                />
-              </article>
-            </Link>
-          ))}
+          {items.map((item) => {
+            // Use slug if available, otherwise generate from title
+            const urlSlug = item.slug || item.title.toLowerCase().replace(/[^a-z0-9\s-]/g, '').replace(/\s+/g, '-');
+            return (
+              <Link
+                key={item._id}
+                href={`/case-studies/${urlSlug}`}
+                className="group block bg-white rounded-2xl shadow-md hover:shadow-xl overflow-hidden border border-gray-100 transition-all duration-300 hover:-translate-y-1"
+              >
+                <article className="p-5">
+                  <h2 className="text-lg font-semibold text-gray-900 mb-3 line-clamp-2">
+                    {item.title}
+                  </h2>
+                  <div
+                    className="prose prose-sm text-gray-700 line-clamp-5 max-w-none"
+                    dangerouslySetInnerHTML={{ __html: item.content }}
+                  />
+                </article>
+              </Link>
+            );
+          })}
         </div>
       )}
     </div>

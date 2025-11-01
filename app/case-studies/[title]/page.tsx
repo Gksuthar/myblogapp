@@ -33,15 +33,16 @@ export default function CaseStudyDetails() {
     const fetchCaseStudy = async () => {
       setLoading(true);
       try {
-        const res = await fetch(`/api/case-study/${title}`);
+        // Fetch using title parameter (API will convert it to slug or match by title)
+        const res = await fetch(`/api/caseStudy?title=${encodeURIComponent(title as string)}`);
         if (!res.ok) {
           const errorData = await res.json();
           throw new Error(errorData.error || 'Failed to fetch case study');
         }
         const data: CaseStudy = await res.json();
         setCaseStudy(data);
-      } catch (err: any) {
-        setError(err.message);
+      } catch (err: unknown) {
+        setError(err instanceof Error ? err.message : 'Failed to fetch case study');
       } finally {
         setLoading(false);
       }

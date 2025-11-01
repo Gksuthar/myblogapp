@@ -9,6 +9,7 @@ const cardSchema = new mongoose.Schema({
 const caseStudySchema = new mongoose.Schema(
   {
     title: { type: String, required: true },
+    slug: { type: String, required: true, unique: true },
     content: { type: String, required: true },
     headerTitle: { type: String, required: false },
     headerDescription: { type: String, required: false },
