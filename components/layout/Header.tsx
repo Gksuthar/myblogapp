@@ -28,6 +28,9 @@ export default function Header() {
   const [services, setServices] = useState<ServiceItem[]>([]);
   const [loadingServices, setLoadingServices] = useState<boolean>(false);
 
+  // Toggle Services mega menu
+  const toggleServicesMenu = () => setServicesOpen((prev: boolean) => !prev);
+
   // Fetch categories
   useEffect(() => {
     const fetchCategories = async () => {
@@ -117,6 +120,13 @@ export default function Header() {
                 <Link
                   href={item.path}
                   className="text-gray-700 font-medium hover:text-blue-600"
+                  onClick={(e) => {
+                    if (item.isDropdown) {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      toggleServicesMenu();
+                    }
+                  }}
                 >
                   {item.link}
                 </Link>
@@ -128,7 +138,7 @@ export default function Header() {
                     onClick={(e: MouseEvent<HTMLButtonElement>) => {
                       e.preventDefault();
                       e.stopPropagation();
-                      setServicesOpen((prev: boolean) => !prev);
+                      toggleServicesMenu();
                     }}
                     className="p-1 rounded hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
                   >
