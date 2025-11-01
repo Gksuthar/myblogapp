@@ -40,9 +40,24 @@ export async function GET(req: Request) {
     if (title) {
       // Try to find by exact title or by generated slug from title
       const generatedSlug = createSlug(title);
-      const caseStudy = await caseStudyschema.findOne({
-        $or: [{ title }, { slug: generatedSlug }]
+      
+      // First try to find by slug or title
+      let caseStudy = await caseStudyschema.findOne({
+        $or: [{ title }, { slug: generatedSlug }, { slug: title }]
       }).lean();
+      
+      // If not found, try to find any case study and check if the title matches when slugified
+      if (!caseStudy) {
+        const allCaseStudies = await caseStudyschema.find().lean();
+        const foundStudy = allCaseStudies.find((cs) => {
+          const csSlug = cs.slug || createSlug(cs.title);
+          return csSlug === generatedSlug || csSlug === title;
+        });
+        if (foundStudy) {
+          caseStudy = foundStudy;
+        }
+      }
+      
       if (!caseStudy) {
         return NextResponse.json({ error: "case study not found" }, { status: 404 });
       }
