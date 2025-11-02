@@ -58,8 +58,8 @@ export default function Home() {
                     },
                 });
                 setHeroData(res.data);
-            } catch (error: any) {
-                console.error("Failed to fetch hero data:", error.response?.data || error.message);
+            } catch (error: unknown) {
+                console.error("Failed to fetch hero data:", error);
             }
         };
 
@@ -71,8 +71,8 @@ export default function Home() {
             try {
                 const res = await axios.get('/api/tructedCompany');
                 setTrustedCompanies(res.data); // expects an array from GET
-            } catch (error: any) {
-                console.error('Failed to fetch trusted companies:', error.response?.data || error.message);
+            } catch (error: unknown) {
+                console.error('Failed to fetch trusted companies:', error);
             } finally {
                 setLoadingTrusted(false);
             }
@@ -95,7 +95,7 @@ export default function Home() {
                 } else {
                     setServiceCards([]);
                 }
-            } catch (e) {
+            } catch {
                 setServiceCards([]);
             } finally {
                 setLoadingServices(false);
@@ -227,12 +227,12 @@ export default function Home() {
                                 title: svc.heroSection?.title || 'Untitled Service',
                                 img: svc.heroSection?.image || 'https://cdn.prod.website-files.com/6718c309cc349b579872ddbb/6732eedcfeeebafefe65ebd0_icons8-checklist-94%201.svg',
                                 excerpt: svc.heroSection?.description || '',
-                                date: svc.createdAt ? new Date(svc.createdAt).toLocaleDateString() : '',
                             };
                             const href = `/services/${svc.slug || (svc.heroSection?.title || 'service').toLowerCase().trim().replace(/[^a-z0-9\s-]/g, '').replace(/\s+/g, '-').replace(/-+/g, '-')}`;
                             return (
-                                <a key={svc._id} href={href} className="block">
+                                <a key={svc._id} href={href} className="block h-full">
                                     <motion.div
+                                        className="h-full"
                                         whileHover={{ y: -6 }}
                                         transition={{ duration: 0.3 }}
                                     >

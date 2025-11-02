@@ -2,6 +2,7 @@
 
 import { useEffect, useState, type MouseEvent } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { FaBars, FaTimes } from "react-icons/fa";
 import { MdExpandMore } from "react-icons/md";
 import axios from "axios";
@@ -94,7 +95,7 @@ export default function Header() {
   ];
 
   const CustomButton = ({ text }: { text: string }) => (
-    <button className="px-4 py-2 bg-slate-700 text-white rounded-md text-sm font-medium hover:bg-slate-800 transition">
+    <button className="px-4 py-2 bg-[var(--primary-color)] text-white rounded-md text-sm font-medium hover:bg-[var(--primary-color)] transition">
       {text}
     </button>
   );
@@ -104,8 +105,16 @@ export default function Header() {
       <div className="max-w-7xl mx-auto flex justify-between items-center p-4 relative">
         {/* Logo */}
         <div className="flex items-center space-x-2">
-          <h4 className="text-xl font-bold text-slate-800">STANFOX</h4>
-          <p className="text-xs text-gray-500 hidden sm:block">YOUR OUTSOURCE PARTNER</p>
+          <Link href="/">
+            <Image
+              src="https://web.archive.org/web/20241205104115im_/https://sbaccounting.us/wp-content/uploads/2018/05/logo_big1-1.png"
+              alt="Company logo"
+              width={180}
+              height={48}
+              className="h-10 w-auto object-contain"
+              priority
+            />
+          </Link>
         </div>
 
         {/* Desktop Menu */}
@@ -119,7 +128,7 @@ export default function Header() {
               <div className="flex items-center gap-1">
                 <Link
                   href={item.path}
-                  className="text-gray-700 font-medium hover:text-blue-600"
+                  className="text-gray-700 font-medium hover:text-[var(--primary-color)]"
                   onClick={(e) => {
                     if (item.isDropdown) {
                       e.preventDefault();
@@ -140,7 +149,7 @@ export default function Header() {
                       e.stopPropagation();
                       toggleServicesMenu();
                     }}
-                    className="p-1 rounded hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+                    className="p-1 rounded hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--primary-color)]"
                   >
                     <MdExpandMore className={`transition-transform ${servicesOpen ? 'rotate-180' : ''}`} />
                   </button>
@@ -169,7 +178,7 @@ export default function Header() {
                             onClick={() => setActiveTab(category._id)}
                             className={`w-full text-left py-3 px-4 rounded-lg text-sm font-medium transition-all duration-200 mb-2 ${
                               activeTab === category._id
-                                ? "bg-green-100 text-green-700 shadow-sm"
+                                ? "bg-[color-mix(in srgb, var(--primary-color) 15%, white)] text-[var(--primary-color)] shadow-sm"
                                 : "text-gray-700 hover:bg-gray-100"
                             }`}
                           >
@@ -207,11 +216,11 @@ export default function Header() {
                               }`}
                               className="flex items-start p-4 rounded-xl hover:bg-gray-50 transition-all duration-200 group border border-transparent hover:border-gray-200"
                             >
-                              <div className="w-10 h-10 flex items-center justify-center text-xl bg-green-50 text-green-600 rounded-full flex-shrink-0 border border-green-200">
+                              <div className="w-10 h-10 flex items-center justify-center text-xl bg-[#e6f3ff] text-[var(--primary-color)] rounded-full flex-shrink-0 border border-[color-mix(in srgb, var(--primary-color) 40%, white)]">
                                 �
                               </div>
                               <div className="ml-3">
-                                <p className="text-sm font-semibold text-gray-900 group-hover:text-green-600 transition-colors">
+                                <p className="text-sm font-semibold text-gray-900 group-hover:text-[var(--primary-color)] transition-colors">
                                   {svc.heroSection?.title || "Untitled"}
                                 </p>
                                 <p className="text-xs text-gray-500 mt-1 line-clamp-2">
@@ -248,7 +257,7 @@ export default function Header() {
               <Link
                 key={item.id}
                 href={item.path}
-                className="text-gray-700 hover:text-blue-600 text-lg font-medium"
+                className="text-gray-700 hover:text-[var(--primary-color)] text-lg font-medium"
                 onClick={() => setMenuOpen(false)}
               >
                 {item.link}

@@ -1,5 +1,11 @@
 @import "tailwindcss";
 
+/* Brand theme variables */
+:root {
+  --primary-color: #359aff;
+  --primary-color-contrast: #ffffff; /* text on primary */
+}
+
 /* Font configuration */
 .font-lexend {
   font-family: var(--font-lexend), system-ui, -apple-system, sans-serif;

@@ -98,7 +98,7 @@ export default function AccountingOutsourcingServices() {
               </h1>
               
               <p className="text-lg md:text-xl text-gray-600 leading-relaxed">
-                Looking for certified bookkeepers from India for your CPA? Add Stanfox's skilled Indian bookkeepers to your USA team & readily manage bookkeeping, reconciliations & more.
+                Looking for certified bookkeepers from India for your CPA? Add Stanfox&apos;s skilled Indian bookkeepers to your USA team & readily manage bookkeeping, reconciliations & more.
               </p>
               
               <motion.button
@@ -114,12 +114,12 @@ export default function AccountingOutsourcingServices() {
               {...fadeIn(0.3)}
               className="relative lg:flex justify-center hidden"
             >
-              {/* Main Document Icon */}
-              <div className="relative w-80 h-80 bg-green-50 border-4 border-green-200 rounded-2xl flex items-center justify-center">
+              {/* Main Document Icon (uses primary color instead of green) */}
+              <div className="relative w-80 h-80 bg-[rgba(53,154,255,0.06)] border-4 border-[rgba(53,154,255,0.35)] rounded-2xl flex items-center justify-center">
                 <div className="text-6xl">📊</div>
-                
+
                 {/* Security Shield */}
-                <div className="absolute -top-4 -right-4 w-16 h-16 bg-green-500 rounded-full flex items-center justify-center shadow-lg">
+                <div className="absolute -top-4 -right-4 w-16 h-16 bg-[var(--primary-color)] rounded-full flex items-center justify-center shadow-lg">
                   <span className="text-white text-2xl">✓</span>
                 </div>
               </div>
@@ -209,7 +209,7 @@ export default function AccountingOutsourcingServices() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 bg-blue-600">
+  <section className="py-20 bg-[var(--primary-color)]">
         <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
           <motion.div
             {...fadeIn(0.2)}
@@ -218,21 +218,21 @@ export default function AccountingOutsourcingServices() {
             <h2 className="text-4xl md:text-5xl font-bold text-white">
               Ready to Scale Your Accounting Practice?
             </h2>
-            <p className="text-xl text-blue-100">
+            <p className="text-xl text-[rgba(255,255,255,0.9)]">
               Join hundreds of CPA firms who trust us with their bookkeeping needs.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className="px-8 py-4 bg-white text-blue-600 font-semibold rounded-lg hover:bg-gray-100 transition-all duration-300 shadow-lg"
+                className="px-8 py-4 bg-white text-[var(--primary-color)] font-semibold rounded-lg hover:bg-gray-100 transition-all duration-300 shadow-lg"
               >
                 Start Free Trial
               </motion.button>
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className="px-8 py-4 border-2 border-white text-white font-semibold rounded-lg hover:bg-white hover:text-blue-600 transition-all duration-300"
+                className="px-8 py-4 border-2 border-white text-white font-semibold rounded-lg hover:bg-white hover:text-[var(--primary-color)] transition-all duration-300"
               >
                 Schedule Consultation
               </motion.button>

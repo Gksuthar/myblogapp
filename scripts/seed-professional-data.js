@@ -132,7 +132,7 @@ const professionalData = {
     },
     {
       categoryName: "Business Owners",
-      title: "Bookkeeping Services",
+      // title: "Bookkeeping Services",
       description: "Expert and reliable bookkeeping at your service. Accurate financial records for informed business decisions.",
       slug: "bookkeeping-services",
       content: `<h2>Professional Bookkeeping Services</h2>

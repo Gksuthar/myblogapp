@@ -12,15 +12,18 @@ interface Props {
 }
 const HeroSection: React.FC<Props> = ({ title, disc  , image }) => {
   return (
-    <section className="relative flex flex-col-reverse md:flex-row items-center justify-between gap-10 md:gap-20 px-6 md:px-16 py-20 bg-gradient-to-br from-gray-50 to-white overflow-hidden">
+  <section className="relative flex flex-col-reverse md:flex-row items-center justify-between gap-2 md:gap-4 px-6 md:px-16 py-6 md:py-8 bg-gradient-to-br from-gray-50 to-white overflow-hidden">
       {/* Left side - text content */}
       <motion.div
         initial={{ opacity: 0, x: -40 }}
         whileInView={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.6 }}
-        className="flex-1 text-center md:text-left"
+        className="flex-1 text-center md:text-left md:pr-6"
       >
-        <span className="inline-block bg-blue-50 text-blue-600 text-sm font-medium px-3 py-1 rounded-full mb-4 shadow-sm">
+        <span
+          className="inline-block text-[var(--primary-color)] text-sm font-medium px-3 py-1 rounded-full mb-4 shadow-sm"
+          style={{ backgroundColor: 'rgba(53,154,255,0.12)' }}
+        >
           ✨ Learn. Build. Share.
         </span>
 
@@ -28,7 +31,7 @@ const HeroSection: React.FC<Props> = ({ title, disc  , image }) => {
           {title}
         </h1>
 
-        <p className="text-gray-600 max-w-lg mx-auto md:mx-0 mb-8">
+        <p className="text-gray-600 max-w-xl mx-auto md:mx-0 mb-6">
           {disc}
         </p>
 
@@ -49,7 +52,6 @@ const HeroSection: React.FC<Props> = ({ title, disc  , image }) => {
             <CustomButton
               text="About Us"
               variant="transparent"
-              className="border border-gray-300 hover:bg-gray-100"
             />
           </Link>
         </div>
@@ -62,18 +64,15 @@ const HeroSection: React.FC<Props> = ({ title, disc  , image }) => {
         transition={{ duration: 0.6 }}
         className="flex-1 relative"
       >
-        {/* Glow effect background */}
-        <div className="absolute inset-0 rounded-3xl bg-gradient-to-tr from-blue-200 to-indigo-100 blur-3xl opacity-40"></div>
-
         {/* Main illustration */}
-        <div className="relative z-10 flex justify-center">
+        <div className="relative z-10 flex justify-center md:justify-end">
           <Image
             src={image} // Make sure this image exists in public/images
             alt="Developer illustration"
-            width={420}
-            height={420}
+            width={480}
+            height={480}
             priority
-            className="rounded-2xl shadow-lg object-cover w-full max-w-[400px] sm:max-w-[450px]"
+            className="rounded-2xl shadow-md object-cover w-full max-w-[380px] sm:max-w-[440px] md:max-w-[480px]"
           />
         </div>
       </motion.div>

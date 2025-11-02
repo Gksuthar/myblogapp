@@ -49,13 +49,13 @@ const CaseStudiesAndConnect: React.FC = () => {
     <section className="bg-white text-gray-800">
       {/* ======================= Case Studies Section ======================= */}
       <div className="max-w-6xl mx-auto px-5 py-20">
-        <h2 className="text-2xl sm:text-3xl font-semibold text-[#3d466e] mb-8 text-center sm:text-left">
+        <h2 className="text-2xl sm:text-3xl font-semibold text-[var(--primary-color)] mb-8 text-center sm:text-left">
           Case Studies
         </h2>
 
         {loading ? (
           <div className="flex justify-center py-8">
-            <div className="animate-spin rounded-full h-8 w-8 border-t-4 border-[#3d466e]" />
+            <div className="animate-spin rounded-full h-8 w-8 border-t-4 border-[var(--primary-color)]" />
           </div>
         ) : caseStudies?.length === 0 ? (
           <p className="text-center text-gray-600 py-8">
@@ -71,12 +71,12 @@ const CaseStudiesAndConnect: React.FC = () => {
                   key={study?._id}
                   className="border rounded-md p-4 shadow-sm hover:shadow-md transition-all"
                 >
-                  <h3 className="font-medium text-[#3d466e] text-sm sm:text-base mb-2 line-clamp-2">
+                  <h3 className="font-medium text-[var(--primary-color)] text-sm sm:text-base mb-2 line-clamp-2">
                     {study?.title || "Untitled Case Study"}
                   </h3>
                   <a
                     href={`/case-studies/${urlSlug}`}
-                    className="text-xs sm:text-sm text-[#3d466e] font-semibold hover:underline"
+                    className="text-xs sm:text-sm text-[var(--primary-color)] font-semibold hover:underline"
                   >
                     View Case Study →
                   </a>
@@ -88,7 +88,7 @@ const CaseStudiesAndConnect: React.FC = () => {
       </div>
 
       {/* ======================= Let's Connect Section ======================= */}
-      <section className="relative py-24 overflow-hidden">
+  <section className="relative py-20 overflow-hidden">
         {/* Background pattern */}
         <div
           className="absolute inset-0 opacity-20 pointer-events-none"
@@ -101,15 +101,15 @@ const CaseStudiesAndConnect: React.FC = () => {
 
         {/* Center content */}
         <div className="relative z-10 flex items-center justify-center">
-          <div className="bg-[#d5e6d1] rounded-md shadow-[4px_4px_0_#000] border border-black text-center px-10 py-14 max-w-xl w-full mx-4">
-            <h2 className="text-3xl md:text-4xl font-semibold text-[#3d466e] mb-4">
+          <div className="rounded-xl border text-center px-10 py-12 max-w-xl w-full mx-4 bg-[rgba(53,154,255,0.10)] border-[color-mix(in_srgb,_var(--primary-color)_45%,_white)] shadow-[0_12px_30px_rgba(53,154,255,0.15)]">
+            <h2 className="text-3xl md:text-4xl font-semibold text-gray-900 mb-4">
               Let’s Connect!
             </h2>
             <p className="text-gray-700 text-base md:text-lg mb-8">
               Connect with our accounting professionals & get started today!
             </p>
 
-            <a href="/Contactus" className="inline-block px-6 py-3 bg-[#3d466e] text-white rounded-md hover:bg-[#2f3859] transition-all shadow-md">
+            <a href="/Contactus" className="inline-block px-6 py-3 bg-[var(--primary-color)] text-white rounded-md hover:bg-[var(--primary-color)] transition-all shadow-md">
               Contact Us
             </a>
           </div>

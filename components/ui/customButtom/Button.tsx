@@ -15,7 +15,7 @@ type VariantType =
   | "successTrans";
 
 interface CustomButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  text?: any;
+  text?: React.ReactNode;
   icon?: React.ReactNode;
   variant?: VariantType;
   className?: string;
@@ -24,15 +24,15 @@ interface CustomButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const variantClasses: Record<VariantType, string> = {
-  primary: "bg-blue-600 hover:bg-blue-700 text-white",
+  primary: "bg-[var(--primary-color)] hover:bg-[var(--primary-color)] text-[var(--primary-color-contrast)]",
   success: "bg-green-600 hover:bg-green-700 text-white",
   danger: "bg-red-600 hover:bg-red-700 text-white",
   dark: "bg-gray-800 hover:bg-gray-900 text-white",
   light: "bg-gray-100 hover:bg-gray-200 text-gray-800",
-  theme: "bg-indigo-600 hover:bg-indigo-700 text-white",
+  theme: "bg-[var(--primary-color)] hover:bg-[var(--primary-color)] text-[var(--primary-color-contrast)]",
   silver: "bg-gray-300 hover:bg-gray-400 text-gray-900",
   transparent:
-    "bg-transparent border border-gray-300 text-gray-700 hover:bg-gray-100",
+    "bg-transparent border border-[var(--primary-color)] text-[var(--primary-color)] hover:bg-[var(--primary-color)] hover:text-white",
   successTrans:
     "bg-green-50 text-green-700 border border-green-500 hover:bg-green-100",
 };

@@ -18,8 +18,8 @@ const Trusted: React.FC = () => {
           "url('https://cdn.prod.website-files.com/6718c309cc349b579872ddbb/67332d1aaa9780c12cdd3d8a_glob-p-1080.png')",
       }}
     >
-      {/* Overlay */}
-      <div className="absolute inset-0 bg-black/60"></div>
+  {/* Overlay */}
+  <div className="absolute inset-0 bg-black/45"></div>
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-white">
         {/* Heading */}
@@ -37,8 +37,12 @@ const Trusted: React.FC = () => {
               key={stat.label}
               className="flex flex-col items-center bg-white/10 backdrop-blur-sm p-6 rounded-2xl hover:bg-white/20 transition-all duration-300"
             >
-              <div className="text-5xl mb-3 text-amber-400">{stat.icon}</div>
-              <span className="text-3xl sm:text-4xl font-extrabold">{stat.value}</span>
+              <div className="mb-3">
+                <span className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-[var(--primary-color)] text-white text-2xl shadow-md">
+                  {stat.icon}
+                </span>
+              </div>
+              <span className="text-3xl sm:text-4xl font-extrabold text-white">{stat.value}</span>
               <span className="mt-2 text-lg sm:text-xl text-gray-200">{stat.label}</span>
             </div>
           ))}

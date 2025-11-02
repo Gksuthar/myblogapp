@@ -4,11 +4,11 @@ import React from "react";
 
 const JoinTeamSection: React.FC = () => {
   return (
-    <section className="py-16 px-5 sm:px-8 lg:px-12 bg-white text-gray-800">
+    <section className="py-12 px-5 sm:px-8 lg:px-12 bg-white text-gray-800">
       <div className="max-w-7xl mx-auto">
         {/* Title & Description */}
-        <div className="text-center md:text-left mb-10">
-          <h2 className="text-3xl sm:text-4xl font-semibold text-[#3d466e] tracking-tight">
+  <div className="text-center md:text-left mb-8">
+          <h2 className="text-3xl sm:text-4xl font-semibold text-[var(--primary-color)] tracking-tight">
             Be Part Of Something Great
             
           </h2>
@@ -20,18 +20,20 @@ const JoinTeamSection: React.FC = () => {
             calm needed to deliver exceptional results, every day.
           </p>
 
-          <button className="mt-6 px-7 py-3 bg-[#3d466e] text-white rounded-lg hover:bg-[#2f3859] transition-all shadow-md hover:shadow-lg">
+          <button className="mt-6 px-7 py-3 bg-[var(--primary-color)] text-white rounded-lg hover:bg-[var(--primary-color)] transition-all shadow-md hover:shadow-lg">
             Join The Team
           </button>
         </div>
 
-        {/* Single Image Section */}
-        <div className="relative w-full max-w-5xl mx-auto aspect-[16/9] overflow-hidden rounded-xl">
-          <img
+        {/* Single Image Section with brand hover tint */}
+        <div className="relative w-full max-w-5xl mx-auto aspect-[16/9] overflow-hidden rounded-xl group shadow-sm">
+          <Image
             src="https://cdn.prod.website-files.com/6718c309cc349b579872ddbb/686b71ddbf8b5d7ad363c0f4_Stanfox%20-%20Office%20Image%20(1)-p-1080.webp"
             alt="Stanfox Office"
-            className="object-cover grayscale hover:grayscale-0 hover:scale-105 transition duration-700 ease-in-out"
+            fill
+            className="object-cover grayscale group-hover:grayscale-0 group-hover:scale-105 transition duration-700 ease-in-out"
           />
+          <span className="pointer-events-none absolute inset-0 bg-[var(--primary-color)] mix-blend-multiply opacity-0 group-hover:opacity-20 transition-opacity" />
         </div>
       </div>
     </section>

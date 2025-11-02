@@ -27,6 +27,18 @@ const nextConfig: NextConfig = {
         port: '',
         pathname: '/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'web.archive.org',
+        port: '',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'sbaccounting.us',
+        port: '',
+        pathname: '/**',
+      },
     ],
   },
 };

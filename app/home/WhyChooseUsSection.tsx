@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import Image from "next/image";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import {
@@ -41,7 +42,7 @@ const WhyChooseUsSection: React.FC = () => {
         } else {
           setServices([]);
         }
-      } catch (e) {
+      } catch {
         setServices([]);
       } finally {
         setLoading(false);
@@ -63,14 +64,14 @@ const WhyChooseUsSection: React.FC = () => {
 
           <Link
             href="/hire-expert"
-            className="text-blue-600 font-semibold text-lg hover:underline flex items-center mb-4"
+            className="text-[var(--primary-color)] font-semibold text-lg hover:underline flex items-center mb-4"
           >
             Hire expert today <span className="ml-2">→</span>
           </Link>
 
           <Link
             href="/services-list"
-            className="text-blue-600 font-semibold text-lg hover:underline flex items-center mb-12 lg:mb-0"
+            className="text-[var(--primary-color)] font-semibold text-lg hover:underline flex items-center mb-12 lg:mb-0"
           >
             View all services <span className="ml-2">→</span>
           </Link>
@@ -85,7 +86,7 @@ const WhyChooseUsSection: React.FC = () => {
                   <li key={svc._id}>
                     <Link
                       href={`/services/${(svc.heroSection?.title || 'service').toLowerCase().replace(/\s+/g, '-')}`}
-                      className="text-gray-800 hover:text-blue-600 text-base"
+                      className="text-gray-800 hover:text-[var(--primary-color)] text-base"
                     >
                       {svc.heroSection?.title || 'Untitled'}
                     </Link>
@@ -104,18 +105,28 @@ const WhyChooseUsSection: React.FC = () => {
                 key={index}
                 className="flex items-center space-x-4 hover:translate-x-1 transition-transform duration-300"
               >
-                <div className="text-blue-600 text-2xl">{feature.icon}</div>
+                <div className="text-[var(--primary-color)] text-2xl">{feature.icon}</div>
                 <p className="text-lg text-gray-800 font-medium">{feature.title}</p>
               </div>
             ))}
           </div>
         </div>
 
-        {/* Right Illustration Placeholder */}
+        {/* Right Illustration with brand-colored highlight */}
         <div className="lg:w-1/2 flex justify-center lg:justify-end">
-          {/* <div className="bg-gray-50 rounded-xl p-8 shadow-lg w-full max-w-lg h-[400px] flex items-center justify-center border border-gray-200"> */}
-      <img src="https://cdn.prod.website-files.com/6718c309cc349b579872ddbb/67348d71d96b43d96eea23f1_why_choose.svg" alt="" />
-          {/* </div> */}
+          <div className="relative group rounded-3xl p-4 sm:p-6 w-full max-w-[560px] border border-gray-200 bg-white shadow-sm">
+            <div className="relative">
+              <Image
+                src="https://cdn.prod.website-files.com/6718c309cc349b579872ddbb/67348d71d96b43d96eea23f1_why_choose.svg"
+                alt="Why choose illustration"
+                width={560}
+                height={420}
+                className="w-full h-auto rounded-2xl"
+              />
+              {/* Tint overlay inside the image area to shift accents to primary */}
+              <span className="pointer-events-none absolute inset-0 rounded-2xl bg-[var(--primary-color)] mix-blend-multiply opacity-15 group-hover:opacity-25 transition-opacity" />
+            </div>
+          </div>
         </div>
       </div>
     </section>

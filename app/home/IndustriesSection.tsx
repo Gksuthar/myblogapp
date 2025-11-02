@@ -80,29 +80,29 @@ const IndustriesSection: React.FC = () => {
             Loading industries...
           </div>
         ) : industries.length > 0 ? (
-          industries.map((item : any, i : number) => (
+          industries.map((item: { id?: string; image?: string; title?: string; description?: string }, i: number) => (
             <motion.div
               key={item.id || i}
-              whileHover={{ y: -8, scale: 1.03 }}
-              transition={{ duration: 0.25 }}
-              className="group relative bg-white rounded-2xl shadow-md hover:shadow-xl border border-gray-100 hover:border-green-300 transition-all duration-300 flex-shrink-0 w-72 sm:w-80 md:w-96 p-6 sm:p-8 flex flex-col justify-between"
+                whileHover={{ y: -8, scale: 1.03 }}
+                transition={{ duration: 0.25 }}
+                className="group relative bg-white rounded-2xl shadow-md hover:shadow-xl border border-gray-100 hover:border-[var(--primary-color)] transition-all duration-300 flex-shrink-0 w-72 sm:w-80 md:w-96 p-6 sm:p-8 flex flex-col justify-between"
             >
               <div>
                 {/* === Icon === */}
-                <div className="p-4 mb-6   group-hover:scale-110 transition-transform duration-300">
-                  <Image
-                    src={item?.image}
-                    alt={item?.title}
-                    width={48}
-                    height={48}
-                    className="object-contain w-10 h-10"
-                    unoptimized
-                  />
-                </div>
+                  <div className="overflow-hidden mb-6 h-40 rounded-lg">
+                    <Image
+                      src={item?.image || ''}
+                      alt={item?.title || ''}
+                      width={600}
+                      height={400}
+                      className="object-cover w-full h-40 transform transition-transform duration-300 group-hover:scale-110"
+                      unoptimized
+                    />
+                  </div>
 
                 {/* === Title === */}
                 <h3
-                  className="text-xl font-semibold text-gray-900 mb-3 group-hover:text-green-700 transition-colors duration-300 line-clamp-1"
+                  className="text-xl font-semibold text-gray-900 mb-3 group-hover:text-[var(--primary-color)] transition-colors duration-300 line-clamp-1"
                   title={item?.title}
                 >
                   {item?.title}
@@ -118,7 +118,7 @@ const IndustriesSection: React.FC = () => {
               </div>
 
               {/* === Decorative Accent === */}
-              <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-green-400 via-emerald-400 to-green-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-b-2xl" />
+              <div className="absolute bottom-0 left-0 w-full h-1 bg-[var(--primary-color)] opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-b-2xl" />
             </motion.div>
           ))
         ) : (
