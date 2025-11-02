@@ -69,10 +69,10 @@ const HeroSection: React.FC<Props> = ({ title, disc  , image }) => {
           <Image
             src={image} // Make sure this image exists in public/images
             alt="Developer illustration"
-            width={480}
-            height={480}
+            width={640}
+            height={640}
             priority
-            className="rounded-2xl shadow-md object-cover w-full max-w-[380px] sm:max-w-[440px] md:max-w-[480px]"
+            className="rounded-2xl shadow-md object-cover w-full max-w-[480px] sm:max-w-[560px] md:max-w-[620px]"
           />
         </div>
       </motion.div>
