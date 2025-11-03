@@ -125,15 +125,19 @@ const ContactForm: React.FC = () => {
             <div>
               <h1 className="text-3xl font-bold text-gray-800 mb-6">Contact Us</h1>
               <p className="text-gray-600 max-w-md mb-8">
-                Consult with us & share your accounting requirements. Take first-hand experience of working with **StanTax** professionals by **10-hours of free trial**, and let them exceed your expectations. Connect with us today.
+Feel free to talk to our representative at any time you please use our contact form on our website or one of our contact numbers. Let us work on your future together.
+
+You can always visit us at our HQ, we have a friendly staff and a mean cup of coffee.
+
+
               </p>
 
               <div className="space-y-3 mb-10">
                 <div className="flex items-center space-x-2 text-gray-700">
-                  <span className="font-medium">📧 info@stantaxes.com</span>
+                  <span className="font-medium">📧 shalin@sbaccounting.us</span>
                 </div>
                 <div className="flex items-center space-x-2 text-gray-700">
-                  <span className="font-medium">📞 +1 407 495 6629</span>
+                  <span className="font-medium">📞 +1 430 755 2828</span>
                 </div>
               </div>
 
