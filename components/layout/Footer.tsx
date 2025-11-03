@@ -5,6 +5,8 @@ import Image from 'next/image';
 import { useEffect, useState } from 'react';
 
 type Certification = { label: string; image?: string };
+type CompanyLink = { label: string; href: string };
+type Address = { title: string; lines: string[] };
 
 const FooterLink = ({ href, children }: { href: string; children: React.ReactNode }) => (
   <li>
@@ -14,19 +16,51 @@ const FooterLink = ({ href, children }: { href: string; children: React.ReactNod
   </li>
 );
 
+const isValidImageSrc = (src: string) => {
+  if (!src) return false;
+  if (src.startsWith('/')) return true; // local/static asset
+  try {
+    const u = new URL(src);
+    return u.protocol === 'http:' || u.protocol === 'https:';
+  } catch {
+    return false;
+  }
+};
 
 const Footer: React.FC = () => {
+  const [logoUrl, setLogoUrl] = useState('');
+  const [tagline, setTagline] = useState('');
+  const [links, setLinks] = useState<CompanyLink[]>([]);
   const [certs, setCerts] = useState<Certification[]>([]);
+  const [associatePartner, setAssociatePartner] = useState('');
+  const [contactPhoneUSA, setContactPhoneUSA] = useState('');
+  const [contactPhoneIND, setContactPhoneIND] = useState('');
+  const [contactEmail, setContactEmail] = useState('');
+  const [officeUSA, setOfficeUSA] = useState<Address>({ title: 'USA Office', lines: [] });
+  const [officeIND, setOfficeIND] = useState<Address>({ title: 'India Office', lines: [] });
+  const [contactNotes, setContactNotes] = useState<string[]>([]);
+  const [internationalNote, setInternationalNote] = useState('');
+  const [copyrightText, setCopyrightText] = useState('');
 
   useEffect(() => {
     const load = async () => {
       try {
         const res = await fetch('/api/footer', { cache: 'no-store' });
         const data = await res.json();
-        const items: Certification[] = Array.isArray(data?.data?.certifications)
-          ? data.data.certifications
-          : [];
-        setCerts(items);
+        const d = data?.data || {};
+        setLogoUrl(d.logoUrl || '');
+        setTagline(d.tagline || '');
+        setLinks(Array.isArray(d.companyLinks) ? d.companyLinks : []);
+        setCerts(Array.isArray(d.certifications) ? d.certifications : []);
+        setAssociatePartner(d.associatePartner || '');
+        setContactPhoneUSA(d.contactPhoneUSA || '');
+        setContactPhoneIND(d.contactPhoneIND || '');
+        setContactEmail(d.contactEmail || '');
+        setOfficeUSA(d.officeUSA || { title: 'USA Office', lines: [] });
+        setOfficeIND(d.officeIND || { title: 'India Office', lines: [] });
+  setContactNotes(Array.isArray(d.contactNotes) ? d.contactNotes : []);
+  setInternationalNote(d.internationalNote || '');
+        setCopyrightText(d.copyrightText || '');
       } catch {
         setCerts([]);
       }
@@ -42,15 +76,15 @@ const Footer: React.FC = () => {
           {/* Logo & Tagline (Col 1-4) */}
           <div className="md:col-span-4">
             <div className="flex items-center space-x-2 mb-4">
-              {/* Assuming Stanfox logo is an SVG or simple text, using text here */}
-              <span className="text-2xl font-bold text-white">
-                <Image src='https://web.archive.org/web/20241205104115im_/https://sbaccounting.us/wp-content/uploads/2018/05/logo_big1-1.png' alt="Stanfox Logo" width={144} height={32} className="h-8 w-auto" />
-              </span>
-              <span className="text-xs font-light text-gray-400">EXPERT PARTNER</span>
+              {isValidImageSrc(logoUrl) ? (
+                <Image src={logoUrl} alt="Logo" width={144} height={32} className="h-8 w-auto" unoptimized />
+              ) : (
+                <span className="text-2xl font-bold text-white">Logo</span>
+              )}
             </div>
-            <p className="text-gray-400 text-sm max-w-xs">
-              Maximize Efficiency, Minimize Costs - Your Trusted Outsourcing Accounting Services.
-            </p>
+            {tagline && (
+              <p className="text-gray-400 text-sm max-w-xs">{tagline}</p>
+            )}
           </div>
 
           {/* Company Links (Col 5-7) */}
@@ -58,18 +92,23 @@ const Footer: React.FC = () => {
             <h4 className="font-bold text-base mb-4">Company</h4>
             <div className="grid grid-cols-2 gap-4">
               <ul className="space-y-3">
-                <FooterLink href="/">Home</FooterLink>
-                <FooterLink href="/about">About Us</FooterLink>
-                <FooterLink href="/how-we-work">How We Work</FooterLink>
-                <FooterLink href="/why-stanfox">Why Stanfox</FooterLink>
-                <FooterLink href="/contact">Contact Us</FooterLink>
+                {(links.length ? links : [
+                  { label: 'Home', href: '/' },
+                  { label: 'About Us', href: '/about' },
+                  { label: 'How We Work', href: '/how-we-work' },
+                  { label: 'Contact Us', href: '/Contactus' }
+                ]).slice(0,5).map((l, i) => (
+                  <FooterLink key={i} href={l.href}>{l.label}</FooterLink>
+                ))}
               </ul>
               <ul className="space-y-3">
-                <FooterLink href="/locations">Locations</FooterLink>
-                <FooterLink href="/career">Career</FooterLink>
-                <FooterLink href="/blogs">Blog</FooterLink>
-                <FooterLink href="/engagement">Engagement Model</FooterLink>
-                <FooterLink href="/privacy">Privacy Policy</FooterLink>
+                {(links.length > 5 ? links.slice(5) : [
+                  { label: 'Blogs', href: '/blogs' },
+                  { label: 'Services', href: '/services' },
+                  { label: 'Privacy Policy', href: '/privacy' }
+                ]).slice(0,5).map((l, i) => (
+                  <FooterLink key={i} href={l.href}>{l.label}</FooterLink>
+                ))}
               </ul>
             </div>
           </div>
@@ -84,9 +123,12 @@ const Footer: React.FC = () => {
                 </div>
               ))}
             </div>
-            <h4 className="font-bold text-base mb-2">Associate Partner:</h4>
-            {/* Placeholder for TaxApro Logo */}
-            <div className="text-3xl font-extrabold tracking-widest text-white/90">TaxApro</div>
+            {associatePartner && (
+              <>
+                <h4 className="font-bold text-base mb-2">Associate Partner:</h4>
+                <div className="text-3xl font-extrabold tracking-widest text-white/90">{associatePartner}</div>
+              </>
+            )}
           </div>
         </div>
 
@@ -99,47 +141,66 @@ const Footer: React.FC = () => {
           <div>
             <h4 className="font-bold text-base mb-4">Contact</h4>
             <ul className="space-y-2 text-sm">
-              <li className="text-gray-400">
-                <span className="font-semibold text-white">USA </span>+1 407-486-8620
-              </li>
-              <li className="text-gray-400">
-                <span className="font-semibold text-white">IND </span>+91 99740-40370
-              </li>
-              <li className="text-gray-400">
-                <span className="font-semibold text-white">Email </span>
-                <Link href="mailto:info@stanfox.com" className="hover:underline">
-                  info@stanfox.com
-                </Link>
-              </li>
+              {contactPhoneUSA && (
+                <li className="text-gray-400">
+                  <span className="font-semibold text-white">USA </span>{contactPhoneUSA}
+                </li>
+              )}
+              {contactPhoneIND && (
+                <li className="text-gray-400">
+                  <span className="font-semibold text-white">IND </span>{contactPhoneIND}
+                </li>
+              )}
+              {contactEmail && (
+                <li className="text-gray-400">
+                  <span className="font-semibold text-white">Email </span>
+                  <Link href={`mailto:${contactEmail}`} className="hover:underline">
+                    {contactEmail}
+                  </Link>
+                </li>
+              )}
             </ul>
           </div>
 
           {/* USA Office */}
           <div>
-            <h4 className="font-bold text-base mb-4">🇺🇸 USA Office</h4>
+            <h4 className="font-bold text-base mb-4">🇺🇸 {officeUSA.title}</h4>
             <p className="text-gray-400 text-sm">
-              30 N Gould St Ste N Sheridan,<br />
-              WY 82801<br />
+              {officeUSA.lines.map((l, i) => (
+                <span key={i} className="block">{l}</span>
+              ))}
             </p>
           </div>
 
           {/* India Office */}
           <div>
-            <h4 className="font-bold text-base mb-4">🇮🇳 India Office</h4>
+            <h4 className="font-bold text-base mb-4">🇮🇳 {officeIND.title}</h4>
             <p className="text-gray-400 text-sm">
-             B 301 Saptak Apts,<br />
-              Judges Bungalows Crossroads,<br />
-              Ahmedabad, India 380054
+              {officeIND.lines.map((l, i) => (
+                <span key={i} className="block">{l}</span>
+              ))}
             </p>
           </div>
 
    
         </div>
 
+        {/* Contact Notes */}
+        {(contactNotes.length > 0 || internationalNote) && (
+          <div className="mb-8 text-sm text-gray-400 space-y-3">
+            {contactNotes.filter(Boolean).map((p, i) => (
+              <p key={i}>{p}</p>
+            ))}
+            {internationalNote && (
+              <p className="font-medium text-white/80">{internationalNote}</p>
+            )}
+          </div>
+        )}
+
         {/* Footer Bar: Copyright and Social Icons */}
         <div className="flex flex-col md:flex-row justify-between items-center pt-4 border-t border-gray-700/50">
           <p className="text-gray-500 text-xs mb-4 md:mb-0">
-            © 2025 Stanfox. All rights reserved.
+            {copyrightText || '© 2025. All rights reserved.'}
           </p>
           <div className="flex space-x-4">
             {/* Social Icons Placeholder */}
