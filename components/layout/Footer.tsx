@@ -37,7 +37,7 @@ const Footer: React.FC = () => {
     <footer className="bg-[#1e1e1e] text-white py-12 px-6 md:px-16">
       <div className="max-w-7xl mx-auto">
         {/* Top Section: Logo, Company Links, Certification */}
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-12 border-b border-gray-700/50 pb-10 mb-10">
+  <div className="grid grid-cols-1 md:grid-cols-12 items-start gap-12 border-b border-gray-700/50 pb-10 mb-10">
           
           {/* Logo & Tagline (Col 1-4) */}
           <div className="md:col-span-4">
@@ -93,7 +93,7 @@ const Footer: React.FC = () => {
         {/* Middle Section removed per request (Business Owners & Accounting/CPA Firms) */}
         
         {/* Bottom Section: Contact & Addresses */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-10 mb-10">
+  <div className="grid grid-cols-1 md:grid-cols-3 items-start gap-10 mb-10">
           
           {/* Contact Information */}
           <div>
