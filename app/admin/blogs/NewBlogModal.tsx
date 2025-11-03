@@ -27,7 +27,8 @@ export type NewBlogModalProps = {
   open: boolean;
   onClose: () => void;
   onCreated?: () => void;
-  editData?: BlogDoc; // if editing an existing blog
+  // Accept partial blog data or null to support "create" flow and looser caller types
+  editData?: Partial<BlogDoc> | null; // if editing an existing blog
 };
 
 const BlogSchema = Yup.object().shape({

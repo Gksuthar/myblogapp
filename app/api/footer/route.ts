@@ -6,9 +6,13 @@ import FooterSettings from '@/app/api/model/footerSettings';
 export async function GET() {
   try {
     await connectDB();
-    const doc = await FooterSettings.findOne({}).sort({ updatedAt: -1 }).lean();
-    if (!doc) return NextResponse.json({ data: null });
-    return NextResponse.json({ data: { _id: doc._id.toString(), certifications: doc.certifications || [] } });
+    type FooterDoc = { _id: unknown; certifications?: Array<{ label: string; image?: string }>; };
+    const doc = await FooterSettings.findOne({}).sort({ updatedAt: -1 }).lean<FooterDoc>();
+    if (!doc) {
+      return NextResponse.json({ data: null });
+    }
+    const id = (doc as { _id: { toString?: () => string } })._id?.toString?.() ?? '';
+    return NextResponse.json({ data: { _id: id, certifications: doc.certifications || [] } });
   } catch (error) {
     console.error('Error fetching footer settings:', error);
     return NextResponse.json({ error: 'Failed to fetch footer settings' }, { status: 500 });
