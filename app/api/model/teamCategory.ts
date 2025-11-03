@@ -5,7 +5,7 @@ const teamCardSchema = new mongoose.Schema({
   description: { type: String, required: true },
   image: { type: String, required: true },
   tags: [{ type: String }],
-  buttonText: { type: String, default: "Hire Now" },
+  buttonText: { type: String, default: "" },
 });
 
 const teamCategorySchema = new mongoose.Schema({

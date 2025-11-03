@@ -129,13 +129,6 @@ export default function Header() {
                 <Link
                   href={item.path}
                   className="text-gray-700 font-medium hover:text-[var(--primary-color)]"
-                  onClick={(e) => {
-                    if (item.isDropdown) {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      toggleServicesMenu();
-                    }
-                  }}
                 >
                   {item.link}
                 </Link>

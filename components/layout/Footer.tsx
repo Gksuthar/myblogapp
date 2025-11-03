@@ -1,7 +1,10 @@
-'use client'
+"use client";
 // components/Footer.tsx
-// import Image from 'next/image';
 import Link from 'next/link';
+import Image from 'next/image';
+import { useEffect, useState } from 'react';
+
+type Certification = { label: string; image?: string };
 
 const FooterLink = ({ href, children }: { href: string; children: React.ReactNode }) => (
   <li>
@@ -13,6 +16,23 @@ const FooterLink = ({ href, children }: { href: string; children: React.ReactNod
 
 
 const Footer: React.FC = () => {
+  const [certs, setCerts] = useState<Certification[]>([]);
+
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const res = await fetch('/api/footer', { cache: 'no-store' });
+        const data = await res.json();
+        const items: Certification[] = Array.isArray(data?.data?.certifications)
+          ? data.data.certifications
+          : [];
+        setCerts(items);
+      } catch {
+        setCerts([]);
+      }
+    };
+    load();
+  }, []);
   return (
     <footer className="bg-[#1e1e1e] text-white py-12 px-6 md:px-16">
       <div className="max-w-7xl mx-auto">
@@ -24,8 +44,8 @@ const Footer: React.FC = () => {
             <div className="flex items-center space-x-2 mb-4">
               {/* Assuming Stanfox logo is an SVG or simple text, using text here */}
               <span className="text-2xl font-bold text-white">
-                <img src='https://web.archive.org/web/20241205104115im_/https://sbaccounting.us/wp-content/uploads/2018/05/logo_big1-1.png' alt="Stanfox Logo" className="h-8" />
-                </span>
+                <Image src='https://web.archive.org/web/20241205104115im_/https://sbaccounting.us/wp-content/uploads/2018/05/logo_big1-1.png' alt="Stanfox Logo" width={144} height={32} className="h-8 w-auto" />
+              </span>
               <span className="text-xs font-light text-gray-400">EXPERT PARTNER</span>
             </div>
             <p className="text-gray-400 text-sm max-w-xs">
@@ -58,10 +78,11 @@ const Footer: React.FC = () => {
           <div className="md:col-span-5">
             <h4 className="font-bold text-base mb-4">Certification</h4>
             <div className="flex space-x-3 mb-4">
-              {/* Placeholder for Certification Badges */}
-              <div className="w-16 h-16 bg-gray-700 rounded flex items-center justify-center text-xs text-gray-400">Badge 1</div>
-              <div className="w-16 h-16 bg-gray-700 rounded flex items-center justify-center text-xs text-gray-400">Badge 2</div>
-              <div className="w-16 h-16 bg-gray-700 rounded flex items-center justify-center text-xs text-gray-400">Badge 3</div>
+              {(certs.length ? certs : [{label:'Badge 1'}, {label:'Badge 2'}, {label:'Badge 3'}]).slice(0,3).map((b, i) => (
+                <div key={i} className="w-16 h-16 bg-gray-700 rounded flex items-center justify-center text-xs text-gray-300">
+                  {b.label || `Badge ${i+1}`}
+                </div>
+              ))}
             </div>
             <h4 className="font-bold text-base mb-2">Associate Partner:</h4>
             {/* Placeholder for TaxApro Logo */}

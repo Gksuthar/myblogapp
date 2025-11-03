@@ -3,6 +3,7 @@
 import AccountantCard from "@/components/AccountantCard";
 import Tabs from "@/components/Tabs/Tabs";
 import axios from "axios";
+import Image from "next/image";
 import { useEffect, useState } from "react";
 
 interface TeamCard {
@@ -100,13 +101,15 @@ const tabsData = roles?.map((role) => ({
       </p>
 
       {/* Tabs Section */}
-      <div className="mb-12">
-        <Tabs
-          tabs={tabsData || []}
-          defaultActive={tabsData[0]?.value || ""}
-          onChange={(value) => console.log("Selected Tab:", value)}
-        />
-      </div>
+      {tabsData?.length ? (
+        <div className="mb-12">
+          <Tabs
+            tabs={tabsData}
+            defaultActive={tabsData[0]?.value || ""}
+            onChange={(value) => console.log("Selected Tab:", value)}
+          />
+        </div>
+      ) : null}
 
       {/* Services Section */}
      <div className="flex flex-col-reverse md:flex-row items-center gap-8 md:gap-12">
@@ -124,17 +127,20 @@ const tabsData = roles?.map((role) => ({
             and startups. From recording daily transactions to managing end-to-end payroll,
             we bring expertise and peace of mind to your finance department.`}
         </p>
-      </div>
+      </div> 
 
       {/* Image Section */}
-      <div className="flex-1 flex justify-center md:justify-end mb-8 md:mb-0">
-        <img
+      <div className="relative flex-1 flex justify-center md:justify-center mb-8 md:mb-0">
+        <div className="absolute -top-6 -left-6 w-40 h-40 bg-[rgba(53,154,255,0.15)] blur-3xl rounded-full" aria-hidden="true" />
+        <Image
           src={
-            content?.image ||
+            
             'https://cdn.prod.website-files.com/6718c309cc349b579872ddbb/67e687fc26d372e8e15937d1_CFO%20Advisory%20Service.svg'
           }
           alt={content?.title || 'CFO Advisory Service'}
-          className="w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg object-contain"
+          width={800}
+          height={560}
+          className="w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl h-auto object-contain rounded-2xl shadow-lg"
         />
       </div>
     </div>

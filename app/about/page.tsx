@@ -158,13 +158,20 @@ const AboutPage: React.FC = () => {
       {/* Values Section */}
       {aboutData?.values?.length ? (
         <section className="py-16 bg-white">
-          <div className="max-w-4xl mx-auto px-6">
-            <h2 className="text-3xl font-bold text-center mb-6">Our Values</h2>
-            <p className="text-gray-700 leading-8 text-lg">
-              {aboutData.values
-                .map((v) => `${v.title}: ${v.description}`)
-                .join(' ')}
-            </p>
+          <div className="max-w-5xl mx-auto px-6">
+            <h2 className="text-3xl font-bold text-center mb-10">Our Values</h2>
+            <div className="grid md:grid-cols-2 gap-6">
+              {aboutData.values.map((v, idx) => (
+                <div key={idx} className="bg-gray-50 rounded-xl p-6 border border-gray-100">
+                  <h3 className="text-xl font-semibold text-gray-900">
+                    {v.title}
+                  </h3>
+                  <p className="text-gray-700 mt-2 leading-7">
+                    {v.description}
+                  </p>
+                </div>
+              ))}
+            </div>
           </div>
         </section>
       ) : null}

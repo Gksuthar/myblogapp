@@ -6,7 +6,7 @@ export async function GET() {
 
   try {
 const studies = await CategoryModel.find().sort({ createdAt: -1 });
-    if (!studies) return NextResponse.json({ error: "No Category found" }, { status: 404 });
+    if (!studies || studies.length === 0) return NextResponse.json([]);
     return NextResponse.json(studies);
   } catch (error) {
     console.error(error);
@@ -26,7 +26,7 @@ export async function POST(req: Request) {
 
         const created = await CategoryModel.create({ name, description });
         return NextResponse.json({ data: { id: created._id.toString(), name, description } }, { status: 201 });
-    } catch (err: any) {
-        return NextResponse.json({ error: err.message || 'Failed to create category' }, { status: 500 });
+  } catch (err: unknown) {
+    return NextResponse.json({ error: err instanceof Error ? err.message : 'Failed to create category' }, { status: 500 });
     }
 }

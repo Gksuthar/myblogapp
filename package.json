@@ -7,7 +7,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "seed:admin": "node scripts/init-admin.js"
+    "seed:admin": "node scripts/init-admin.js",
+    "import:archive": "node scripts/import-archive.mjs",
+    "seed:services": "node scripts/seed-services.mjs"
   },
   "dependencies": {
     "@ckeditor/ckeditor5-build-classic": "^41.4.2",
@@ -17,7 +19,8 @@
     "axios": "^1.12.2",
     "bcryptjs": "^3.0.2",
     "ckeditor": "^4.12.1",
-    "dotenv": "^17.2.3",
+  "dotenv": "^17.2.3",
+  "cheerio": "^1.0.0-rc.12",
     "formik": "^2.4.6",
     "framer-motion": "^12.23.24",
     "jsonwebtoken": "^9.0.2",

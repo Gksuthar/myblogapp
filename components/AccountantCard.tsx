@@ -1,6 +1,7 @@
-'use client'
+"use client"
 // File: AccountantCard.jsx
 import React from "react";
+import Image from "next/image";
 
 interface AccountantCardProps {
   title: string;
@@ -15,12 +16,12 @@ const AccountantCard: React.FC<AccountantCardProps> = ({
   description,
   image,
   tags = [],
-  buttonText = "Hire Now",
+  // buttonText intentionally unused; CTA removed
 }) => {
   return (
     <div className="w-full ">
       {/* Main Card */}
-           <div className="relative bg-white border rounded-[30px] shadow-md flex flex-col md:flex-row items-center md:items-start overflow-hidden w-full mt-4 min-h-[380px] max-h-[300px]">
+           <div className="relative bg-white border rounded-[30px] shadow-md flex flex-col md:flex-row items-center md:items-start overflow-hidden w-full mt-4 min-h-[360px]">
         {/* Left Section */}
         <div className="p-8 flex-1 space-y-6">
           {/* Tags */}
@@ -29,7 +30,7 @@ const AccountantCard: React.FC<AccountantCardProps> = ({
               ? tags.map((tag, idx) => (
                   <span
                     key={idx}
-                    className="bg-blue-100 text-blue-800 text-sm px-4 py-1 rounded-lg font-medium"
+                    className="bg-[rgba(53,154,255,0.12)] text-[var(--primary-color)] text-sm px-4 py-1 rounded-lg font-medium"
                   >
                     {tag}
                   </span>
@@ -39,7 +40,7 @@ const AccountantCard: React.FC<AccountantCardProps> = ({
                   <span className="bg-green-100 text-green-800 text-sm px-4 py-1 rounded-lg font-medium">
                     10+ years of experience
                   </span>
-                  <span className="bg-blue-100 text-blue-800 text-sm px-4 py-1 rounded-lg font-medium">
+                  <span className="bg-[rgba(53,154,255,0.12)] text-[var(--primary-color)] text-sm px-4 py-1 rounded-lg font-medium">
                     Advanced knowledge
                   </span>
                   <span className="bg-red-100 text-red-800 text-sm px-4 py-1 rounded-lg font-medium">
@@ -56,10 +57,7 @@ const AccountantCard: React.FC<AccountantCardProps> = ({
           <p className="text-gray-600 text-sm sm:text-base leading-relaxed line-clamp-3">{description}
           </p>
 
-          {/* Button */}
-          <button className="bg-gray-700 text-white px-6 py-2 rounded-lg shadow hover:bg-gray-800 transition">
-            {buttonText}
-          </button>
+          {/* Button removed as per request */}
         </div>
 
         {/* Right Section */}
@@ -80,11 +78,12 @@ const AccountantCard: React.FC<AccountantCardProps> = ({
           </svg>
 
           {/* Image */}
-          <img
-          style={{width:"250px"}}
+          <Image
             src={image}
             alt={title}
-            className="relative w-full max-w-sm object-contain z-10 rounded-lg"
+            width={360}
+            height={240}
+            className="relative w-full max-w-[360px] h-auto object-contain z-10 rounded-2xl shadow-lg"
           />
         </div>
       </div>

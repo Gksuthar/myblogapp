@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
 
 interface AdminSettings {
   username: string;
@@ -9,7 +8,6 @@ interface AdminSettings {
 }
 
 export default function AdminSettings() {
-  const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
@@ -24,6 +22,9 @@ export default function AdminSettings() {
   const [currentPassword, setCurrentPassword] = useState('admin');
   const [newPassword, setNewPassword] = useState('admin');
   const [confirmPassword, setConfirmPassword] = useState('');
+  
+  // Footer certifications
+  const [certifications, setCertifications] = useState<string[]>(['', '', '']);
   
   // Fetch current settings
   useEffect(() => {
@@ -49,6 +50,20 @@ export default function AdminSettings() {
     };
     
     fetchSettings();
+    // load footer settings
+    (async () => {
+      try {
+        const res = await fetch('/api/footer', { cache: 'no-store' });
+        const data = await res.json();
+        const labels: string[] = Array.isArray(data?.data?.certifications)
+          ? data.data.certifications.map((c: { label?: string }) => c?.label || '')
+          : [];
+        const firstThree = [labels[0] || 'Badge 1', labels[1] || 'Badge 2', labels[2] || 'Badge 3'];
+        setCertifications(firstThree);
+      } catch {
+        setCertifications(['Badge 1', 'Badge 2', 'Badge 3']);
+      }
+    })();
   }, []);
   
   // Handle profile update
@@ -77,8 +92,35 @@ export default function AdminSettings() {
       }
       
       setSuccess('Profile updated successfully');
-    } catch (err: any) {
-      setError(err.message || 'Error updating profile. Please try again.');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Error updating profile. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  
+  // Handle certifications save
+  const handleSaveCertifications = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+    setSuccess(null);
+    try {
+      setIsLoading(true);
+      const payload = {
+        certifications: certifications.map((label) => ({ label })),
+      };
+      const res = await fetch('/api/footer', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err?.error || 'Failed to save certifications');
+      }
+      setSuccess('Certifications updated');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to save certifications');
     } finally {
       setIsLoading(false);
     }
@@ -124,8 +166,8 @@ export default function AdminSettings() {
       setCurrentPassword('');
       setNewPassword('');
       setConfirmPassword('');
-    } catch (err: any) {
-      setError(err.message || 'Error updating password. Please try again.');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Error updating password. Please try again.');
     } finally {
       setIsLoading(false);
     }
@@ -253,6 +295,37 @@ export default function AdminSettings() {
             >
               {isLoading ? 'Updating...' : 'Change Password'}
             </button>
+          </form>
+        </div>
+
+        {/* Footer Certifications */}
+        <div className="bg-white p-6 rounded-lg shadow-md md:col-span-2">
+          <h2 className="text-xl font-semibold mb-4">Footer Certifications</h2>
+          <form onSubmit={handleSaveCertifications} className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {certifications.map((val, idx) => (
+              <div key={idx} className="flex flex-col">
+                <label className="text-gray-700 font-medium mb-2">Badge {idx + 1}</label>
+                <input
+                  type="text"
+                  value={val}
+                  onChange={(e) => {
+                    const next = [...certifications];
+                    next[idx] = e.target.value;
+                    setCertifications(next);
+                  }}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+            ))}
+            <div className="md:col-span-3">
+              <button
+                type="submit"
+                disabled={isLoading}
+                className="w-full md:w-auto bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition-colors"
+              >
+                {isLoading ? 'Saving…' : 'Save Certifications'}
+              </button>
+            </div>
           </form>
         </div>
       </div>

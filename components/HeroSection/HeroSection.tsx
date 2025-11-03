@@ -62,14 +62,16 @@ const HeroSection: React.FC<Props> = ({ title, disc, image }) => {
         initial={{ opacity: 0, x: 40 }}
         whileInView={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.6 }}
-        className="flex-1 flex justify-center md:justify-center"
+        className="flex-1 flex justify-center md:justify-center relative"
       >
-        <div className="relative w-full max-w-[520px] lg:max-w-[580px] xl:max-w-[640px]">
+        {/* Decorative glow */}
+        <div className="absolute -top-10 -right-10 w-56 h-56 bg-[rgba(53,154,255,0.14)] blur-3xl rounded-full" aria-hidden="true" />
+        <div className="relative w-full max-w-[640px] lg:max-w-[720px] xl:max-w-[820px]">
           <Image
             src={image}
             alt="Accounting & bookkeeping illustration"
-            width={640}
-            height={480}
+            width={820}
+            height={560}
             priority
             className="rounded-2xl shadow-lg object-cover w-full h-auto"
           />

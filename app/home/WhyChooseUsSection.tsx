@@ -26,9 +26,19 @@ interface ServiceItem {
   heroSection?: { title: string; description: string };
 }
 
+interface WhyChooseData {
+  title?: string;
+  intro?: string[];
+  benefits?: { title: string; description: string; image?: string }[];
+  mission?: string;
+  vision?: string;
+  coreValues?: string[];
+}
+
 const WhyChooseUsSection: React.FC = () => {
   const [services, setServices] = useState<ServiceItem[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
+  const [why, setWhy] = useState<WhyChooseData | null>(null);
 
   useEffect(() => {
     const fetchServices = async () => {
@@ -48,63 +58,114 @@ const WhyChooseUsSection: React.FC = () => {
         setLoading(false);
       }
     };
+    const fetchWhy = async () => {
+      try {
+        const res = await axios.get('/api/why-choose');
+        const data = res?.data?.data || null;
+        setWhy(data);
+      } catch {
+        setWhy(null);
+      }
+    };
     fetchServices();
+    fetchWhy();
   }, []);
   return (
     <section className="bg-white py-16 px-4 md:px-16">
-      <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center justify-between gap-12">
+      <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center justify-between gap-8">
         {/* Left Content */}
         <div className="lg:w-1/2">
           <h2 className="text-4xl md:text-5xl font-extrabold text-gray-900 leading-tight mb-6">
-            Why Choose Stanfox For <br /> Outsourcing Accounting Services
+            {why?.title || 'Why Choose Us?'}
           </h2>
-          <p className="text-lg text-gray-600 mb-8 max-w-md">
-            Experience the Stanfox difference. Choose the perfect combo of expertise combined with adherence to U.S. standards.
-          </p>
+          {/* Intro paragraphs (dynamic with fallback) */}
+          {why?.intro?.length ? (
+            <div className="space-y-5 text-[15px] leading-7 text-gray-700">
+              {why.intro.map((p, i) => (
+                <p key={i}>{p}</p>
+              ))}
+            </div>
+          ) : null}
 
-          <Link
-            href="/hire-expert"
-            className="text-[var(--primary-color)] font-semibold text-lg hover:underline flex items-center mb-4"
-          >
-            Hire expert today <span className="ml-2">→</span>
-          </Link>
+          {/* Benefits (dynamic) */}
+          {why?.benefits?.length ? (
+            <div className="mt-8 space-y-8">
+              {why.benefits.map((b, i) => (
+                <div key={i}>
+                  <h3 className="text-2xl font-bold text-gray-900 mb-2">{b.title}</h3>
+                  <p className="text-gray-700 text-[15px] leading-7">{b.description}</p>
+                </div>
+              ))}
+            </div>
+          ) : null}
 
-          <Link
-            href="/services-list"
-            className="text-[var(--primary-color)] font-semibold text-lg hover:underline flex items-center mb-12 lg:mb-0"
-          >
-            View all services <span className="ml-2">→</span>
-          </Link>
+          {/* Mission & Vision (dynamic) */}
+          {(why?.mission || why?.vision) && (
+            <div className="mt-10 space-y-6">
+              {why?.mission && (
+                <div>
+                  <h3 className="text-2xl font-bold text-gray-900 mb-2">Mission</h3>
+                  <p className="text-gray-700 text-[15px] leading-7">{why.mission}</p>
+                </div>
+              )}
+              {why?.vision && (
+                <div>
+                  <h3 className="text-2xl font-bold text-gray-900 mb-2">Vision</h3>
+                  <p className="text-gray-700 text-[15px] leading-7">{why.vision}</p>
+                </div>
+              )}
+            </div>
+          )}
 
-          {/* Preview a few services */}
-          <div className="mt-6">
-            {loading ? (
-              <p className="text-gray-500 text-sm">Loading services…</p>
-            ) : (
-              <ul className="space-y-2">
-                {services?.map((svc) => (
-                  <li key={svc._id}>
-                    <Link
-                      href={`/services/${(svc.heroSection?.title || 'service').toLowerCase().replace(/\s+/g, '-')}`}
-                      className="text-gray-800 hover:text-[var(--primary-color)] text-base"
-                    >
-                      {svc.heroSection?.title || 'Untitled'}
-                    </Link>
-                  </li>
+
+
+          {/* Core Values */}
+          {why?.coreValues?.length ? (
+            <div className="mt-10">
+              <h3 className="text-2xl font-bold text-gray-900 mb-4">Core Values</h3>
+              <ul className="list-disc pl-6 space-y-2 text-gray-700 text-[15px] leading-7">
+                {why.coreValues.map((v, i) => (
+                  <li key={i}>{v}</li>
                 ))}
-                {!loading && services?.length === 0 && (
-                  <li className="text-gray-500 text-sm">No services available.</li>
-                )}
               </ul>
-            )}
+            </div>
+          ) : null}
+
+          {/* Quick links + service preview */}
+          <div className="mt-10">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-4 space-y-3 sm:space-y-0">
+              <Link href="/services-list" className="text-[var(--primary-color)] font-semibold text-lg hover:underline flex items-center">
+                View all services <span className="ml-2">→</span>
+              </Link>
+            </div>
+
+            <div className="mt-6">
+              {loading ? (
+                <p className="text-gray-500 text-sm">Loading services…</p>
+              ) : (
+                <ul className="space-y-2">
+                  {services?.map((svc) => (
+                    <li key={svc._id}>
+                      <Link
+                        href={`/services/${(svc.heroSection?.title || 'service').toLowerCase().replace(/\s+/g, '-')}`}
+                        className="text-gray-800 hover:text-[var(--primary-color)] text-base"
+                      >
+                        {svc.heroSection?.title || 'Untitled'}
+                      </Link>
+                    </li>
+                  ))}
+                  {!loading && services?.length === 0 && (
+                    <li className="text-gray-500 text-sm">No services available.</li>
+                  )}
+                </ul>
+              )}
+            </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-8 gap-x-12 !mt-10" >
+          {/* Feature quick grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-8 gap-x-12 !mt-10">
             {features.map((feature, index) => (
-              <div
-                key={index}
-                className="flex items-center space-x-4 hover:translate-x-1 transition-transform duration-300"
-              >
+              <div key={index} className="flex items-center space-x-4 hover:translate-x-1 transition-transform duration-300">
                 <div className="text-[var(--primary-color)] text-2xl">{feature.icon}</div>
                 <p className="text-lg text-gray-800 font-medium">{feature.title}</p>
               </div>
@@ -117,7 +178,7 @@ const WhyChooseUsSection: React.FC = () => {
           <div className="relative group rounded-3xl p-4 sm:p-6 w-full max-w-[560px] border border-gray-200 bg-white shadow-sm">
             <div className="relative">
               <Image
-                src="https://cdn.prod.website-files.com/6718c309cc349b579872ddbb/67348d71d96b43d96eea23f1_why_choose.svg"
+                src="https://res.cloudinary.com/dsu49fx2b/image/upload/v1762154070/imagesmy_caltjl.png"
                 alt="Why choose illustration"
                 width={560}
                 height={420}

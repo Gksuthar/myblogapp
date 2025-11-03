@@ -71,12 +71,13 @@ const CaseStudiesAndConnect: React.FC = () => {
                   key={study?._id}
                   className="border rounded-md p-4 shadow-sm hover:shadow-md transition-all"
                 >
-                  <h3 className="font-medium text-[var(--primary-color)] text-sm sm:text-base mb-2 line-clamp-2">
+                  {/* Title in black */}
+                  <h3 className="font-medium text-gray-900 text-sm sm:text-base mb-2 line-clamp-2">
                     {study?.title || "Untitled Case Study"}
                   </h3>
                   <a
                     href={`/case-studies/${urlSlug}`}
-                    className="text-xs sm:text-sm text-[var(--primary-color)] font-semibold hover:underline"
+                    className="text-xs sm:text-sm text-gray-900 font-semibold hover:text-[var(--primary-color)] hover:underline"
                   >
                     View Case Study →
                   </a>

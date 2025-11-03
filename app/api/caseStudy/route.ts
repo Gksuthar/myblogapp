@@ -67,7 +67,8 @@ export async function GET(req: Request) {
     // Otherwise → return all case studies
     const caseStudies = await caseStudyschema.find().sort({ createdAt: -1 }).lean();
     if (!caseStudies || caseStudies.length === 0) {
-      return NextResponse.json({ error: "No case studies found" }, { status: 404 });
+      // Normalize empty list responses to 200 with [] to avoid breaking UIs
+      return NextResponse.json([]);
     }
 
     return NextResponse.json(caseStudies);
@@ -130,6 +131,14 @@ export async function PATCH(req: Request) {
   await connectDB();
 
   try {
+    type CaseStudyUpdate = {
+      title?: string;
+      content?: string;
+      headerTitle?: string;
+      headerDescription?: string;
+      cards?: Array<{ cardTitle: string; cardDescription: string; cardImage: string }>;
+      slug?: string;
+    };
     const body = await req.json();
     const { id, title, content, headerTitle, headerDescription, cards } = body;
 
@@ -143,7 +152,7 @@ export async function PATCH(req: Request) {
     }
 
     // If title changed, regenerate slug
-    const updateData: any = { title, content, headerTitle, headerDescription, cards };
+    const updateData: CaseStudyUpdate = { title, content, headerTitle, headerDescription, cards };
     if (title !== existing.title) {
       const baseSlug = createSlug(title);
       let counter = 1;

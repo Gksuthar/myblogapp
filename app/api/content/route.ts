@@ -2,19 +2,20 @@ import { connectDB } from "@/lib/mongodb";
 import { NextResponse } from "next/server";
 import { Content } from "../model/content";
 
-export async function GET(req: Request) {
+export async function GET() {
   try {
     await connectDB()
-    const blogs = await Content.find().sort({ createdAt: -1 }).lean();
-    if (!blogs || blogs.length === 0) {
-      return NextResponse.json({ error: "No case studies found" }, { status: 404 });
+    const items = await Content.find().sort({ createdAt: -1 }).lean();
+    if (!items || items.length === 0) {
+      // Normalize empty list responses to 200 with [] to avoid breaking UIs
+      return NextResponse.json([]);
     }
 
-    return NextResponse.json(blogs);
+    return NextResponse.json(items);
   } catch (error) {
     console.error(error);
     return NextResponse.json(
-      { error: "Failed to fetch case studies" },
+      { error: "Failed to fetch content" },
       { status: 500 }
     );
   }
@@ -73,10 +74,10 @@ export async function PATCH(req: Request) {
       { message: "Case study updated successfully", data: updatedCase },
       { status: 200 }
     );
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("PATCH Error:", error);
     return NextResponse.json(
-      { error: "Failed to update case study", details: error.message },
+      { error: "Failed to update content", details: error instanceof Error ? error.message : 'Unknown error' },
       { status: 500 }
     );
   }
@@ -101,6 +102,6 @@ export async function DELETE(req: Request) {
     return NextResponse.json({ message: "Case study deleted successfully", deleted }, { status: 200 });
   } catch (error) {
     console.error("DELETE Error:", error);
-    return NextResponse.json({ error: "Failed to delete case study" }, { status: 500 });
+    return NextResponse.json({ error: "Failed to delete content" }, { status: 500 });
   }
 }
