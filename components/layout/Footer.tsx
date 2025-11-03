@@ -97,9 +97,8 @@ const Footer: React.FC = () => {
           <div>
             <h4 className="font-bold text-base mb-4">🇺🇸 USA Office</h4>
             <p className="text-gray-400 text-sm">
-              1000 Bristol Bay Dr, Suite 2100,<br />
-              Miami, IL 33138<br />
-              United States
+              30 N Gould St Ste N Sheridan,<br />
+              WY 82801<br />
             </p>
           </div>
 
@@ -107,9 +106,9 @@ const Footer: React.FC = () => {
           <div>
             <h4 className="font-bold text-base mb-4">🇮🇳 India Office</h4>
             <p className="text-gray-400 text-sm">
-              E 404, GCF Business Centre,<br />
-              Vijay Cross Road,<br />
-              Ahmedabad - 380004
+             B 301 Saptak Apts,<br />
+              Judges Bungalows Crossroads,<br />
+              Ahmedabad, India 380054
             </p>
           </div>
 

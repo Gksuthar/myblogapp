@@ -21,38 +21,54 @@ const Trusted: React.FC = () => {
   {/* Overlay - very light blue gradient so the image stays natural */}
   <div
     className="absolute inset-0 pointer-events-none"
-    style={{
-      background:
-        "linear-gradient(180deg, rgba(53,154,255,0.08) 0%, rgba(53,154,255,0.12) 50%, rgba(53,154,255,0.08) 100%)",
-    }}
+    // style={{
+    //   background:
+    //     "linear-gradient(180deg, rgba(0, 102, 204, 0.08) 0%, rgba(0, 102, 204, 0.12) 50%, rgba(0, 102, 204, 0.08) 100%)",
+    // }}
   />
 
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-white">
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-black">
         {/* Heading */}
         <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4">
           Trusted. Promising. Result-driven.
         </h2>
-        <p className="text-base sm:text-lg md:text-xl mb-12 text-gray-200">
+        <p className="text-base sm:text-lg md:text-xl mb-12 ">
           Backed by the trust of CPAs, validated by our results. See our impact at a glance.
         </p>
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-          {stats.map((stat) => (
-            <div
-              key={stat.label}
-              className="flex flex-col items-center bg-white/10 backdrop-blur-sm p-6 rounded-2xl hover:bg-white/20 transition-all duration-300"
-            >
-              <div className="mb-3">
-                <span className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-[var(--primary-color)] text-white text-2xl shadow-md">
-                  {stat.icon}
-                </span>
-              </div>
-              <span className="text-3xl sm:text-4xl font-extrabold text-white">{stat.value}</span>
-              <span className="mt-2 text-lg sm:text-xl text-gray-200">{stat.label}</span>
-            </div>
-          ))}
-        </div>
+<div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+  {stats.map((stat) => (
+    <div
+      key={stat.label}
+      className="group flex flex-col items-center bg-white shadow-lg p-6 rounded-2xl border border-gray-100 
+      hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
+    >
+      {/* Icon */}
+      <div className="mb-4">
+        <span className="inline-flex items-center justify-center w-16 h-16 rounded-full 
+        bg-gradient-to-br from-[#359aff] to-[#5ab0ff] text-white text-3xl shadow-md 
+        group-hover:scale-105 transition-transform duration-300">
+          {stat.icon}
+        </span>
+      </div>
+
+      {/* Value */}
+      <span className="text-4xl font-extrabold text-gray-900 group-hover:text-[#359aff] transition-colors duration-300">
+        {stat.value}
+      </span>
+
+      {/* Label */}
+      <span className="mt-2 text-lg text-gray-600 font-medium">
+        {stat.label}
+      </span>
+
+      {/* Accent Line */}
+      <div className="mt-4 h-1 w-10 bg-[#359aff] rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300"></div>
+    </div>
+  ))}
+</div>
+
       </div>
     </section>
   );

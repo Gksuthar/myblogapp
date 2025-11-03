@@ -17,13 +17,9 @@ export async function GET(req: Request) {
       return NextResponse.json(blog);
     }
 
-    // Otherwise → return all blogs
+    // Otherwise → return all blogs (empty array with 200 if none)
     const blogs = await Blog.find().sort({ createdAt: -1 }).lean();
-    if (!blogs || blogs.length === 0) {
-      return NextResponse.json({ error: "No blogs found" }, { status: 404 });
-    }
-
-    return NextResponse.json(blogs);
+    return NextResponse.json(blogs ?? []);
   } catch (error) {
     console.error(error);
     return NextResponse.json(
@@ -102,14 +98,25 @@ export async function PUT(req: Request) {
 export async function DELETE(req: Request) {
   await connectDB();
   try {
-    const body = await req.json();
-    const { id } = body;
-
+    // Accept id from either JSON body or query string for flexibility
+    let id: string | undefined;
+    try {
+      const body = await req.json();
+      id = body?.id;
+    } catch {
+      // ignore JSON parse errors, may be sent via querystring only
+    }
     if (!id) {
-      return NextResponse.json({ error: "Slug is required to delete blog" }, { status: 400 });
+      const { searchParams } = new URL(req.url);
+      id = searchParams.get('id') || undefined;
     }
 
-    const deletedBlog = await Blog.findOneAndDelete({ id });
+    if (!id) {
+      return NextResponse.json({ error: "ID is required to delete blog" }, { status: 400 });
+    }
+
+    // Delete by Mongo _id
+    const deletedBlog = await Blog.findByIdAndDelete(id);
 
     if (!deletedBlog) {
       return NextResponse.json({ error: "Blog not found" }, { status: 404 });

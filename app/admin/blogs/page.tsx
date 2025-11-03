@@ -1,10 +1,10 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import Link from 'next/link';
+// import Link from 'next/link';
 import axios from 'axios';
-import { useRouter } from 'next/navigation';
-import NewBlogModal from './new/page';
+// import { useRouter } from 'next/navigation';
+import NewBlogModal from './NewBlogModal';
 
 interface Blog {
   _id: string;
@@ -25,15 +25,23 @@ export default function AdminBlogs() {
   const [error, setError] = useState('');
   const [open, setOpen] = useState(false);
   const [editingBlog, setEditingBlog] = useState<Blog | null>(null);
-  const router = useRouter();
+  // const router = useRouter();
 
   const fetchBlogs = async () => {
     try {
       const { data } = await axios.get('/api/blogs');
-      setBlogs(data || []);
-    } catch (err) {
-      console.error(err);
-      setError('Error fetching blogs. Please try again.');
+      setBlogs(Array.isArray(data) ? data : []);
+      setError('');
+    } catch (err: unknown) {
+      // Treat 404 as empty list for a nicer UX
+      const status = (err as { response?: { status?: number } })?.response?.status;
+      if (status === 404) {
+        setBlogs([]);
+        setError('');
+      } else {
+        console.error(err);
+        setError('Error fetching blogs. Please try again.');
+      }
     } finally {
       setLoading(false);
     }
@@ -43,7 +51,7 @@ export default function AdminBlogs() {
     fetchBlogs();
   }, []);
 
-const handleDelete = async (items: any) => {
+const handleDelete = async (items: string) => {
   if (!confirm("Are you sure you want to delete this case study?")) return;
 
   try {
