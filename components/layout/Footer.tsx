@@ -88,11 +88,11 @@ const Footer: React.FC = () => {
   return (
     <footer className="bg-[#1e1e1e] text-white py-12 px-6 md:px-16">
       <div className="max-w-7xl mx-auto">
-        {/* Top Section: Logo, Company Links, Certification */}
-  <div className="grid grid-cols-1 md:grid-cols-12 items-start gap-12 border-b border-gray-700/50 pb-10 mb-10">
+    {/* Top Section: Logo, Company Links, Certification (3 equal columns) */}
+  <div className="grid grid-cols-1 md:grid-cols-3 items-start gap-12 border-b border-gray-700/50 pb-10 mb-10">
           
-          {/* Logo & Tagline (Col 1-4) */}
-          <div className="md:col-span-4">
+          {/* Logo & Tagline */}
+          <div>
             <div className="flex items-center space-x-2 mb-4">
               {isValidImageSrc(logoUrl) ? (
                 <Image src={logoUrl} alt="Logo" width={144} height={32} className="h-8 w-auto" unoptimized />
@@ -105,8 +105,8 @@ const Footer: React.FC = () => {
             )}
           </div>
 
-          {/* Company Links (Col 5-7) */}
-          <div className="md:col-span-3">
+          {/* Company Links */}
+          <div>
             <h4 className="font-bold text-base mb-4">Company</h4>
             <div className="grid grid-cols-2 gap-4">
               <ul className="space-y-3">
@@ -121,7 +121,7 @@ const Footer: React.FC = () => {
               </ul>
               <ul className="space-y-3">
                 {(links.length > 5 ? links.slice(5) : [
-                  { label: 'Stanfoxes Certification', href: '/certification' },
+                  { label: 'Sbaccounting Certification', href: '/certification' },
                   { label: 'Application', href: '/apply' },
                   { label: 'Services', href: '/services' },
                   { label: 'Privacy Policy', href: '/privacy' }
@@ -132,8 +132,8 @@ const Footer: React.FC = () => {
             </div>
           </div>
 
-          {/* Certification (Col 8-12) */}
-          <div className="md:col-span-5">
+          {/* Certification */}
+          <div>
             <h4 className="font-bold text-base mb-4">Certification:</h4>
             <div className="flex flex-wrap items-center gap-6 mb-4">
               {getUniqueCerts().slice(0,4).map((b, i) => (

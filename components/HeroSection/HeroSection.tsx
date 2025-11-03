@@ -10,9 +10,10 @@ interface Props {
   title: string;
   disc: string;
   image: string;
+  showCtas?: boolean; // optional, default true
 }
 
-const HeroSection: React.FC<Props> = ({ title, disc, image }) => {
+const HeroSection: React.FC<Props> = ({ title, disc, image, showCtas = true }) => {
   return (
     <section className="relative flex flex-col-reverse md:flex-row items-center justify-between gap-10 px-6 md:px-16 py-10 bg-gradient-to-br from-gray-50 to-white overflow-hidden">
       
@@ -38,23 +39,25 @@ const HeroSection: React.FC<Props> = ({ title, disc, image }) => {
           {disc}
         </p>
 
-        <div className="flex items-center justify-center md:justify-start gap-4">
-          <Link href="/blogs">
-            <CustomButton
-              text={
-                <span className="flex items-center gap-2">
-                  Explore Blogs <FaArrowRight className="text-sm" />
-                </span>
-              }
-              variant="primary"
-              className="shadow-md"
-            />
-          </Link>
+        {showCtas && (
+          <div className="flex items-center justify-center md:justify-start gap-4">
+            <Link href="/blogs">
+              <CustomButton
+                text={
+                  <span className="flex items-center gap-2">
+                    Explore Blogs <FaArrowRight className="text-sm" />
+                  </span>
+                }
+                variant="primary"
+                className="shadow-md"
+              />
+            </Link>
 
-          <Link href="/about">
-            <CustomButton text="About Us" variant="transparent" />
-          </Link>
-        </div>
+            <Link href="/about">
+              <CustomButton text="About Us" variant="transparent" />
+            </Link>
+          </div>
+        )}
       </motion.div>
 
       {/* Right image */}

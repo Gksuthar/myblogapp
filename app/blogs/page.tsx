@@ -72,6 +72,7 @@ const Page = () => {
             title={heroData.title}
             disc={heroData.disc}
             image={heroData.image}
+            showCtas={false}
           />
         ) : (
           <ComponentLoader height="h-64" message="Loading hero section..." />
