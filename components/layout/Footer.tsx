@@ -89,7 +89,7 @@ const Footer: React.FC = () => {
     <footer className="bg-[#1e1e1e] text-white py-12 px-6 md:px-16">
       <div className="max-w-7xl mx-auto">
     {/* Top Section: Logo, Company Links, Certification (3 equal columns) */}
-  <div className="grid grid-cols-1 md:grid-cols-3 items-start gap-12 border-b border-gray-700/50 pb-10 mb-10">
+  <div className="grid grid-cols-1 md:grid-cols-3 items-start gap-6 border-b border-gray-700/50 pb-10 mb-10">
           
           {/* Logo & Tagline */}
           <div>
@@ -108,8 +108,8 @@ const Footer: React.FC = () => {
           {/* Company Links */}
           <div>
             <h4 className="font-bold text-base mb-4">Company</h4>
-            <div className="grid grid-cols-2 gap-4">
-              <ul className="space-y-3">
+            <div className="flex items-start gap-8"> {/* switch to flex so columns hug with no extra space */}
+              <ul className="space-y-2 flex-none"> {/* content-width column; no stretching */}
                 {(links.length ? links : [
                   { label: 'Home', href: '/' },
                   { label: 'About Us', href: '/about' },
@@ -119,7 +119,7 @@ const Footer: React.FC = () => {
                   <FooterLink key={i} href={l.href}>{l.label}</FooterLink>
                 ))}
               </ul>
-              <ul className="space-y-3">
+              <ul className="space-y-1 flex flex-col justify-start flex-none"> {/* content-width column; no stretching */}
                 {(links.length > 5 ? links.slice(5) : [
                   { label: 'Sbaccounting Certification', href: '/certification' },
                   { label: 'Application', href: '/apply' },
@@ -135,8 +135,8 @@ const Footer: React.FC = () => {
           {/* Certification */}
           <div>
             <h4 className="font-bold text-base mb-4">Certification:</h4>
-            <div className="flex flex-wrap items-center gap-6 mb-4">
-              {getUniqueCerts().slice(0,4).map((b, i) => (
+            <div className="flex flex-nowrap items-center gap-8 mb-4">
+              {getUniqueCerts().slice(0,3).map((b, i) => (
                 isValidImageSrc(b.image || '') ? (
                   <Image
                     key={i}
@@ -161,6 +161,7 @@ const Footer: React.FC = () => {
               </>
             )}
           </div>
+
         </div>
 
         {/* Middle Section removed per request (Business Owners & Accounting/CPA Firms) */}
