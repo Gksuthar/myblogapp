@@ -1,46 +1,32 @@
 'use client';
 
-import React, { Suspense, lazy } from 'react';
-import { Formik, Form, Field, ErrorMessage, useFormikContext } from 'formik';
+import React, { Suspense, useEffect, useState } from 'react';
+import { Formik, Form, Field, ErrorMessage, useFormikContext, FormikHelpers } from 'formik';
+import ReCAPTCHA from 'react-google-recaptcha';
+import { useRef } from 'react';
 import * as yup from 'yup';
 import ComponentLoader from '@/components/ComponentLoader';
 
 export const contactSchema = yup.object({
-  firstName: yup.string().trim().required('First Name is required.'),
-  lastName: yup.string().trim().required('Last Name is required.'),
-  companyName: yup.string().trim().optional(),
-  companyWebsite: yup.string().trim().url('Must be a valid URL.').optional(),
+  name: yup.string().trim().required('Name is required.'),
   email: yup.string().trim().email('Invalid email address.').required('Email is required.'),
-  phone: yup.string().trim().matches(/^[0-9\s-()+\.]{7,15}$/, 'Invalid phone number.').required('Phone Number is required.'),
-    message: yup.string().trim().min(10, 'Message must be at least 10 characters.').required('Message is required.'),
-  privacyPolicy: yup.boolean().oneOf([true], 'You must accept the privacy policy.'),
+  phone: yup
+    .string()
+    .trim()
+    .matches(/^[0-9\s-()+\.]{7,15}$/, 'Invalid phone number.')
+    .required('Phone Number is required.'),
+  message: yup
+    .string()
+    .trim()
+    .min(10, 'Message must be at least 10 characters.')
+    .required('Message is required.'),
 }).required();
 
 // Infer the TypeScript type from the Yup schema for strong typing
 export type ContactFormData = yup.InferType<typeof contactSchema>;
-// Assuming '@/lib/validationSchema' is the path to the file above
 
-// --- Dummy Data ---
-const trustedPartners = [
-  { name: 'TaxApro', logo: 'TaxApro' },
-  { name: 'Aykin', logo: 'Aykin' },
-  { name: 'Reeder', logo: 'REEDER' },
-  { name: 'DAVID DASS', logo: 'DAVID DASS, CPA' },
-  { name: 'UNBOXED', logo: 'UNBOXED' },
-  { name: 'Agranda', logo: 'Agranda CPA' },
-  { name: 'SCINE & ASSOCIATES', logo: 'SCINE & ASSOCIATES' },
-  { name: 'BlueFire', logo: 'BlueFire' },
-  { name: 'Backroad Advisors', logo: 'Backroad Advisors' },
-];
-
-const helpOptions = [
-  'Select one...',
-  'Tax Preparation',
-  'Accounting Services',
-  'Business Consultation',
-  'Other Inquiry',
-];
-// --- /Dummy Data ---
+// --- Trusted Companies fetched from API ---
+type TrustedCompany = { _id: string; name: string; image: string };
 
 // Custom Input Field with Tailwind Styling and Error Display
 interface CustomFieldProps {
@@ -77,26 +63,47 @@ const CustomField: React.FC<CustomFieldProps> = ({ label, name, type = 'text', p
 
 // Main Contact Form Component using Formik
 const ContactForm: React.FC = () => {
+  const [companies, setCompanies] = useState<TrustedCompany[]>([]);
+  const [loadingCompanies, setLoadingCompanies] = useState<boolean>(true);
+  const recaptchaRef = useRef<ReCAPTCHA | null>(null);
+
+  useEffect(() => {
+    let alive = true;
+    (async () => {
+      try {
+        const res = await fetch('/api/tructedCompany', { cache: 'no-store' });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data?.error || 'Failed to load trusted companies');
+        if (alive) setCompanies(Array.isArray(data) ? data : []);
+      } catch (e) {
+        console.error('Failed to fetch trusted companies:', e);
+      } finally {
+        if (alive) setLoadingCompanies(false);
+      }
+    })();
+    return () => { alive = false };
+  }, []);
+
   const initialValues: ContactFormData = {
-    firstName: '',
-    lastName: '',
-    companyName: '',
-    companyWebsite: '',
+    name: '',
     email: '',
     phone: '',
     message: '',
-    privacyPolicy: false,
   };
 
-  const onSubmit = async (values: ContactFormData, { resetForm, setSubmitting }: any) => {
+  const onSubmit = async (
+    values: ContactFormData,
+    { resetForm, setSubmitting }: FormikHelpers<ContactFormData>
+  ) => {
     try {
       setSubmitting(true);
+      const recaptchaToken = recaptchaRef.current?.getValue() || '';
       const response = await fetch('/api/contact', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(values),
+        body: JSON.stringify({ ...values, recaptchaToken }),
       });
 
       const data = await response.json();
@@ -107,6 +114,7 @@ const ContactForm: React.FC = () => {
 
       alert('✅ Thank you! Your message has been sent successfully. We\'ll get back to you soon.');
       resetForm();
+      recaptchaRef.current?.reset();
     } catch (error) {
       console.error('Form submission error:', error);
       alert('❌ Oops! Something went wrong. Please try again or contact us directly at info@stantaxes.com');
@@ -120,12 +128,12 @@ const ContactForm: React.FC = () => {
       <div className="min-h-screen flex justify-center py-12 px-4 sm:px-6 lg:px-8">
         <div className="w-full rounded-lg overflow-hidden ">
           <div className="grid grid-cols-1 lg:grid-cols-2">
-          {/* LEFT SECTION (Info & Partners - Content is identical to the previous solution) */}
+          {/* LEFT SECTION (Info & Partners) */}
           <div className="p-8 md:p-12 lg:p-16 space-y-8 flex flex-col justify-between">
             <div>
               <h1 className="text-3xl font-bold text-gray-800 mb-6">Contact Us</h1>
               <p className="text-gray-600 max-w-md mb-8">
-Feel free to talk to our representative at any time you please use our contact form on our website or one of our contact numbers. Let us work on your future together.
+                    Feel free to talk to our representative at any time you please use our contact form on our website or one of our contact numbers. Let us work on your future together.
 
 You can always visit us at our HQ, we have a friendly staff and a mean cup of coffee.
 
@@ -141,17 +149,44 @@ You can always visit us at our HQ, we have a friendly staff and a mean cup of co
                 </div>
               </div>
 
-              <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wider mb-4">Trusted By</h2>
-              <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-3 gap-4">
-                {trustedPartners.map((partner) => (
-                  <div key={partner.name} className="flex items-center justify-center h-12 border border-gray-300/60 rounded-md bg-white/70 p-2 text-xs font-semibold text-gray-600 shadow-sm">
-                    {partner.logo}
+        <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wider mb-4">Trusted By</h2>
+          <div className="grid grid-cols-4 gap-2">
+                {loadingCompanies && (
+                      Array.from({ length: 8 }).map((_, i) => (
+                        <div key={`skeleton-${i}`} className="aspect-square w-full rounded-md bg-gray-100 animate-pulse border border-gray-200" />
+                  ))
+                )}
+                {!loadingCompanies && companies.length === 0 && (
+                  <div className="col-span-4 text-xs text-gray-500">No trusted companies yet.</div>
+                )}
+                {!loadingCompanies && companies.map((c) => (
+                      <div
+                        key={c._id}
+                        className="aspect-square w-full border border-gray-200 rounded-md bg-white p-1 overflow-hidden flex items-center justify-center"
+                      >
+                    {c.image ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={c.image}
+                        alt={c.name}
+                        loading="lazy"
+                            className="max-h-[92%] max-w-[95%] object-contain"
+                        onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
+                      />
+                    ) : null}
+                    {/* Fallback to name if image missing or failed */}
+                    {!c.image && (
+                      <span className="text-[11px] font-semibold text-gray-600 truncate px-2 text-center">
+                        {c.name}
+                      </span>
+                    )}
                   </div>
                 ))}
               </div>
             </div>
-            <div className="mt-8 lg:mt-0 relative hidden lg:block self-end">
-                    <img src="https://cdn.prod.website-files.com/6718c309cc349b579872ddbb/6740588b760df20a1555190c_contact_us.svg" alt="" />
+      <div className="mt-8 lg:mt-0 relative hidden lg:block self-end">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src="https://cdn.prod.website-files.com/6718c309cc349b579872ddbb/6740588b760df20a1555190c_contact_us.svg" alt="Contact Illustration" />
             </div>
           </div>
 
@@ -166,20 +201,9 @@ You can always visit us at our HQ, we have a friendly staff and a mean cup of co
             >
               {({ isSubmitting, touched, errors }) => (
                 <Form className="space-y-6">
-                  {/* Row 1: First Name & Last Name */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <CustomField label="First Name*" name="firstName" placeholder="First Name" />
-                    <CustomField label="Last Name*" name="lastName" placeholder="Last Name" />
-                  </div>
-
-                  {/* Row 2: Company Name & Company Website */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <CustomField label="Company Name" name="companyName" placeholder="Company Name" />
-                    <CustomField label="Company Website" name="companyWebsite" type="url" placeholder="www.company.com" />
-                  </div>
-
-                  {/* Row 3: Email & Phone Number */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* Name, Email, Phone each as full-width rows */}
+                  <div className="grid grid-cols-1 gap-4">
+                    <CustomField label="Name*" name="name" placeholder="Your full name" />
                     <CustomField label="Email*" name="email" type="email" placeholder="you@company.com" />
                     <CustomField label="Phone Number*" name="phone" type="tel" placeholder="Phone number" />
                   </div>
@@ -203,27 +227,13 @@ You can always visit us at our HQ, we have a friendly staff and a mean cup of co
                     <ErrorMessage name="message" component="div" className="mt-1 text-sm text-red-500" />
                   </div>
 
-                  {/* Row 6: Privacy Policy Checkbox */}
-                  <div className="flex items-start">
-                    <div className="flex items-center h-5">
-                      <Field
-                        id="privacyPolicy"
-                        name="privacyPolicy"
-                        type="checkbox"
-                        className={`h-4 w-4 rounded transition-all duration-200 cursor-pointer 
-                          ${touched.privacyPolicy && errors.privacyPolicy ? 'border-red-500 text-red-600 focus:ring-red-500' : 'border-gray-300 text-blue-600 focus:ring-blue-500'}`}
-                      />
-                    </div>
-                    <div className="ml-3 text-sm">
-                      <label htmlFor="privacyPolicy" className="font-medium text-gray-700 cursor-pointer">
-                        You agree to our friendly{' '}
-                        <a href="/privacy-policy" className="text-blue-600 hover:text-blue-800 focus:outline-none focus:underline">
-                          privacy policy
-                        </a>
-                        .
-                      </label>
-                      <ErrorMessage name="privacyPolicy" component="div" className="text-sm text-red-500" />
-                    </div>
+                  {/* reCAPTCHA */}
+                  <div>
+                    {process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY ? (
+                      <ReCAPTCHA sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY as string} ref={recaptchaRef} />
+                    ) : (
+                      <p className="text-xs text-amber-600">reCAPTCHA not configured. Set NEXT_PUBLIC_RECAPTCHA_SITE_KEY to enable spam protection.</p>
+                    )}
                   </div>
 
                   {/* Submit Button */}

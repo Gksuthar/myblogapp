@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import ComponentLoader from '@/components/ComponentLoader';
 
 interface AdminSettings {
   username: string;
@@ -223,11 +224,7 @@ export default function AdminSettings() {
   };
   
   if (isLoading && !settings.username) {
-    return (
-      <div className="flex justify-center items-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
-      </div>
-    );
+    return <ComponentLoader height="h-64" />;
   }
   
   return (

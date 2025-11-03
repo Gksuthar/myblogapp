@@ -1,6 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import ComponentLoader from "@/components/ComponentLoader";
 
 interface CaseStudyItem {
   _id: string;
@@ -54,9 +55,7 @@ const CaseStudiesAndConnect: React.FC = () => {
         </h2>
 
         {loading ? (
-          <div className="flex justify-center py-8">
-            <div className="animate-spin rounded-full h-8 w-8 border-t-4 border-[var(--primary-color)]" />
-          </div>
+          <ComponentLoader height="h-20" />
         ) : caseStudies?.length === 0 ? (
           <p className="text-center text-gray-600 py-8">
             No case studies available.

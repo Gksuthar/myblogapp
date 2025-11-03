@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import Link from 'next/link';
+import ComponentLoader from '@/components/ComponentLoader';
 
 interface CaseStudyItem {
   _id: string;
@@ -54,9 +55,7 @@ export default function CaseStudiesPage() {
 
       {/* Loader */}
       {loading && (
-        <div className="flex justify-center py-16">
-          <div className="animate-spin rounded-full h-10 w-10 border-t-4 border-blue-500"></div>
-        </div>
+        <ComponentLoader height="h-24" />
       )}
 
       {/* Error */}

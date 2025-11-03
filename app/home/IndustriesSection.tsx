@@ -4,6 +4,7 @@ import React, { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import axios from "axios";
 import { motion } from "framer-motion";
+import ComponentLoader from "@/components/ComponentLoader";
 
 
 const IndustriesSection: React.FC = () => {
@@ -76,16 +77,14 @@ const IndustriesSection: React.FC = () => {
         className="max-w-7xl mx-auto flex gap-6 sm:gap-8 overflow-x-hidden py-4"
       >
         {loading ? (
-          <div className="w-full text-center text-gray-500 py-10">
-            Loading industries...
-          </div>
+          <ComponentLoader height="h-24" />
         ) : industries.length > 0 ? (
           industries.map((item: { id?: string; image?: string; title?: string; description?: string }, i: number) => (
             <motion.div
               key={item.id || i}
                 whileHover={{ y: -8, scale: 1.03 }}
                 transition={{ duration: 0.25 }}
-                className="group relative bg-white rounded-2xl shadow-md hover:shadow-xl border border-gray-100 hover:border-[var(--primary-color)] transition-all duration-300 flex-shrink-0 w-72 sm:w-80 md:w-96 p-6 sm:p-8 flex flex-col justify-between"
+                className="group relative overflow-hidden bg-white rounded-2xl shadow-md hover:shadow-xl border border-gray-100 hover:border-[var(--primary-color)] transition-all duration-300 flex-shrink-0 w-72 sm:w-80 md:w-96 p-6 sm:p-8 flex flex-col justify-between"
             >
               <div>
                 {/* === Icon === */}
@@ -102,7 +101,7 @@ const IndustriesSection: React.FC = () => {
 
                 {/* === Title === */}
                 <h3
-                  className="text-xl font-semibold text-gray-900 mb-3 group-hover:text-[var(--primary-color)] transition-colors duration-300 line-clamp-1"
+                  className="text-xl font-semibold text-gray-900 mb-3 group-hover:text-[var(--primary-color)] transition-colors duration-300 truncate whitespace-nowrap max-w-full"
                   title={item?.title}
                 >
                   {item?.title}
@@ -118,7 +117,7 @@ const IndustriesSection: React.FC = () => {
               </div>
 
               {/* === Decorative Accent === */}
-              <div className="absolute bottom-0 left-0 w-full h-1 bg-[var(--primary-color)] opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-b-2xl" />
+              <div className="absolute bottom-0 left-0 right-0 h-1 bg-[var(--primary-color)] opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-b-2xl" />
             </motion.div>
           ))
         ) : (

@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import CustomButton from '@/components/ui/customButtom/Button';
+import ComponentLoader from '@/components/ComponentLoader';
 
 interface CaseData {
   _id?: string;
@@ -77,9 +78,7 @@ const handleDelete = async (items: any) => {
 
       {/* Loader */}
       {loading && (
-        <div className="flex justify-center items-center py-20">
-          <div className="animate-spin rounded-full h-10 w-10 border-t-4 border-indigo-500"></div>
-        </div>
+        <ComponentLoader height="h-32" />
       )}
 
       {/* No Data Found */}

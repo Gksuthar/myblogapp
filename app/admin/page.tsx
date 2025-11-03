@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
+import ComponentLoader from '@/components/ComponentLoader';
 
 export default function AdminDashboard() {
   const [stats, setStats] = useState({
@@ -40,9 +41,7 @@ export default function AdminDashboard() {
       <h1 className="text-1xl font-bold mb-6">Admin Dashboard</h1>
       
       {loading ? (
-        <div className="flex justify-center my-12">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
-        </div>
+        <ComponentLoader height="h-24" />
       ) : (
         <>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">

@@ -3,6 +3,7 @@
 import Image from "next/image";
 import React, { useState, useCallback, useEffect } from "react";
 import axios from "axios";
+import ComponentLoader from "@/components/ComponentLoader";
 
 interface StepData {
   _id?: string;
@@ -110,9 +111,7 @@ const HowItWorksSection: React.FC = () => {
 
         {/* Loading Spinner */}
         {loading ? (
-          <div className="flex justify-center items-center h-64">
-            <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-blue-500"></div>
-          </div>
+          <ComponentLoader height="h-64" />
         ) : steps?.length === 0 ? (
           <p className="text-center text-gray-500 text-lg">
             No steps found. Please add new entries.

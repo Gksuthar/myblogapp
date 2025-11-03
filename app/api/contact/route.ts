@@ -25,15 +25,40 @@ export async function POST(req: Request) {
     const {
       firstName,
       lastName,
+      name,
       email,
       phone,
       companyName,
       companyWebsite,
       message,
+      recaptchaToken,
     } = body;
 
+    // Optional: verify Google reCAPTCHA if configured (support both RECAPTCHA_SECRET_KEY and RECAPTCHA_SECRET env names)
+    const secret = process.env.RECAPTCHA_SECRET_KEY || process.env.RECAPTCHA_SECRET;
+    if (secret) {
+      try {
+        const params = new URLSearchParams();
+        params.append('secret', secret);
+        params.append('response', recaptchaToken || '');
+        const verifyRes = await fetch('https://www.google.com/recaptcha/api/siteverify', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: params.toString(),
+        });
+        const verifyJson = await verifyRes.json();
+        if (!verifyJson.success) {
+          return NextResponse.json({ error: 'reCAPTCHA verification failed' }, { status: 400 });
+        }
+      } catch (e) {
+        console.error('reCAPTCHA verify error', e);
+        return NextResponse.json({ error: 'reCAPTCHA verification error' }, { status: 400 });
+      }
+    }
+
     // Validate required fields
-    if (!firstName || !lastName || !email || !phone || !message) {
+    const fullName = name?.trim() || `${firstName || ''} ${lastName || ''}`.trim();
+    if (!fullName || !email || !phone || !message) {
       return NextResponse.json(
         { error: "Missing required fields" },
         { status: 400 }
@@ -42,8 +67,8 @@ export async function POST(req: Request) {
 
     // Create new contact
     const newContact = await ContactModel.create({
-      firstName,
-      lastName,
+      firstName: (firstName ?? fullName.split(' ')[0] ?? '').trim(),
+      lastName: (lastName ?? fullName.split(' ').slice(1).join(' ') ?? '').trim(),
       email,
       phone,
       companyName: companyName || "",

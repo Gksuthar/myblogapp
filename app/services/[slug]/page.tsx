@@ -65,11 +65,7 @@ export default function ServiceDetailsPage() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-10">
-      {loading && (
-        <div className="flex justify-center py-16">
-          <div className="animate-spin rounded-full h-10 w-10 border-t-4 border-blue-500"></div>
-        </div>
-      )}
+      {loading && <ComponentLoader height="h-24" />}
 
       {!loading && error && (
         <p className="text-center text-red-600">{error}</p>

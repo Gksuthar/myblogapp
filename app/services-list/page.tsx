@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import ComponentLoader from '@/components/ComponentLoader';
 
 interface ServiceItem {
   _id: string;
@@ -51,11 +52,7 @@ export default function ServicesListPage() {
         <p className="mt-3 text-gray-600">Browse all available services.</p>
       </div>
 
-      {loading && (
-        <div className="flex justify-center py-16">
-          <div className="animate-spin rounded-full h-10 w-10 border-t-4 border-blue-500"></div>
-        </div>
-      )}
+      {loading && <ComponentLoader height="h-24" />}
 
       {!loading && error && (
         <p className="text-center text-red-600">{error}</p>

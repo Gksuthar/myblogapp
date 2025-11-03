@@ -11,14 +11,16 @@ const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
   className = '' 
 }) => {
   const sizeClasses = {
-    sm: 'w-4 h-4',
-    md: 'w-8 h-8',
+    sm: 'w-5 h-5',
+    md: 'w-10 h-10',
     lg: 'w-12 h-12'
   };
 
   return (
     <div className={`flex items-center justify-center ${className}`}>
-      <div className={`${sizeClasses[size]} animate-spin rounded-full border-2 border-gray-300 border-t-blue-600`}></div>
+      <div
+        className={`${sizeClasses[size]} animate-spin rounded-full border-4 border-gray-200 border-t-[var(--primary-color)]`}
+      />
     </div>
   );
 };
