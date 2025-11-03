@@ -178,7 +178,7 @@ const WhyChooseUsSection: React.FC = () => {
           <div className="relative group rounded-3xl p-4 sm:p-6 w-full max-w-[560px] border border-gray-200 bg-white shadow-sm">
             <div className="relative">
               <Image
-                src="https://res.cloudinary.com/dsu49fx2b/image/upload/v1762154070/imagesmy_caltjl.png"
+                src="https://images.pexels.com/photos/53621/calculator-calculation-insurance-finance-53621.jpeg"
                 alt="Why choose illustration"
                 width={560}
                 height={420}

@@ -3,7 +3,7 @@
 import { useEffect, useState, type MouseEvent } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { FaBars, FaTimes } from "react-icons/fa";
+import { FaBars, FaTimes, FaFileInvoiceDollar, FaChartLine, FaBook, FaCalculator, FaTools } from "react-icons/fa";
 import { MdExpandMore } from "react-icons/md";
 import axios from "axios";
 
@@ -39,10 +39,13 @@ export default function Header() {
         const response = await axios.get('/api/service/categories');
         if (response.status === 200 && response.data) {
           const cats = Array.isArray(response.data) ? response.data : [];
-          setCategories(cats);
+          // Hide unwanted categories from the menu (user request)
+          const blocked = ['ganesh kumar suthar', 'accounting', 'accounting services'];
+          const filtered = cats.filter((c: Category) => !blocked.includes((c?.name || '').trim().toLowerCase()));
+          setCategories(filtered);
           // Set first category as active by default
-          if (cats.length > 0) {
-            setActiveTab(cats[0]._id);
+          if (filtered.length > 0) {
+            setActiveTab(filtered[0]._id);
           }
         }
       } catch (error) {
@@ -99,6 +102,15 @@ export default function Header() {
       {text}
     </button>
   );
+
+  const renderServiceIcon = (title?: string) => {
+    const t = (title || '').toLowerCase();
+    if (t.includes('tax')) return <FaFileInvoiceDollar />;
+    if (t.includes('report')) return <FaChartLine />;
+    if (t.includes('bookkeep')) return <FaBook />;
+    if (t.includes('account')) return <FaCalculator />;
+    return <FaTools />;
+  };
 
   return (
     <header className=" w-full bg-white z-50">
@@ -210,7 +222,7 @@ export default function Header() {
                               className="flex items-start p-4 rounded-xl hover:bg-gray-50 transition-all duration-200 group border border-transparent hover:border-gray-200"
                             >
                               <div className="w-10 h-10 flex items-center justify-center text-xl bg-[#e6f3ff] text-[var(--primary-color)] rounded-full flex-shrink-0 border border-[color-mix(in srgb, var(--primary-color) 40%, white)]">
-                                �
+                                {renderServiceIcon(svc.heroSection?.title)}
                               </div>
                               <div className="ml-3">
                                 <p className="text-sm font-semibold text-gray-900 group-hover:text-[var(--primary-color)] transition-colors">

@@ -30,3 +30,40 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: err instanceof Error ? err.message : 'Failed to create category' }, { status: 500 });
     }
 }
+
+// DELETE: remove categories by ids or names
+export async function DELETE(req: Request) {
+  try {
+    await connectDB();
+    const body = await req.json().catch(() => ({}));
+    const { ids, names } = body as { ids?: string[] | string; names?: string[] | string };
+
+    type CategoryDeleteFilter = {
+      _id?: { $in: string[] };
+      name?: { $in: (string | RegExp)[] };
+    };
+
+    const toDelete: CategoryDeleteFilter = {};
+    if (ids) {
+      const arr = Array.isArray(ids) ? ids : [ids];
+      toDelete._id = { $in: arr };
+    }
+    if (names) {
+      const arr = (Array.isArray(names) ? names : [names])
+        .map((n) => String(n).trim())
+        // case-insensitive exact match via regex
+        .map((n) => new RegExp(`^${n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, 'i'));
+      toDelete.name = { $in: arr };
+    }
+
+    if (!toDelete._id && !toDelete.name) {
+      return NextResponse.json({ error: 'Provide ids or names to delete' }, { status: 400 });
+    }
+
+  const result = await CategoryModel.deleteMany(toDelete);
+    return NextResponse.json({ deletedCount: result.deletedCount ?? 0 });
+  } catch (error) {
+    console.error('Failed to delete categories:', error);
+    return NextResponse.json({ error: 'Failed to delete categories' }, { status: 500 });
+  }
+}
