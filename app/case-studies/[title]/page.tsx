@@ -130,7 +130,7 @@ export default function CaseStudyDetails() {
         <div className="mt-16 text-center">
           <button
             onClick={() => router.back()}
-            className="px-6 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
+            className=" !bg-[var(--primary-color)] px-6 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
           >
             Back to Case Studies
           </button>

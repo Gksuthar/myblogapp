@@ -113,15 +113,7 @@ const Footer: React.FC = () => {
             </p>
           </div>
 
-          {/* Canada Office */}
-          <div>
-            <h4 className="font-bold text-base mb-4">🇨🇦 Canada Office</h4>
-            <p className="text-gray-400 text-sm">
-              15 Brucewood Road,<br />
-              Brampton, L6R 3M1<br />
-              Ontario
-            </p>
-          </div>
+   
         </div>
 
         {/* Footer Bar: Copyright and Social Icons */}

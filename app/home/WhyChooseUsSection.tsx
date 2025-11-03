@@ -99,7 +99,7 @@ const WhyChooseUsSection: React.FC = () => {
             )}
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-8 gap-x-12">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-8 gap-x-12 !mt-10" >
             {features.map((feature, index) => (
               <div
                 key={index}

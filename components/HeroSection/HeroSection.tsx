@@ -5,24 +5,27 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { FaArrowRight } from "react-icons/fa";
 import CustomButton from "../ui/customButtom/Button";
+
 interface Props {
-  title: string
-  disc: string
-  image:string
+  title: string;
+  disc: string;
+  image: string;
 }
-const HeroSection: React.FC<Props> = ({ title, disc  , image }) => {
+
+const HeroSection: React.FC<Props> = ({ title, disc, image }) => {
   return (
-  <section className="relative flex flex-col-reverse md:flex-row items-center justify-between gap-2 md:gap-4 px-6 md:px-16 py-6 md:py-8 bg-gradient-to-br from-gray-50 to-white overflow-hidden">
-      {/* Left side - text content */}
+    <section className="relative flex flex-col-reverse md:flex-row items-center justify-between gap-10 px-6 md:px-16 py-10 bg-gradient-to-br from-gray-50 to-white overflow-hidden">
+      
+      {/* Left content */}
       <motion.div
         initial={{ opacity: 0, x: -40 }}
         whileInView={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.6 }}
-        className="flex-1 text-center md:text-left md:pr-6"
+        className="flex-1 text-center md:text-left "
       >
         <span
           className="inline-block text-[var(--primary-color)] text-sm font-medium px-3 py-1 rounded-full mb-4 shadow-sm"
-          style={{ backgroundColor: 'rgba(53,154,255,0.12)' }}
+          style={{ backgroundColor: "rgba(53,154,255,0.12)" }}
         >
           ✨ Learn. Build. Share.
         </span>
@@ -31,7 +34,7 @@ const HeroSection: React.FC<Props> = ({ title, disc  , image }) => {
           {title}
         </h1>
 
-        <p className="text-gray-600 max-w-xl mx-auto md:mx-0 mb-6">
+        <p className="text-gray-600 max-w-lg mx-auto md:mx-0 mb-6 leading-relaxed">
           {disc}
         </p>
 
@@ -49,30 +52,26 @@ const HeroSection: React.FC<Props> = ({ title, disc  , image }) => {
           </Link>
 
           <Link href="/about">
-            <CustomButton
-              text="About Us"
-              variant="transparent"
-            />
+            <CustomButton text="About Us" variant="transparent" />
           </Link>
         </div>
       </motion.div>
 
-      {/* Right side - image or illustration */}
+      {/* Right image */}
       <motion.div
         initial={{ opacity: 0, x: 40 }}
         whileInView={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.6 }}
-        className="flex-1 relative"
+        className="flex-1 flex justify-center md:justify-center"
       >
-        {/* Main illustration */}
-        <div className="relative z-10 flex justify-center md:justify-end">
+        <div className="relative w-full max-w-[520px] lg:max-w-[580px] xl:max-w-[640px]">
           <Image
-            src={image} // Make sure this image exists in public/images
-            alt="Developer illustration"
+            src={image}
+            alt="Accounting & bookkeeping illustration"
             width={640}
-            height={640}
+            height={480}
             priority
-            className="rounded-2xl shadow-md object-cover w-full max-w-[480px] sm:max-w-[560px] md:max-w-[620px]"
+            className="rounded-2xl shadow-lg object-cover w-full h-auto"
           />
         </div>
       </motion.div>

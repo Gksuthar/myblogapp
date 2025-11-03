@@ -111,7 +111,7 @@ const tabsData = roles?.map((role) => ({
       {/* Services Section */}
      <div className="flex flex-col-reverse md:flex-row items-center gap-8 md:gap-12">
       {/* Text Section */}
-      <div className="flex-1 text-center md:text-left">
+      <div className="flex-1 text-center md:text-left justify-center mb-8 md:mb-0">
         <h3 className="text-2xl sm:text-3xl md:text-4xl font-semibold text-gray-800 mb-4 leading-snug">
           {content?.title || 'Outsource Accounting, Bookkeeping & Payroll Services'}
         </h3>

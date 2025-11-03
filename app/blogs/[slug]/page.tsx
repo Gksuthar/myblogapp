@@ -120,7 +120,7 @@ export default function BlogPage() {
         <div className="mt-12">
           <Link
             href="/blogs"
-            className="inline-block px-6 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
+            className=" !bg-[var(--primary-color)] inline-block px-6 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
           >
             Back to Blogs
           </Link>

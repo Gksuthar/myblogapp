@@ -93,8 +93,8 @@ export default function AboutHero() {
         onSubmit={handleSubmit}
       >
         {({ setFieldValue }) => (
-          <Form className="space-y-4 mb-8">
-            <div>
+          <Form className="space-y-1 mb-8">
+            <div className='flex justify-center'>
               <label className="block font-medium mb-1">Title</label>
               <Field
                 type="text"
@@ -105,7 +105,7 @@ export default function AboutHero() {
               <ErrorMessage name="title" component="div" className="text-red-500 text-sm mt-1" />
             </div>
 
-            <div>
+            <div className='flex justify-center'>
               <label className="block font-medium mb-1">Description</label>
               <Field
                 as="textarea"
@@ -116,7 +116,7 @@ export default function AboutHero() {
               <ErrorMessage name="disc" component="div" className="text-red-500 text-sm mt-1" />
             </div>
 
-            <div>
+            <div className='flex justify-center'>
               <label className="block font-medium mb-1">Button Text</label>
               <Field
                 type="text"
@@ -126,7 +126,7 @@ export default function AboutHero() {
               />
             </div>
 
-            <div>
+            <div className='flex justify-center'>
               <label className="block font-medium mb-1">Image</label>
               <input
                 type="file"

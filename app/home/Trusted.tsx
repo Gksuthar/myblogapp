@@ -18,8 +18,14 @@ const Trusted: React.FC = () => {
           "url('https://cdn.prod.website-files.com/6718c309cc349b579872ddbb/67332d1aaa9780c12cdd3d8a_glob-p-1080.png')",
       }}
     >
-  {/* Overlay */}
-  <div className="absolute inset-0 bg-black/45"></div>
+  {/* Overlay - very light blue gradient so the image stays natural */}
+  <div
+    className="absolute inset-0 pointer-events-none"
+    style={{
+      background:
+        "linear-gradient(180deg, rgba(53,154,255,0.08) 0%, rgba(53,154,255,0.12) 50%, rgba(53,154,255,0.08) 100%)",
+    }}
+  />
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-white">
         {/* Heading */}

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import Image from 'next/image';
 import ComponentLoader from '@/components/ComponentLoader';
 import HeroSection from '@/components/HeroSection/HeroSection';
@@ -70,6 +70,24 @@ const AboutPage: React.FC = () => {
     })();
   }, []);
 
+  // Remove inline images, figures and svg-only buttons from rich HTML like company history
+  const sanitizedHistory = useMemo(() => {
+    const raw = aboutData?.companyHistory || '';
+    if (!raw) return '';
+    const html = raw
+      // remove <img /> tags
+      .replace(/<img[^>]*>/gi, '')
+      // remove <picture>..</picture>
+      .replace(/<picture[^>]*>[\s\S]*?<\/picture>/gi, '')
+      // remove <figure>..</figure>
+      .replace(/<figure[^>]*>[\s\S]*?<\/figure>/gi, '')
+      // remove inline svgs
+      .replace(/<svg[^>]*>[\s\S]*?<\/svg>/gi, '')
+      // remove anchors that only wrap images
+      .replace(/<a[^>]*>\s*(?:<img[^>]*>\s*)+<\/a>/gi, '');
+    return html;
+  }, [aboutData?.companyHistory]);
+
   if (loading) return <ComponentLoader height="h-64" message="Loading about page..." />;
 
   return (
@@ -104,7 +122,7 @@ const AboutPage: React.FC = () => {
           <div
             className="prose max-w-none text-gray-700"
             dangerouslySetInnerHTML={{
-              __html: aboutData?.companyHistory || '<p>Our story began with a passion for innovation.</p>',
+              __html: sanitizedHistory || '<p>Our story began with a passion for innovation.</p>',
             }}
           />
         </div>
@@ -118,13 +136,15 @@ const AboutPage: React.FC = () => {
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
               {aboutData.team.map((member, idx) => (
                 <div key={idx} className="bg-white p-6 rounded-lg shadow-md text-center">
-                  <Image
-                    src={member.image || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=300'}
-                    alt={member.name}
-                    width={120}
-                    height={120}
-                    className="mx-auto rounded-full mb-4 object-cover"
-                  />
+                  <div className="mx-auto mb-4 w-24 h-24 rounded-full overflow-hidden">
+                    <Image
+                      src={member.image || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=300'}
+                      alt={member.name}
+                      width={96}
+                      height={96}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
                   <h3 className="text-xl font-bold">{member.name}</h3>
                   <p className="text-indigo-600">{member.position}</p>
                   <p className="text-gray-600 text-sm mt-2">{member.bio}</p>
@@ -138,16 +158,13 @@ const AboutPage: React.FC = () => {
       {/* Values Section */}
       {aboutData?.values?.length ? (
         <section className="py-16 bg-white">
-          <div className="max-w-7xl mx-auto px-6 text-center">
-            <h2 className="text-3xl font-bold mb-8">Our Values</h2>
-            <div className="grid md:grid-cols-3 gap-6">
-              {aboutData.values.map((val, idx) => (
-                <div key={idx} className="bg-gray-50 p-6  shadow-sm">
-                  <h3 className="text-xl font-bold mb-3">{val.title}</h3>
-                  <p className="text-gray-600">{val.description}</p>
-                </div>
-              ))}
-            </div>
+          <div className="max-w-4xl mx-auto px-6">
+            <h2 className="text-3xl font-bold text-center mb-6">Our Values</h2>
+            <p className="text-gray-700 leading-8 text-lg">
+              {aboutData.values
+                .map((v) => `${v.title}: ${v.description}`)
+                .join(' ')}
+            </p>
           </div>
         </section>
       ) : null}
