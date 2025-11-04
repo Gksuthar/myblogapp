@@ -62,8 +62,10 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
     tabIndex,
     styles,
 }) => {
+    // Only pass style prop if it's a valid CSSProperties object
+    const divStyle = (styles && typeof styles === 'object' && !('container' in styles)) ? (styles as React.CSSProperties) : undefined;
     return (
-        <div className={required ? "select-required" : ""} style={styles}>
+        <div className={required ? "select-required" : ""} style={divStyle}>
             {label && (
                 <label
                     className={`input-label ps-1 text-md ${required ? "required" : ""

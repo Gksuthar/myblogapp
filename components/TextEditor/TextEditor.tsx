@@ -1,4 +1,5 @@
 'use client'
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useEffect, useState, useRef } from "react";
 import dynamic from "next/dynamic";
 
@@ -20,9 +21,7 @@ interface CKEditorInstance {
   getData: () => string;
 }
 
-// Type for ClassicEditor - using any due to complex CKEditor type definitions
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type ClassicEditorType = any;
+// Type for ClassicEditor - runtime loaded; typings vary across builds
 
 const TextEditor: React.FC<WpCKEditorProps> = ({
   initialContent = "",
@@ -32,7 +31,6 @@ const TextEditor: React.FC<WpCKEditorProps> = ({
 }) => {
   const [content, setContent] = useState<string>(initialContent);
   const [editorLoaded, setEditorLoaded] = useState(false);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const editorRef = useRef<any>(null);
 
   const editorConfig = {
@@ -102,7 +100,7 @@ const TextEditor: React.FC<WpCKEditorProps> = ({
     link: {
       decorators: {
         openInNewTab: {
-          mode: 'manual',
+          mode: "manual" as const,
           label: 'Open in a new tab',
           attributes: {
             target: '_blank',
@@ -142,37 +140,35 @@ const TextEditor: React.FC<WpCKEditorProps> = ({
   useEffect(() => {
     let mounted = true;
     
-    // Load standard ClassicEditor build
-    // TODO: To enable alignment, uncomment below and add custom build:
-    // const customBuildPath = "../ckeditor5-custom-build/build/ckeditor";
-    // Promise.any([
-    //   import(/* @vite-ignore */ customBuildPath).catch(() => null),
-    //   import("@ckeditor/ckeditor5-build-classic")
-    // ]).then((editorMod) => {
-    //   if (mounted && editorMod) {
-    //     editorRef.current = editorMod.default;
-    //     setEditorLoaded(true);
-    //   }
-    // }).catch(() => {
-    //   import("@ckeditor/ckeditor5-build-classic").then((mod) => {
-    //     if (mounted) {
-    //       editorRef.current = mod.default;
-    //       setEditorLoaded(true);
-    //     }
-    //   });
-    // });
-    
-    // Standard build (alignment not available)
-    import("@ckeditor/ckeditor5-build-classic")
-      .then((mod) => {
+    // Try a custom build that includes Alignment plugin first. If it doesn't exist, fall back.
+    const tryLoad = async () => {
+      try {
+        // path relative to this file: components/TextEditor -> project root -> ckeditor5-custom-build
+        // Use dynamic evaluator to avoid TypeScript module resolution errors when the folder doesn't exist.
+        const dynImport = new Function('p', 'return import(p)');
+        const mod = await dynImport("../../ckeditor5-custom-build/build/ckeditor");
         if (mounted) {
-          editorRef.current = mod.default;
+          // some custom builds export default, some export ClassicEditor named
+          editorRef.current = (mod as any).default ?? (mod as any).ClassicEditor ?? mod;
+          setEditorLoaded(true);
+          return;
+        }
+      } catch {
+        // ignore and fallback to standard build
+      }
+
+      try {
+        const mod = await import("@ckeditor/ckeditor5-build-classic");
+        if (mounted) {
+          editorRef.current = (mod as any).default ?? mod;
           setEditorLoaded(true);
         }
-      })
-      .catch(() => {
-        // Error handling
-      });
+      } catch {
+        // swallow; editor will stay not loaded and a placeholder is shown
+      }
+    };
+
+    void tryLoad();
     
     return () => {
       mounted = false;
@@ -202,7 +198,8 @@ const TextEditor: React.FC<WpCKEditorProps> = ({
             editor={editorRef.current} 
             data={content} 
             onChange={handleChange}
-            config={editorConfig}
+            // Cast to any to avoid overly strict EditorConfig typing differences between builds
+            config={editorConfig as any}
           />
         ) : (
           <div className="p-4 text-sm text-gray-500">Loading editor…</div>
