@@ -1,4 +1,5 @@
 'use client';
+/* eslint-disable @next/next/no-img-element */
 
 import { useEffect, useState, Suspense, lazy } from 'react';
 import ComponentLoader from '@/components/ComponentLoader';
@@ -14,6 +15,8 @@ interface Blog {
   content?: string;
   excerpt?: string;
   image?: string;
+  category?: string;
+  readTime?: string;
   published: boolean;
   createdAt: string;
 }
@@ -74,11 +77,7 @@ const Page = () => {
     );
   }
 
-  // Handle blog card click
-  const handleBlogClick = (slug: string) => {
-    const blog = blogs.find((b) => b.slug === slug);
-    setSelectedBlog(blog || null);
-  };
+  // Modal open is currently not wired to BlogCard clicks. Keep state for future expansion.
 
   return (
     <main className="bg-gray-50 min-h-screen">
@@ -86,9 +85,9 @@ const Page = () => {
       <Suspense fallback={<ComponentLoader height="h-64" message="Loading hero section..." />}>
         {heroData ? (
           <HeroSection
-            title={heroData.title}
+            title={heroData.title || 'Blogs'}
             disc={heroData.description || ''}
-            image={heroData.image}
+            image={heroData.image || '/vercel.svg'}
             showCtas={false}
           />
         ) : (
@@ -105,7 +104,7 @@ const Page = () => {
                 key={blog?._id}
                 slug={blog?.slug}
                 title={blog?.title}
-                imageUrl={blog?.image}
+                imageUrl={blog?.image || '/vercel.svg'}
                 category={blog?.category}
                 date={new Date(blog?.createdAt).toLocaleDateString('en-US', {
                   year: 'numeric',
@@ -146,7 +145,7 @@ const Page = () => {
             />
             <div
               className="prose prose-slate max-w-none"
-              dangerouslySetInnerHTML={{ __html: selectedBlog?.content }}
+              dangerouslySetInnerHTML={{ __html: selectedBlog?.content || '' }}
             />
           </div>
         </div>
