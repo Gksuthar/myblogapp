@@ -12,6 +12,7 @@ interface ServiceItem {
   heroSection?: { title: string; description: string };
   slug?: string;
   categoryId: string;
+  serviceCardView:{title: string; description: string }
 }
 
 interface Category {
@@ -39,13 +40,10 @@ export default function Header() {
         const response = await axios.get('/api/service/categories');
         if (response.status === 200 && response.data) {
           const cats = Array.isArray(response.data) ? response.data : [];
-          // Hide unwanted categories from the menu (user request)
-          const blocked = ['ganesh kumar suthar', 'accounting', 'accounting services'];
-          const filtered = cats.filter((c: Category) => !blocked.includes((c?.name || '').trim().toLowerCase()));
-          setCategories(filtered);
+          setCategories(cats);
           // Set first category as active by default
-          if (filtered.length > 0) {
-            setActiveTab(filtered[0]._id);
+          if (cats.length > 0) {
+            setActiveTab(cats[0]._id);
           }
         }
       } catch (error) {
@@ -61,7 +59,7 @@ export default function Header() {
       try {
         setLoadingServices(true);
         const response = await axios.get('/api/service');
-        console.log('Services API Response:', response.data);
+        // console.log('Services API Response:', response.data[0]?.serviceCardView);
         
         if (response.status === 200 && response.data) {
           const result = response.data;
@@ -74,7 +72,7 @@ export default function Header() {
             data = result;
           }
           
-          console.log('Parsed services data:', data);
+          console.log('Parsed services data:', data[0].serviceCardView);
           setServices(data);
         } else {
           setServices([]);
@@ -201,6 +199,7 @@ export default function Header() {
                         </div>
                       ) : (() => {
                           const filteredServices = services.filter((svc: ServiceItem) => svc.categoryId === activeTab);
+                          console.log("filteredServices" , filteredServices)
                           return filteredServices.length === 0 ? (
                             <div className="flex justify-center items-center h-full text-gray-400">
                               No services in this category
@@ -212,7 +211,7 @@ export default function Header() {
                               key={svc._id}
                               href={`/services/${
                                 svc.slug ||
-                                (svc.heroSection?.title || "service")
+                                (svc.heroSection?.title ||  svc.categoryId )
                                   .toLowerCase()
                                   .trim()
                                   .replace(/[^a-z0-9\s-]/g, "")
@@ -226,10 +225,10 @@ export default function Header() {
                               </div>
                               <div className="ml-3">
                                 <p className="text-sm font-semibold text-gray-900 group-hover:text-[var(--primary-color)] transition-colors">
-                                  {svc.heroSection?.title || "Untitled"}
+                                  {svc.heroSection?.title || svc.serviceCardView?.title}
                                 </p>
                                 <p className="text-xs text-gray-500 mt-1 line-clamp-2">
-                                  {svc.heroSection?.description || "—"}
+                                  {svc.heroSection?.description ||svc.serviceCardView?.title}
                                 </p>
                               </div>
                             </Link>

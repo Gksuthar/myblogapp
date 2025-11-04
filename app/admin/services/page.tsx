@@ -6,6 +6,7 @@ import { BsPencil, BsTrash2 } from 'react-icons/bs';
 import CustomButton from '@/components/ui/customButtom/Button';
 import CategoryModal from './categories/CategoryModal';
 import ServiceModal from './serviceModel';
+import CategoryTable from './categories/CategoryTable';
 
 interface CardSection {
   sectionTitle: string;
@@ -30,13 +31,30 @@ interface Service {
   updatedAt?: string;
 }
 
+interface Category {
+  _id: string;
+  name: string;
+  description: string;
+  createdAt?: string;
+}
+
 export default function AdminServices() {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [open, setOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState<'services' | 'categories'>('services');
+
+  // Modal states
+  const [isModalOpen, setIsModalOpen] = useState(false); // category modal
+  const [open, setOpen] = useState(false); // service modal
+
+  // Service states
   const [editingService, setEditingService] = useState<Service | null>(null);
   const [services, setServices] = useState<Service[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+
+  // Category states
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [catLoading, setCatLoading] = useState(false);
+  const [catError, setCatError] = useState('');
 
   // ✅ Fetch services
   const fetchServices = async () => {
@@ -45,142 +63,196 @@ export default function AdminServices() {
       setError('');
       const response = await axios.get('/api/service');
       const data = response.data.data || [];
-      // Ensure services have proper structure
       setServices(Array.isArray(data) ? data : []);
-    } catch (err: unknown) {
-      const errorMessage = err && typeof err === 'object' && 'response' in err 
-        ? (err as { response?: { data?: { error?: string } } }).response?.data?.error || 'Failed to load services'
-        : 'Failed to load services';
-      setError(errorMessage);
+    } catch (err: any) {
+      setError(err.response?.data?.error || 'Failed to load services');
     } finally {
       setLoading(false);
     }
   };
 
-  // ✅ Delete service
-  const handleDelete = async (serviceId: string) => {
-    if (!confirm('Are you sure you want to delete this service?')) {
-      return;
-    }
-
+  // ✅ Fetch categories
+  const fetchCategories = async () => {
     try {
-      setError('');
+      setCatLoading(true);
+      setCatError('');
+      const res = await axios.get('/api/service/categories');
+      console.log("res" , res);
+      setCategories(res.data || []);
+    } catch (err: any) {
+      setCatError(err.response?.data?.error || 'Failed to load categories');
+    } finally {
+      setCatLoading(false);
+    }
+  };
+
+  // ✅ Delete service
+  const handleDeleteService = async (serviceId: string) => {
+    if (!confirm('Are you sure you want to delete this service?')) return;
+    try {
       await axios.delete('/api/service', {
         data: { id: serviceId },
         headers: { 'Content-Type': 'application/json' },
       });
-      fetchServices(); // Refresh list after deletion
-    } catch (err: unknown) {
-      const errorMessage = err && typeof err === 'object' && 'response' in err 
-        ? (err as { response?: { data?: { error?: string } } }).response?.data?.error || 'Failed to delete service'
-        : 'Failed to delete service';
-      setError(errorMessage);
-      alert(errorMessage);
+      fetchServices();
+    } catch (err: any) {
+      alert(err.response?.data?.error || 'Failed to delete service');
+    }
+  };
+
+  // ✅ Delete category
+  const handleDeleteCategory = async (categoryId: string) => {
+    if (!confirm('Are you sure you want to delete this category?')) return;
+    try {
+      await axios.delete('/api/service/categories', { data: { ids: [categoryId] } });
+      fetchCategories();
+    } catch (err: any) {
+      alert(err.response?.data?.error || 'Failed to delete category');
     }
   };
 
   // ✅ Edit service
-  const handleEdit = (service: Service) => {
+  const handleEditService = (service: Service) => {
     setEditingService(service);
     setOpen(true);
   };
 
-  // ✅ Close modal and reset editing state
   const handleCloseModal = () => {
     setOpen(false);
     setEditingService(null);
   };
 
-  // ✅ Load on mount
+  // ✅ Load data on mount
   useEffect(() => {
     fetchServices();
+    fetchCategories();
   }, []);
 
   return (
     <div className="p-6">
-      {/* Header Buttons */}
-      <div className="flex gap-4 mb-6">
-        <CustomButton text="Add Category" onClick={() => setIsModalOpen(true)} />
-        <CustomButton text="Add Service" onClick={() => setOpen(true)} />
+      {/* ---------- TABS ---------- */}
+      <div className="flex gap-4 border-b mb-6">
+        <button
+          onClick={() => setActiveTab('services')}
+          className={`px-4 py-2 font-semibold border-b-4 transition ${
+            activeTab === 'services'
+              ? 'border-blue-600 text-blue-600'
+              : 'border-transparent text-gray-500 hover:text-blue-500'
+          }`}
+        >
+          Services
+        </button>
+        <button
+          onClick={() => setActiveTab('categories')}
+          className={`px-4 py-2 font-semibold border-b-4 transition ${
+            activeTab === 'categories'
+              ? 'border-blue-600 text-blue-600'
+              : 'border-transparent text-gray-500 hover:text-blue-500'
+          }`}
+        >
+          Categories
+        </button>
       </div>
 
-      {/* Loading / Error / Empty */}
-      {loading && <p className="text-gray-500">Loading services...</p>}
-      {error && <p className="text-red-500 mb-4">{error}</p>}
-      {!loading && !error && services.length === 0 && (
-        <p className="text-gray-500">No services found.</p>
+      {/* ---------- SERVICE TAB ---------- */}
+      {activeTab === 'services' && (
+        <>
+          <div className="flex gap-4 mb-6">
+            <CustomButton text="Add Service" onClick={() => setOpen(true)} />
+          </div>
+
+          {loading && <p className="text-gray-500">Loading services...</p>}
+          {error && <p className="text-red-500 mb-4">{error}</p>}
+          {!loading && !error && services.length === 0 && (
+            <p className="text-gray-500">No services found.</p>
+          )}
+
+          {!loading && !error && services.length > 0 && (
+            <div className="overflow-x-auto">
+              <table className="min-w-full border border-gray-300 rounded-md">
+                <thead className="bg-gray-100 text-left">
+                  <tr>
+                    <th className="px-4 py-2 border-b">#</th>
+                    <th className="px-4 py-2 border-b">Title</th>
+                    <th className="px-4 py-2 border-b">Description</th>
+                    <th className="px-4 py-2 border-b">Created</th>
+                    <th className="px-4 py-2 border-b text-center">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {services.map((service, index) => (
+                    <tr key={service._id} className="hover:bg-gray-50">
+                      <td className="px-4 py-2 border-b">{index + 1}</td>
+                      <td className="px-4 py-2 border-b font-semibold">
+                        {service.heroSection?.title || '—'}
+                      </td>
+                      <td className="px-4 py-2 border-b text-gray-700 max-w-md truncate">
+                        {service.heroSection?.description || '—'}
+                      </td>
+                      <td className="px-4 py-2 border-b text-sm text-gray-500">
+                        {service.createdAt
+                          ? new Date(service.createdAt).toLocaleDateString()
+                          : '—'}
+                      </td>
+                      <td className="px-4 py-2 border-b">
+                        <div className="flex gap-2 justify-center items-center">
+                          <button
+                            onClick={() => handleEditService(service)}
+                            className="p-2 text-blue-600 hover:bg-blue-50 rounded transition-colors"
+                          >
+                            <BsPencil size={18} />
+                          </button>
+                          <button
+                            onClick={() => handleDeleteService(service._id)}
+                            className="p-2 text-red-600 hover:bg-red-50 rounded transition-colors"
+                          >
+                            <BsTrash2 size={18} />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </>
       )}
 
-      {/* ✅ Services Table */}
-      {!loading && !error && services.length > 0 && (
-        <div className="overflow-x-auto">
-          <table className="min-w-full border border-gray-300 rounded-md">
-            <thead className="bg-gray-100 text-left">
-              <tr>
-                <th className="px-4 py-2 border-b">#</th>
-                <th className="px-4 py-2 border-b">Title</th>
-                <th className="px-4 py-2 border-b">Description</th>
-                <th className="px-4 py-2 border-b">Created</th>
-                <th className="px-4 py-2 border-b text-center">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {services.map((service, index) => (
-                <tr key={service._id} className="hover:bg-gray-50">
-                  <td className="px-4 py-2 border-b">{index + 1}</td>
-                  <td className="px-4 py-2 border-b font-semibold">
-                    {service.heroSection?.title || '—'}
-                  </td>
-                  <td className="px-4 py-2 border-b text-gray-700 max-w-md truncate">
-                    {service.heroSection?.description || '—'}
-                  </td>
-                  <td className="px-4 py-2 border-b text-sm text-gray-500">
-                    {service.createdAt
-                      ? new Date(service.createdAt).toLocaleDateString()
-                      : '—'}
-                  </td>
-                  <td className="px-4 py-2 border-b">
-                    <div className="flex gap-2 justify-center items-center">
-                      <button
-                        onClick={() => handleEdit(service)}
-                        className="p-2 text-blue-600 hover:bg-blue-50 rounded transition-colors"
-                        title="Edit service"
-                      >
-                        <BsPencil size={18} />
-                      </button>
-                      <button
-                        onClick={() => handleDelete(service._id)}
-                        className="p-2 text-red-600 hover:bg-red-50 rounded transition-colors"
-                        title="Delete service"
-                      >
-                        <BsTrash2 size={18} />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+      {/* ---------- CATEGORY TAB ---------- */}
+      {activeTab === 'categories' && (
+        <>
+          <div className="flex gap-4 mb-6">
+            <CustomButton text="Add Category" onClick={() => setIsModalOpen(true)} />
+          </div>
+
+          {catLoading && <p className="text-gray-500">Loading categories...</p>}
+          {catError && <p className="text-red-500 mb-4">{catError}</p>}
+
+          {!catLoading && !catError && (
+            <CategoryTable
+              data={categories}
+              loading={catLoading}
+              handleEdit={() => console.log('edit category')}
+              handleDelete={handleDeleteCategory}
+            />
+          )}
+        </>
       )}
 
-      {/* ✅ Category Modal */}
+      {/* ---------- MODALS ---------- */}
       <CategoryModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        onSuccess={() => {
-          console.log('New category added');
-        }}
+        onSuccess={() => fetchCategories()}
       />
 
-      {/* ✅ Service Modal */}
       <ServiceModal
         isOpen={open}
         onClose={handleCloseModal}
         editingService={editingService}
         onSuccess={() => {
-          console.log(editingService ? 'Service updated' : 'Service added');
-          fetchServices(); // 🔄 refresh list after adding/updating
+          fetchServices();
           handleCloseModal();
         }}
       />

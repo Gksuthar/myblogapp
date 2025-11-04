@@ -79,7 +79,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   return (
     <div className="flex flex-col md:flex-row min-h-screen bg-gray-100">
       {/* Mobile menu button */}
-      <div className="md:hidden bg-indigo-700 p-4 flex justify-between items-center shadow-md">
+      {/* <div className="md:hidden bg-indigo-700 p-4 flex justify-between items-center shadow-md">
         <h1 className="text-xl font-bold text-white">Admin Panel</h1>
         <button
           id="menu-button"
@@ -88,7 +88,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
         >
           <AiOutlineDashboard size={24} />
         </button>
-      </div>
+      </div> */}
 
       {/* Sidebar */}
       <div
