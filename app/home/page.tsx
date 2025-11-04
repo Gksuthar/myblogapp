@@ -29,8 +29,12 @@ const fadeIn = (delay = 0, y = 40) => ({
 type ServiceCardItem = {
     _id: string;
     slug?: string;
+    serviceCardView?: { title: string; description: string; image?: string };
     heroSection?: { title: string; description: string; image?: string };
     createdAt?: string;
+    categoryId: any
+    content: any
+
 };
 
 export default function Home() {
@@ -104,7 +108,13 @@ export default function Home() {
         fetchServices();
     }, []);
 
-
+    const toSlug = (text: string) =>
+        (text || '')
+            .toLowerCase()
+            .trim()
+            .replace(/[^a-z0-9\s-]/g, '')  // remove special chars
+            .replace(/\s+/g, '-')          // replace spaces with -
+            .replace(/-+/g, '-');
     return (
         <>
             <Suspense fallback={<ComponentLoader height="h-96" message="Loading hero section..." />}>
@@ -121,8 +131,8 @@ export default function Home() {
             </Suspense>
 
             {/* Trusted Companies Section */}
-            <motion.section 
-                {...fadeIn(0.2, 50)} 
+            <motion.section
+                {...fadeIn(0.2, 50)}
                 className="relative w-full py-20 bg-gradient-to-b from-white to-gray-50 overflow-hidden"
             >
                 <div className="max-w-7xl mx-auto px-6">
@@ -134,7 +144,7 @@ export default function Home() {
                             Join hundreds of accounting professionals who trust us
                         </p>
                     </div>
-                    
+
                     {loadingTrusted ? (
                         <div className="flex justify-center items-center h-32">
                             <ComponentLoader height="h-32" message="Loading companies..." />
@@ -144,16 +154,16 @@ export default function Home() {
                             <motion.div
                                 className="flex gap-16 items-center"
                                 animate={{ x: ["0%", "-50%"] }}
-                                transition={{ 
-                                    repeat: Infinity, 
-                                    repeatType: "loop", 
-                                    duration: 35, 
-                                    ease: "linear" 
+                                transition={{
+                                    repeat: Infinity,
+                                    repeatType: "loop",
+                                    duration: 35,
+                                    ease: "linear"
                                 }}
                             >
                                 {[...trustedCompanies, ...trustedCompanies].map((company, index) => (
-                                    <div 
-                                        key={index} 
+                                    <div
+                                        key={index}
                                         className="flex flex-col items-center justify-center min-w-[200px] h-28 px-6 opacity-70 hover:opacity-100 transition-all duration-300 hover:scale-105"
                                     >
                                         <Image
@@ -166,7 +176,7 @@ export default function Home() {
                                     </div>
                                 ))}
                             </motion.div>
-                            
+
                             {/* Enhanced gradient overlays */}
                             <div className="absolute left-0 top-0 bottom-0 w-32 bg-gradient-to-r from-gray-50 via-gray-50/80 to-transparent pointer-events-none z-10"></div>
                             <div className="absolute right-0 top-0 bottom-0 w-32 bg-gradient-to-l from-gray-50 via-gray-50/80 to-transparent pointer-events-none z-10"></div>
@@ -221,28 +231,42 @@ export default function Home() {
                         {loadingServices && (
                             <ComponentLoader height="h-64" message="Loading services..." />
                         )}
-                        {!loadingServices && serviceCards.map((svc, i) => {
-                            const post = {
-                                id: i + 1,
-                                title: svc.heroSection?.title || 'Untitled Service',
-                                img: svc.heroSection?.image || 'https://cdn.prod.website-files.com/6718c309cc349b579872ddbb/6732eedcfeeebafefe65ebd0_icons8-checklist-94%201.svg',
-                                excerpt: svc.heroSection?.description || '',
-                            };
-                            const href = `/services/${svc.slug || (svc.heroSection?.title || 'service').toLowerCase().trim().replace(/[^a-z0-9\s-]/g, '').replace(/\s+/g, '-').replace(/-+/g, '-')}`;
-                            return (
-                                <a key={svc._id} href={href} className="block h-full">
-                                    <motion.div
-                                        className="h-full"
-                                        whileHover={{ y: -6 }}
-                                        transition={{ duration: 0.3 }}
-                                    >
-                                        <Suspense fallback={<ComponentLoader height="h-64" message="Loading service card..." />}>
-                                            <BlogServiceCard post={post} />
-                                        </Suspense>
-                                    </motion.div>
-                                </a>
-                            );
-                        })}
+                        {!loadingServices &&
+                            serviceCards.map((svc, i) => {
+                                const slug = svc.slug || toSlug(svc?.categoryId || 'service');
+
+                                // Handle array or object form of serviceCardView
+                                const cardView = Array.isArray(svc.serviceCardView)
+                                    ? svc.serviceCardView[0]
+                                    : svc.serviceCardView;
+
+                                const post = {
+                                    id: i + 1,
+                                    title: cardView?.title || svc.heroSection?.title || 'Untitled Service',
+                                    desc: cardView?.description || svc.heroSection?.description || "",
+                                    img:
+                                        cardView?.image ||
+                                        svc.heroSection?.image ||
+                                        'https://cdn.prod.website-files.com/6718c309cc349b579872ddbb/6732eedcfeeebafefe65ebd0_icons8-checklist-94%201.svg',
+                                };
+
+                                const href = `/services/${slug}`;
+
+                                return (
+                                    <a key={svc._id} href={href} className="block h-full">
+                                        <motion.div
+                                            className="h-full"
+                                            whileHover={{ y: -6 }}
+                                            transition={{ duration: 0.3 }}
+                                        >
+                                            <Suspense fallback={<ComponentLoader height="h-64" message="Loading service card..." />}>
+                                                <BlogServiceCard post={post} />
+                                            </Suspense>
+                                        </motion.div>
+                                    </a>
+                                );
+                            })}
+
                     </motion.div>
                 </motion.div>
 

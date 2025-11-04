@@ -9,7 +9,7 @@ interface BlogServiceCardProps {
     id: number;
     title: string;
     img: string;
-    excerpt: string;
+    desc:string
   };
 }
 
@@ -52,9 +52,13 @@ const BlogServiceCard: React.FC<BlogServiceCardProps> = ({ post }) => {
       </div>
 
       {/* Excerpt */}
-      <p className="text-gray-600 text-lg leading-relaxed mt-2 flex-grow max-h-24 overflow-hidden">
-        {post.excerpt}
+      {
+        post.desc &&
+      <p className="text-gray-600 text-lg leading-relaxed mt-2 flex-grow max-h-24 overflow-hidden"  >
+        { post.desc &&   post.desc}
       </p>
+      }
+
     </div>
   );
 };

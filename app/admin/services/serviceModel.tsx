@@ -10,34 +10,13 @@ import * as Yup from 'yup';
 import { Category } from '@/types/api';
 import { motion, AnimatePresence } from 'framer-motion';
 import Textfield from '@/components/customeInput/Textfield';
-import CustomSelect from '@/components/selectBox/CustomSelect';
 import TextEditor from '@/components/TextEditor/TextEditor';
 
 // === Interfaces ===
-interface Service {
-  _id: string;
-  categoryId?: string;
-  heroSection: {
-    title: string;
-    description: string;
-    image?: string;
-  };
-  cardSections?: Array<{
-    sectionTitle: string;
-    sectionDescription: string;
-    cards: Array<{
-      title: string;
-      description: string;
-    }>;
-  }>;
-  content?: string;
-}
-
-interface ServiceModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onSuccess: () => void;
-  editingService?: Service | null;
+interface HeroSection {
+  title: string;
+  description: string;
+  image?: string;
 }
 
 interface Card {
@@ -53,48 +32,61 @@ interface CardSection {
   cards: Card[];
 }
 
-interface HeroSection {
+interface ServiceCardView {
   title: string;
   description: string;
-  image?: string;
+}
+
+interface Service {
+  _id: string;
+  categoryId?: string;
+  heroSection: HeroSection;
+  cardSections?: CardSection[];
+  serviceCardView: ServiceCardView;
+  content?: string;
+}
+
+interface ServiceModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onSuccess: () => void;
+  editingService?: Service | null;
 }
 
 interface FormValues {
   categoryId: string;
   heroSection: HeroSection;
   cardSections: CardSection[];
+  serviceCardView: ServiceCardView;
   content: string;
 }
 
-// === Validation Schema ===
-const ServiceSchema = Yup.object().shape({
-  categoryId: Yup.string().required('Category is required'),
-  heroSection: Yup.object().shape({
-    title: Yup.string().required('Hero title is required'),
-    description: Yup.string().required('Hero description is required'),
-  }),
-  content: Yup.string().required('Content is required'),
-});
-
-export default function ServiceModal({ isOpen, onClose, onSuccess, editingService }: ServiceModalProps) {
+export default function ServiceModal({
+  isOpen,
+  onClose,
+  onSuccess,
+  editingService,
+}: ServiceModalProps) {
   const router = useRouter();
   const [categories, setCategories] = useState<Category[]>([]);
   const isEditing = !!editingService;
 
   useEffect(() => {
     if (isOpen) {
-      axios.get('/api/service/categories').then((res) => {
-        // Transform MongoDB documents to match Category type format
-        const transformedCategories = (res.data || []).map((cat: any) => ({
-          id: cat._id?.toString() || cat.id || '',
-          name: cat.name || '',
-          description: cat.description || '',
-        }));
-        setCategories(transformedCategories);
-      }).catch((error) => {
-        console.error('Failed to fetch categories:', error);
-        setCategories([]);
-      });
+      axios
+        .get('/api/service/categories')
+        .then((res) => {
+          const transformedCategories = (res.data || []).map((cat: any) => ({
+            id: cat._id?.toString() || cat.id || '',
+            name: cat.name || '',
+            description: cat.description || '',
+          }));
+          setCategories(transformedCategories);
+        })
+        .catch((error) => {
+          console.error('Failed to fetch categories:', error);
+          setCategories([]);
+        });
     }
   }, [isOpen]);
 
@@ -132,30 +124,28 @@ export default function ServiceModal({ isOpen, onClose, onSuccess, editingServic
               enableReinitialize
               initialValues={{
                 categoryId: editingService?.categoryId?.toString() || '',
-                heroSection: editingService?.heroSection || { title: '', description: '', image: '' },
-                cardSections: editingService?.cardSections?.map(section => ({
-                  id: crypto.randomUUID(),
-                  sectionTitle: section.sectionTitle || '',
-                  sectionDescription: section.sectionDescription || '',
-                  cards: (section.cards || []).map(card => ({
+                heroSection:
+                  editingService?.heroSection || { title: '', description: '', image: '' },
+                cardSections:
+                  editingService?.cardSections?.map((section) => ({
                     id: crypto.randomUUID(),
-                    title: card.title || '',
-                    description: card.description || '',
-                  })),
-                })) || [],
+                    sectionTitle: section.sectionTitle || '',
+                    sectionDescription: section.sectionDescription || '',
+                    cards: (section.cards || []).map((card) => ({
+                      id: crypto.randomUUID(),
+                      title: card.title || '',
+                      description: card.description || '',
+                    })),
+                  })) || [],
+                serviceCardView:
+                  editingService?.serviceCardView || { title: '', description: '' },
                 content: editingService?.content || '',
               }}
-              validationSchema={ServiceSchema}
               onSubmit={async (values, { setSubmitting, resetForm }) => {
                 try {
                   if (isEditing && editingService?._id) {
-                    // Update existing service
-                    await axios.put('/api/service', {
-                      id: editingService._id,
-                      ...values,
-                    });
+                    await axios.put('/api/service', { id: editingService._id, ...values });
                   } else {
-                    // Create new service
                     await axios.post('/api/service', values);
                   }
                   onSuccess();
@@ -185,7 +175,6 @@ export default function ServiceModal({ isOpen, onClose, onSuccess, editingServic
                     </Field>
                     <ErrorMessage name="categoryId" component="p" className="text-red-500 text-sm" />
                   </div>
-
 
                   {/* === Hero Section === */}
                   <div className="border rounded-lg p-4 bg-gray-50">
@@ -254,6 +243,40 @@ export default function ServiceModal({ isOpen, onClose, onSuccess, editingServic
                     />
                   </div>
 
+                  {/* === Service Card View === */}
+                  <div className="border rounded-lg p-4 bg-gray-50">
+                    <h3 className="font-semibold mb-3">Service Card View</h3>
+
+                    <Textfield
+                      label="Card Title"
+                      name="serviceCardView.title"
+                      placeholder="Enter card view title"
+                      value={values.serviceCardView.title}
+                      onChange={(e) => setFieldValue('serviceCardView.title', e.target.value)}
+                    />
+                    <ErrorMessage
+                      name="serviceCardView.title"
+                      component="p"
+                      className="text-red-500 text-sm"
+                    />
+
+                    <Textfield
+                      label="Card Description"
+                      name="serviceCardView.description"
+                      type="textarea"
+                      placeholder="Enter card view description"
+                      value={values.serviceCardView.description}
+                      onChange={(e) =>
+                        setFieldValue('serviceCardView.description', e.target.value)
+                      }
+                    />
+                    <ErrorMessage
+                      name="serviceCardView.description"
+                      component="p"
+                      className="text-red-500 text-sm"
+                    />
+                  </div>
+
                   {/* === Card Sections === */}
                   <div className="border rounded-lg p-4 bg-gray-50">
                     <div className="flex justify-between items-center mb-3">
@@ -305,6 +328,7 @@ export default function ServiceModal({ isOpen, onClose, onSuccess, editingServic
                             setFieldValue('cardSections', updated);
                           }}
                         />
+
                         <Textfield
                           name={`cardSections[${sIndex}].sectionDescription`}
                           type="textarea"
@@ -363,6 +387,7 @@ export default function ServiceModal({ isOpen, onClose, onSuccess, editingServic
                                 setFieldValue('cardSections', updated);
                               }}
                             />
+
                             <Textfield
                               name={`cardSections[${sIndex}].cards[${cIndex}].description`}
                               type="textarea"
@@ -380,13 +405,11 @@ export default function ServiceModal({ isOpen, onClose, onSuccess, editingServic
                     ))}
                   </div>
 
-         
+                  {/* === Content Editor === */}
                   <TextEditor
-                    label="content"
+                    label="Content"
                     initialContent={values.content}
-                    onContentChange={(value: string) =>
-                      setFieldValue('content', value)
-                    }
+                    onContentChange={(value: string) => setFieldValue('content', value)}
                   />
                   <ErrorMessage name="content" component="p" className="text-red-500 text-sm" />
 
@@ -397,7 +420,11 @@ export default function ServiceModal({ isOpen, onClose, onSuccess, editingServic
                       disabled={isSubmitting}
                       className="flex-1 bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 disabled:opacity-50"
                     >
-                      {isSubmitting ? 'Saving...' : isEditing ? 'Update Service' : 'Create Service'}
+                      {isSubmitting
+                        ? 'Saving...'
+                        : isEditing
+                        ? 'Update Service'
+                        : 'Create Service'}
                     </button>
                     <button
                       type="button"
