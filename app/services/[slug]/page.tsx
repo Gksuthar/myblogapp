@@ -1,6 +1,6 @@
 'use client';
 
-import React, { Suspense, useEffect, useMemo, useState } from 'react';
+import React, { Suspense, useEffect, useState } from 'react';
 import axios from 'axios';
 import { useParams } from 'next/navigation';
 import ComponentLoader from '@/components/ComponentLoader';
@@ -80,8 +80,9 @@ export default function ServiceDetailsPage() {
         } else {
           setError('Failed to load service');
         }
-      } catch (e: any) {
-        setError(e?.response?.data?.error || 'Failed to load service');
+      } catch (e: unknown) {
+        const err = e as { response?: { data?: { error?: string } } };
+        setError(err?.response?.data?.error || 'Failed to load service');
       } finally {
         setLoading(false);
       }
@@ -89,11 +90,10 @@ export default function ServiceDetailsPage() {
     if (slug) fetchService();
   }, [slug]);
 
-  const pageTitle = useMemo(() => service?.heroSection?.title || 'Service', [service]);
+  // const pageTitle = useMemo(() => service?.heroSection?.title || 'Service', [service]);
 
   const defaultHero = {
     title: 'Our Services',
-    description: 'Explore our comprehensive range of services.',
     description:
       'We provide reliable, professional, and customizable business solutions designed to fit your goals.',
     image:
@@ -154,7 +154,7 @@ export default function ServiceDetailsPage() {
           )}
 
           {/* Show ServiceCardView if it exists and card sections exist */}
-          {hasServiceCardView && hasCardSections && (
+          {hasServiceCardView && hasCardSections && serviceCardView && (
             <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm mt-8 mb-8">
               <h2 className="text-2xl font-semibold text-gray-900 mb-2">
                 {serviceCardView.title}
