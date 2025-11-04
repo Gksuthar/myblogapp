@@ -93,6 +93,7 @@ export default function ServiceDetailsPage() {
 
   const defaultHero = {
     title: 'Our Services',
+    description: 'Explore our comprehensive range of services.',
     description:
       'We provide reliable, professional, and customizable business solutions designed to fit your goals.',
     image:

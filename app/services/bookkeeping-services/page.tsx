@@ -93,7 +93,7 @@ export default function BookkeepingServices() {
     icon: card.icon || "✅"
   })) || [];
 
-  const heroTitle = serviceData?.heroSection?.title || "Complete Bookkeeping Services.";
+  const heroTitle = serviceData?.heroSection?.title || 'Bookkeeping Services';
   const heroDescription = serviceData?.heroSection?.description || 
     "Stanfox provides comprehensive bookkeeping services designed to give your business financial clarity and efficiency.";
   

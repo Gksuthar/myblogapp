@@ -72,8 +72,11 @@ export default function AdminIndustriesPage() {
     try {
       await axios.delete('/api/industries', { data: { id } });
       await fetchItems();
-    } catch (e: any) {
-      alert(e?.response?.data?.error || 'Failed to delete');
+    } catch (e: unknown) {
+      const errorMessage = e && typeof e === 'object' && 'response' in e 
+        ? (e as { response?: { data?: { error?: string } } }).response?.data?.error || 'Failed to delete'
+        : 'Failed to delete';
+      alert(errorMessage);
     }
   };
 

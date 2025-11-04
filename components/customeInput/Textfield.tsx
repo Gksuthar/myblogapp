@@ -1,5 +1,5 @@
 'use client'
-import React, { ChangeEventHandler } from "react";
+import React, { ChangeEventHandler, FocusEventHandler, KeyboardEventHandler } from "react";
 
 interface Props {
   label?: string;
@@ -14,24 +14,24 @@ interface Props {
   placeholder?: string;
   style?: React.CSSProperties;
   width?: string;
-  value?: any;
+  value?: string | number;
   onChange?: ChangeEventHandler<HTMLInputElement>;
-  onBlur?: any;
-  onKeyDown?: any;
-  onKeyUp?: any;
+  onBlur?: FocusEventHandler<HTMLInputElement>;
+  onKeyDown?: KeyboardEventHandler<HTMLInputElement>;
+  onKeyUp?: KeyboardEventHandler<HTMLInputElement>;
   readOnly?: boolean;
   minLength?: number;
   maxLength?: number;
-  min?: any;
-  max?: any;
+  min?: string | number;
+  max?: string | number;
   multiline?: boolean;
   disabled?: boolean;
   tabIndex?: number;
   step?: number;
   autoFocus?: boolean;
-  onInput?: any;
+  onInput?: ChangeEventHandler<HTMLInputElement>;
   suffix?: React.ReactNode;
-  onFocus?: any;
+  onFocus?: FocusEventHandler<HTMLInputElement>;
   inputGroupLeft?: React.ReactNode;
   inputGroupRight?: React.ReactNode;
 }

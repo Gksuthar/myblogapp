@@ -7,6 +7,15 @@ import CustomButton from '@/components/ui/customButtom/Button';
 import CategoryModal from './categories/CategoryModal';
 import ServiceModal from './serviceModel';
 
+interface CardSection {
+  sectionTitle: string;
+  sectionDescription: string;
+  cards: Array<{
+    title: string;
+    description: string;
+  }>;
+}
+
 interface Service {
   _id: string;
   categoryId?: string;
@@ -15,14 +24,7 @@ interface Service {
     description: string;
     image?: string;
   };
-  cardSections?: Array<{
-    sectionTitle: string;
-    sectionDescription: string;
-    cards: Array<{
-      title: string;
-      description: string;
-    }>;
-  }>;
+  cardSections?: CardSection[];
   content?: string;
   createdAt?: string;
   updatedAt?: string;
@@ -42,9 +44,14 @@ export default function AdminServices() {
       setLoading(true);
       setError('');
       const response = await axios.get('/api/service');
-      setServices(response.data.data || []);
-    } catch (err: any) {
-      setError(err.response?.data?.error || 'Failed to load services');
+      const data = response.data.data || [];
+      // Ensure services have proper structure
+      setServices(Array.isArray(data) ? data : []);
+    } catch (err: unknown) {
+      const errorMessage = err && typeof err === 'object' && 'response' in err 
+        ? (err as { response?: { data?: { error?: string } } }).response?.data?.error || 'Failed to load services'
+        : 'Failed to load services';
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -63,9 +70,12 @@ export default function AdminServices() {
         headers: { 'Content-Type': 'application/json' },
       });
       fetchServices(); // Refresh list after deletion
-    } catch (err: any) {
-      setError(err.response?.data?.error || 'Failed to delete service');
-      alert(err.response?.data?.error || 'Failed to delete service');
+    } catch (err: unknown) {
+      const errorMessage = err && typeof err === 'object' && 'response' in err 
+        ? (err as { response?: { data?: { error?: string } } }).response?.data?.error || 'Failed to delete service'
+        : 'Failed to delete service';
+      setError(errorMessage);
+      alert(errorMessage);
     }
   };
 
@@ -89,7 +99,7 @@ export default function AdminServices() {
   return (
     <div className="p-6">
       {/* Header Buttons */}
-      <div className="flex gap-3 mb-6">
+      <div className="flex gap-4 mb-6">
         <CustomButton text="Add Category" onClick={() => setIsModalOpen(true)} />
         <CustomButton text="Add Service" onClick={() => setOpen(true)} />
       </div>

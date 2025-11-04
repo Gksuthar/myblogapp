@@ -20,7 +20,7 @@ interface Blog {
 }
 
 export default function BlogPage() {
-  const { slug } = useParams();
+  const { slug } = useParams<{ slug: string }>();
   const router = useRouter();
   const [blog, setBlog] = useState<Blog | null>(null);
   const [loading, setLoading] = useState(true);

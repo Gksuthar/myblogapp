@@ -15,6 +15,15 @@ interface WpCKEditorProps {
   required?: boolean;
 }
 
+// Type for CKEditor instance
+interface CKEditorInstance {
+  getData: () => string;
+}
+
+// Type for ClassicEditor - using any due to complex CKEditor type definitions
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type ClassicEditorType = any;
+
 const TextEditor: React.FC<WpCKEditorProps> = ({
   initialContent = "",
   onContentChange,
@@ -23,6 +32,7 @@ const TextEditor: React.FC<WpCKEditorProps> = ({
 }) => {
   const [content, setContent] = useState<string>(initialContent);
   const [editorLoaded, setEditorLoaded] = useState(false);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const editorRef = useRef<any>(null);
 
   const editorConfig = {
@@ -169,7 +179,7 @@ const TextEditor: React.FC<WpCKEditorProps> = ({
     };
   }, []);
 
-  const handleChange = (_event: unknown, editorInstance: { getData: () => string }) => {
+  const handleChange = (_event: unknown, editorInstance: CKEditorInstance) => {
     const data = editorInstance.getData();
     setContent(data);
     onContentChange?.(data);

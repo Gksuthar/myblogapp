@@ -28,9 +28,16 @@ export async function fetchBlogs(page = 1, limit = 10) {
  * @param id Blog ID
  * @returns Blog data
  */
-export async function fetchBlogById(id: string) {
+export async function fetchBlogById(id: string): Promise<{
+  _id: string;
+  title: string;
+  content: string;
+  slug: string;
+  published: boolean;
+  createdAt: string;
+}> {
   try {
-    const response = await fetch(`/api/blogs/${id}`, {
+    const response = await fetch(`/api/blogs?id=${id}`, {
       next: { revalidate: 60 }
     });
     
@@ -40,7 +47,7 @@ export async function fetchBlogById(id: string) {
     
     return await response.json();
   } catch (error) {
-    console.error(`Error fetching blog ${id}:`, error);
+    console.error('Error fetching blog:', error);
     throw error;
   }
 }
@@ -51,7 +58,17 @@ export async function fetchBlogById(id: string) {
  * @param limit Number of items per page
  * @returns Service data with pagination info
  */
-export async function fetchServices(page = 1, limit = 10) {
+export async function fetchServices(page = 1, limit = 10): Promise<{
+  services: Array<{
+    _id: string;
+    title: string;
+    description: string;
+    slug: string;
+  }>;
+  total: number;
+  page: number;
+  limit: number;
+}> {
   try {
     const response = await fetch(`/api/services?page=${page}&limit=${limit}`, {
       next: { revalidate: 60 }
@@ -73,9 +90,15 @@ export async function fetchServices(page = 1, limit = 10) {
  * @param id Service ID
  * @returns Service data
  */
-export async function fetchServiceById(id: string) {
+export async function fetchServiceById(id: string): Promise<{
+  _id: string;
+  title: string;
+  description: string;
+  content: string;
+  slug: string;
+}> {
   try {
-    const response = await fetch(`/api/services/${id}`, {
+    const response = await fetch(`/api/services?id=${id}`, {
       next: { revalidate: 60 }
     });
     
@@ -85,7 +108,7 @@ export async function fetchServiceById(id: string) {
     
     return await response.json();
   } catch (error) {
-    console.error(`Error fetching service ${id}:`, error);
+    console.error('Error fetching service:', error);
     throw error;
   }
 }

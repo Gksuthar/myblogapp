@@ -87,7 +87,7 @@ export const Datatable = <T,>({
     }
   };
 
-const filterData = (data: T[] | any): T[] => {
+const filterData = (data: T[] | unknown): T[] => {
   // ✅ If data is not an array, return an empty array instead of crashing
   if (!Array.isArray(data)) {
     console.warn("⚠️ Datatable: Expected 'data' to be an array but got:", data);
@@ -96,7 +96,7 @@ const filterData = (data: T[] | any): T[] => {
 
   if (!isSearchBar || !searchTerm.trim()) return data;
 
-  return data.filter((item: any) =>
+  return data.filter((item: T) =>
     Object.values(item).some(
       (value) =>
         value != null &&

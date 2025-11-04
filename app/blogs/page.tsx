@@ -7,11 +7,28 @@ import ComponentLoader from '@/components/ComponentLoader';
 const BlogCard = lazy(() => import('@/components/BlogCard'));
 const HeroSection = lazy(() => import('@/components/HeroSection/HeroSection'));
 
+interface Blog {
+  _id: string;
+  title: string;
+  slug: string;
+  content?: string;
+  excerpt?: string;
+  image?: string;
+  published: boolean;
+  createdAt: string;
+}
+
+interface HeroData {
+  title?: string;
+  description?: string;
+  image?: string;
+}
+
 const Page = () => {
-  const [blogs, setBlogs] = useState<any[]>([]);
-  const [heroData, setHeroData] = useState<any>(null);
+  const [blogs, setBlogs] = useState<Blog[]>([]);
+  const [heroData, setHeroData] = useState<HeroData | null>(null);
   const [loading, setLoading] = useState(true);
-  const [selectedBlog, setSelectedBlog] = useState<any>(null);
+  const [selectedBlog, setSelectedBlog] = useState<Blog | null>(null);
 
   // Fetch hero section data
   const fetchHeroes = async () => {
@@ -70,7 +87,7 @@ const Page = () => {
         {heroData ? (
           <HeroSection
             title={heroData.title}
-            disc={heroData.disc}
+            disc={heroData.description || ''}
             image={heroData.image}
             showCtas={false}
           />

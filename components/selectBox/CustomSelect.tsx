@@ -1,6 +1,6 @@
 'use client'
 import React from "react";
-import Select, { components, MenuProps } from "react-select";
+import Select, { components, MenuProps, StylesConfig } from "react-select";
 import { motion, AnimatePresence } from "framer-motion";
 import "./Select.css"; // Common CSS
 
@@ -14,7 +14,7 @@ type CustomSelectProps = {
     placeholder?: string;
     name?: string;
     options?: OptionType[];
-    value?: any;
+    value?: OptionType | OptionType[] | null;
     onChange?: (value: OptionType | OptionType[] | null) => void;
     isSearchable?: boolean;
     isDisabled?: boolean;
@@ -22,9 +22,9 @@ type CustomSelectProps = {
     required?: boolean;
     isMulti?: boolean;
     autoFocus?: boolean;
-    onBlur?: any;
-    tabIndex?: any;
-    styles?: any;
+    onBlur?: () => void;
+    tabIndex?: number;
+    styles?: StylesConfig<OptionType, boolean>;
 };
 
 // Custom animated Menu component
