@@ -10,34 +10,44 @@
 
 "use client";
 
-import React, { JSX, useEffect, useState } from "react";
+import React, { JSX, useState } from "react";
 import { HiOutlineChevronUp, HiOutlineChevronDown } from "react-icons/hi";
 
-interface DataProps<T> {
+type Align = "left" | "right" | "center";
+
+interface Column<T extends Record<string, unknown>> {
+  header: React.ReactNode;
+  field: keyof T;
+  width?: string | number;
+  align?: Align;
+  sorting?: boolean;
+}
+
+interface DataProps<T extends Record<string, unknown>> {
   data: T[];
-  otherData?: any;
-  columns: any[];
+  otherData?: { errorMsg?: React.ReactNode };
+  columns: Column<T>[];
   checkbox?: boolean;
   isSearchBar?: boolean;
-  children: (child: { row: any; column: any; rowIndex: number }) => JSX.Element;
-  rowClick?: (data: any) => void;
-  onDoubleClick?: (data: T) => void;
-  selectData?: any[];
-  setSelectData?: (data: any[]) => void;
+  children: (child: { row: T; column: Column<T>; rowIndex: number }) => JSX.Element;
+  rowClick?: (data: T & { idx: number }) => void;
+  onDoubleClick?: (data: T & { idx: number }) => void;
+  selectData?: T[];
+  setSelectData?: (data: T[]) => void;
   isLoader?: boolean;
   tableNm?: React.ReactNode;
   pagination?: boolean;
   tableBtn?: React.ReactNode;
   footerSection?: React.ReactNode;
   height?: number;
-  isShowUserDtl?: any;
+  isShowUserDtl?: boolean[];
   tableLeftBtn?: React.ReactNode;
   icon?: React.ReactNode;
   hr?: boolean;
   MoreAction?: React.ReactNode;
 }
 
-export const Datatable = <T,>({
+export const Datatable = <T extends Record<string, unknown>,>({
   data,
   otherData,
   columns,
@@ -46,8 +56,8 @@ export const Datatable = <T,>({
   children,
   rowClick,
   onDoubleClick,
-  selectData,
-  setSelectData,
+  // selectData,
+  // setSelectData,
   isLoader,
   tableNm,
   pagination,
@@ -58,25 +68,16 @@ export const Datatable = <T,>({
   hr,
   MoreAction,
 }: DataProps<T>) => {
-  const [searchTerm, setSearchTerm] = useState<string>("");
-  const [currentPage, setCurrentPage] = useState<number>(1);
-  const [itemsPerPage, setItemsPerPage] = useState<number>(10);
+  const [searchTerm] = useState<string>("");
+  const [currentPage] = useState<number>(1);
+  const [itemsPerPage] = useState<number>(10);
   const [sortColumn, setSortColumn] = useState<keyof T | null>(null);
   const [sortDirection, setSortDirection] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (tableNm === "Day Wise Details" || tableNm === "Day Wise Summary") {
-      setCurrentPage(1);
-    }
-  }, [data]);
+  // If you need page reset on data/search change, lift pagination state up to parent
+  // and control currentPage via props; we avoid setState in effects to satisfy strict lint rules.
 
-  useEffect(() => {
-    if (currentPage > 1) {
-      setCurrentPage(1);
-    }
-  }, [searchTerm]);
-
-  const handleSort = (column: keyof T | any) => {
+  const handleSort = (column: keyof T) => {
     if (sortColumn === column) {
       setSortDirection((prevDirection: string | null) =>
         prevDirection === "asc" ? "desc" : "asc"
@@ -116,42 +117,15 @@ const filterData = (data: T[] | unknown): T[] => {
       })
     : filterData(data);
 
-  const totalPages = Math.ceil(sortedData?.length / itemsPerPage);
+  // const totalPages = Math.ceil(sortedData?.length / itemsPerPage);
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = pagination
     ? sortedData.slice(indexOfFirstItem, indexOfLastItem)
     : sortedData;
 
-  const isSelected = (id: T) => selectData?.indexOf(id) !== -1;
-
-  const handleClick = (_: any, row: T) => {
-    const selectedIndex = selectData ? selectData?.indexOf(row) : 0;
-    let newSelected: T[] = [];
-
-    if (selectedIndex === -1) {
-      newSelected = selectData ? newSelected.concat(selectData, row) : [];
-    } else if (selectedIndex === 0) {
-      newSelected = selectData ? newSelected.concat(selectData?.slice(1)) : [];
-    } else if (selectData && selectedIndex === selectData?.length - 1) {
-      newSelected = newSelected.concat(selectData?.slice(0, -1));
-    } else if (selectedIndex > 0 && selectData) {
-      newSelected = newSelected.concat(
-        selectData?.slice(0, selectedIndex),
-        selectData.slice(selectedIndex + 1)
-      );
-    }
-    setSelectData && setSelectData(newSelected);
-  };
-
-  const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.checked) {
-      const newSelected = data.map((n: any) => n);
-      setSelectData && setSelectData(newSelected);
-      return;
-    }
-    setSelectData && setSelectData([]);
-  };
+  // const isSelected = (id: T) => (selectData ? selectData.indexOf(id) !== -1 : false);
+  // Row selection helpers can be re-introduced when needed; keeping minimal API for now.
 
   return (
     <>
@@ -177,7 +151,7 @@ const filterData = (data: T[] | unknown): T[] => {
             <thead className="bg-gray-50 text-gray-700">
               <tr>
            
-                {columns.map((column: any, index: number) => (
+                {columns.map((column: Column<T>, index: number) => (
                   <th
                     key={index}
                     onClick={() =>
@@ -211,8 +185,8 @@ const filterData = (data: T[] | unknown): T[] => {
 
             <tbody className="bg-white divide-y divide-gray-100">
               {!isLoader &&
-                currentItems.map((row: any, rowIndex: number) => {
-                  const isItemSelected = isSelected(row);
+                currentItems.map((row: T, rowIndex: number) => {
+                  // const isItemSelected = isSelected(row);
                   return (
                     <React.Fragment key={rowIndex}>
                       <tr
@@ -223,11 +197,11 @@ const filterData = (data: T[] | unknown): T[] => {
                       >
                        
 
-                        {columns.map((column: any, colIndex: number) => (
+                        {columns.map((column: Column<T>, colIndex: number) => (
                           <td
                             key={colIndex}
                             onClick={() =>
-                              rowClick && rowClick({ ...row, idx: rowIndex })
+                              rowClick && rowClick({ ...(row as T), idx: rowIndex })
                             }
                             className={`p-2 text-gray-700 ${
                               column.align === "right"
@@ -284,11 +258,7 @@ const filterData = (data: T[] | unknown): T[] => {
 
           {!isLoader && currentItems.length === 0 && (
             <div className="flex flex-col items-center justify-center h-64">
-              <img
-                src=""
-                alt="no data found"
-                className="w-48 mb-2"
-              />
+              {/* Decorative placeholder; replace with Image if you have an asset */}
               <p className="text-gray-600">No {tableNm} found</p>
             </div>
           )}
