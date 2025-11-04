@@ -1,13 +1,27 @@
 'use client'
 import dynamic from 'next/dynamic';
+import 'ckeditor5/ckeditor5.css';
 
 export const RichTextEditor = dynamic(
   async () => {
     const { CKEditor } = await import('@ckeditor/ckeditor5-react');
-    const ClassicEditor = (await import('@ckeditor/ckeditor5-build-classic')).default;
-
-    // ✅ Fix the type issue by casting to any
-    const SafeClassicEditor: any = ClassicEditor;
+    // Use modular CKEditor to avoid duplicated modules. Import required editor and plugins from 'ckeditor5'.
+    const {
+      ClassicEditor,
+      Essentials,
+      Paragraph,
+      Heading,
+      Bold,
+      Italic,
+      Link,
+      BlockQuote,
+      List,
+      Indent,
+      Table,
+      TableToolbar,
+      Alignment,
+    } = await import('ckeditor5');
+    // Using modular CKEditor: Alignment comes from 'ckeditor5' and will be enabled via config.plugins
 
     return function Editor({
       value,
@@ -20,33 +34,51 @@ export const RichTextEditor = dynamic(
       onBlur?: () => void;
       placeholder?: string;
     }) {
+      const config = {
+        placeholder: placeholder ?? 'Write your post...',
+        plugins: [
+          Essentials,
+          Paragraph,
+          Heading,
+          Bold,
+          Italic,
+          Link,
+          BlockQuote,
+          List,
+          Indent,
+          Table,
+          TableToolbar,
+          Alignment,
+        ],
+        toolbar: [
+          'undo',
+          'redo',
+          '|',
+          'heading',
+          '|',
+          'bold',
+          'italic',
+          'link',
+          'blockQuote',
+          '|',
+          'alignment',
+          '|',
+          'bulletedList',
+          'numberedList',
+          'outdent',
+          'indent',
+          '|',
+          'insertTable',
+        ],
+      };
+
       return (
         <CKEditor
-          editor={SafeClassicEditor} // ✅ fixed type
+          editor={ClassicEditor}
           data={value}
-          onChange={(_, editor: any) => onChange(editor.getData())}
+          onChange={(_, editor) => onChange((editor as { getData: () => string }).getData())}
           onBlur={onBlur}
-          config={{
-            placeholder: placeholder ?? 'Write your post...',
-            toolbar: [
-              'undo',
-              'redo',
-              '|',
-              'heading',
-              '|',
-              'bold',
-              'italic',
-              'link',
-              'blockQuote',
-              '|',
-              'bulletedList',
-              'numberedList',
-              'outdent',
-              'indent',
-              '|',
-              'insertTable',
-            ],
-          }}
+          config={config}
         />
       );
     };
