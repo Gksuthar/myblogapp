@@ -12,14 +12,17 @@
     "seed:services": "node scripts/seed-services.mjs"
   },
   "dependencies": {
+    "@ckeditor/ckeditor5-alignment": "^47.1.0",
     "@ckeditor/ckeditor5-build-classic": "^41.4.2",
     "@ckeditor/ckeditor5-react": "^11.0.0",
+    "@ckeditor/ckeditor5-theme-lark": "^47.1.0",
     "@types/bcryptjs": "^2.4.6",
     "@types/jsonwebtoken": "^9.0.10",
     "axios": "^1.12.2",
     "bcryptjs": "^3.0.2",
     "cheerio": "^1.0.0-rc.12",
     "ckeditor": "^4.12.1",
+    "ckeditor5": "^47.1.0",
     "dotenv": "^17.2.3",
     "formik": "^2.4.6",
     "framer-motion": "^12.23.24",
@@ -45,6 +48,9 @@
     "eslint": "^9",
     "eslint-config-next": "16.0.0",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "terser-webpack-plugin": "^5.3.14",
+    "typescript": "^5",
+    "webpack": "^5.102.1",
+    "webpack-cli": "^6.0.1"
   }
 }

@@ -42,7 +42,7 @@ interface Service {
   categoryId?: string;
   heroSection: HeroSection;
   cardSections?: CardSection[];
-  serviceCardView: ServiceCardView;
+  serviceCardView?: ServiceCardView | ServiceCardView[]; // Support both formats for backward compatibility
   content?: string;
 }
 
@@ -98,7 +98,6 @@ export default function ServiceModal({
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          onClick={onClose}
         >
           <motion.div
             className="bg-white w-full max-w-5xl rounded-3xl shadow-3xl p-8 relative overflow-y-auto max-h-[90vh]"
@@ -124,8 +123,11 @@ export default function ServiceModal({
               enableReinitialize
               initialValues={{
                 categoryId: editingService?.categoryId?.toString() || '',
-                heroSection:
-                  editingService?.heroSection || { title: '', description: '', image: '' },
+                heroSection: {
+                  title: editingService?.heroSection?.title || '',
+                  description: editingService?.heroSection?.description || '',
+                  image: editingService?.heroSection?.image || '',
+                },
                 cardSections:
                   editingService?.cardSections?.map((section) => ({
                     id: crypto.randomUUID(),
@@ -137,10 +139,31 @@ export default function ServiceModal({
                       description: card.description || '',
                     })),
                   })) || [],
-                serviceCardView:
-                  editingService?.serviceCardView || { title: '', description: '' },
+                serviceCardView: (() => {
+                  // Handle both old array format and new object format
+                  const scv = editingService?.serviceCardView;
+                  if (!scv) {
+                    return { title: '', description: '' };
+                  }
+                  if (Array.isArray(scv) && scv.length > 0) {
+                    // Old format: array - take first item
+                    return {
+                      title: scv[0]?.title || '',
+                      description: scv[0]?.description || '',
+                    };
+                  }
+                  if (typeof scv === 'object' && !Array.isArray(scv)) {
+                    // New format: object
+                    return {
+                      title: scv.title || '',
+                      description: scv.description || '',
+                    };
+                  }
+                  return { title: '', description: '' };
+                })(),
                 content: editingService?.content || '',
               }}
+
               onSubmit={async (values, { setSubmitting, resetForm }) => {
                 try {
                   if (isEditing && editingService?._id) {
@@ -423,8 +446,8 @@ export default function ServiceModal({
                       {isSubmitting
                         ? 'Saving...'
                         : isEditing
-                        ? 'Update Service'
-                        : 'Create Service'}
+                          ? 'Update Service'
+                          : 'Create Service'}
                     </button>
                     <button
                       type="button"

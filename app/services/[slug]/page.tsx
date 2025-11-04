@@ -15,14 +15,9 @@ interface ServiceDoc {
     description?: string;
     image?: string;
   };
-  serviceCardView?: Array<{
+  serviceCardView?: {
     title?: string;
     description?: string;
-    image?: string;
-  }> | {
-    title?: string;
-    description?: string;
-    image?: string;
   };
   cardSections?: Array<{
     sectionTitle?: string;
@@ -63,9 +58,21 @@ export default function ServiceDetailsPage() {
             ? res.data
             : [];
 
+          // Check if slug is a MongoDB ObjectId (24 hex characters)
+          const isObjectId = /^[0-9a-fA-F]{24}$/.test(slug);
+          
           const match = (rawData as ServiceDoc[]).find((s) => {
-            const dbSlug = s.slug || toSlug(s.heroSection?.title || '');
-            return dbSlug === slug;
+            if (isObjectId) {
+              // Match by _id first (most specific), then categoryId
+              // Convert _id to string for comparison
+              const serviceId = s._id?.toString();
+              const serviceCategoryId = s.categoryId?.toString();
+              return serviceId === slug || serviceCategoryId === slug;
+            } else {
+              // Match by slug or generated slug from title
+              const dbSlug = s.slug || toSlug(s.heroSection?.title || '');
+              return dbSlug === slug;
+            }
           });
 
           if (match) setService(match);
@@ -92,12 +99,39 @@ export default function ServiceDetailsPage() {
       'https://cdn.prod.website-files.com/6718c309cc349b579872ddbb/6732eedcfeeebafefe65ebd0_icons8-checklist-94%201.svg',
   };
 
-  // ✅ Determine if serviceCardView data exists
-  const hasServiceCardView =
-    (Array.isArray(service?.serviceCardView) && service?.serviceCardView.length > 0) ||
-    (!!service?.serviceCardView &&
-      !Array.isArray(service?.serviceCardView) &&
-      (service?.serviceCardView as any)?.title);
+  // Check if hero section has content
+  const hasHeroSection = 
+    service?.heroSection?.title?.trim() || 
+    service?.heroSection?.description?.trim() || 
+    service?.heroSection?.image?.trim();
+
+  // Check if serviceCardView has content
+  const serviceCardView = service?.serviceCardView && !Array.isArray(service.serviceCardView) 
+    ? service.serviceCardView 
+    : null;
+  const hasServiceCardView = 
+    serviceCardView?.title?.trim() || 
+    serviceCardView?.description?.trim();
+
+  // Check if card sections exist
+  const hasCardSections = 
+    Array.isArray(service?.cardSections) && 
+    service.cardSections.length > 0;
+
+  // Determine what to show
+  // If hero section is empty, don't show it
+  // If serviceCardView title, description, and card sections exist, show both hero and serviceCardView
+  // Use hero section data if available, otherwise use serviceCardView data
+  const shouldShowHero = hasHeroSection || (hasServiceCardView && hasCardSections);
+  const heroTitle = hasHeroSection && service?.heroSection?.title?.trim()
+    ? service.heroSection.title
+    : serviceCardView?.title?.trim() || defaultHero.title;
+  const heroDescription = hasHeroSection && service?.heroSection?.description?.trim()
+    ? service.heroSection.description
+    : serviceCardView?.description?.trim() || defaultHero.description;
+  const heroImage = service?.heroSection?.image?.trim()
+    ? service.heroSection.image
+    : defaultHero.image;
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-10">
@@ -107,27 +141,27 @@ export default function ServiceDetailsPage() {
 
       {!loading && !error && service && (
         <>
-          {/* ✅ Only show HeroSection when serviceCardView is NOT available */}
-          {!hasServiceCardView && (
+          {/* Show HeroSection only if hero section exists or if serviceCardView + card sections exist */}
+          {shouldShowHero && (
             <Suspense fallback={<ComponentLoader height="h-64" message="Loading hero..." />}>
               <HeroSection
-                title={
-                  service.heroSection?.title?.trim()
-                    ? service.heroSection.title
-                    : defaultHero.title
-                }
-                disc={
-                  service.heroSection?.description?.trim()
-                    ? service.heroSection.description
-                    : defaultHero.description
-                }
-                image={
-                  service.heroSection?.image?.trim()
-                    ? service.heroSection.image
-                    : defaultHero.image
-                }
+                title={heroTitle}
+                disc={heroDescription}
+                image={heroImage}
               />
             </Suspense>
+          )}
+
+          {/* Show ServiceCardView if it exists and card sections exist */}
+          {hasServiceCardView && hasCardSections && (
+            <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm mt-8 mb-8">
+              <h2 className="text-2xl font-semibold text-gray-900 mb-2">
+                {serviceCardView.title}
+              </h2>
+              {serviceCardView.description && (
+                <p className="text-gray-600">{serviceCardView.description}</p>
+              )}
+            </div>
           )}
 
           {/* Card Sections */}

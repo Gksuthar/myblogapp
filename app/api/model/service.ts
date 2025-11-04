@@ -42,12 +42,12 @@ const HeroSectionSchema = new Schema(
   { _id: false }
 );
 
-const cserviceCardView = new Schema(
+const ServiceCardViewSchema = new Schema(
   {
     title: { type: String, default: '' },
     description: { type: String, default: '' },
   },
-  { _id: true }
+  { _id: false }
 );
 
 // --- Service Schema ---
@@ -57,7 +57,7 @@ const ServiceSchema = new Schema(
     slug: { type: String, trim: true, default: '' },
     heroSection: { type: HeroSectionSchema, default: {} },
     cardSections: { type: [CardSectionSchema], default: [] },
-    serviceCardView:{type:[cserviceCardView] , default:[]},
+    serviceCardView: { type: ServiceCardViewSchema, default: {} },
     content: { type: String, default: '' },
   },
   {

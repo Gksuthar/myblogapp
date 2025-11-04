@@ -242,7 +242,7 @@ export default function Home() {
 
                                 const post = {
                                     id: i + 1,
-                                    title: cardView?.title || svc.heroSection?.title || 'Untitled Service',
+                                    title: cardView?.title || svc.heroSection?.title ||'',
                                     desc: cardView?.description || svc.heroSection?.description || "",
                                     img:
                                         cardView?.image ||
