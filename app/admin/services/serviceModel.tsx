@@ -1,4 +1,5 @@
 'use client';
+/* eslint-disable @next/next/no-img-element */
 
 import React, { useEffect, useState } from 'react';
 import { BiUpload } from 'react-icons/bi';
@@ -6,7 +7,7 @@ import { BsTrash2 } from 'react-icons/bs';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import { Formik, Form, ErrorMessage, Field } from 'formik';
-import * as Yup from 'yup';
+// import * as Yup from 'yup';
 import { Category } from '@/types/api';
 import { motion, AnimatePresence } from 'framer-motion';
 import Textfield from '@/components/customeInput/Textfield';
@@ -37,20 +38,31 @@ interface ServiceCardView {
   description: string;
 }
 
-interface Service {
+// Shape we use internally inside the modal
+// (removed legacy internal Service interface – we accept a more flexible InputService below)
+
+// Accept editing data from caller; allow sections/cards without ids (we will generate them)
+type InputCard = { id?: string; title: string; description: string };
+type InputCardSection = {
+  id?: string;
+  sectionTitle: string;
+  sectionDescription?: string;
+  cards: InputCard[];
+};
+type InputService = {
   _id: string;
   categoryId?: string;
   heroSection: HeroSection;
-  cardSections?: CardSection[];
-  serviceCardView?: ServiceCardView | ServiceCardView[]; // Support both formats for backward compatibility
+  cardSections?: InputCardSection[];
+  serviceCardView?: ServiceCardView | ServiceCardView[];
   content?: string;
-}
+};
 
 interface ServiceModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSuccess: () => void;
-  editingService?: Service | null;
+  editingService?: InputService | null;
 }
 
 interface FormValues {
@@ -76,7 +88,7 @@ export default function ServiceModal({
       axios
         .get('/api/service/categories')
         .then((res) => {
-          const transformedCategories = (res.data || []).map((cat: any) => ({
+          const transformedCategories = (res.data || []).map((cat: Record<string, unknown>) => ({
             id: cat._id?.toString() || cat.id || '',
             name: cat.name || '',
             description: cat.description || '',
@@ -175,9 +187,10 @@ export default function ServiceModal({
                   resetForm();
                   onClose();
                   router.refresh();
-                } catch (error: any) {
+                } catch (error: unknown) {
                   console.error('Service save error:', error);
-                  alert(error.response?.data?.error || 'Failed to save service');
+                  const err = error as { response?: { data?: { error?: string } } };
+                  alert(err?.response?.data?.error || 'Failed to save service');
                 } finally {
                   setSubmitting(false);
                 }
