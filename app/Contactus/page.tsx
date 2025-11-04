@@ -162,7 +162,10 @@ You can always visit us at our HQ, we have a friendly staff and a mean cup of co
                 {!loadingCompanies && companies.map((c) => (
                       <div
                         key={c._id}
-                        className="aspect-square w-full border border-gray-200 rounded-md bg-white p-1 overflow-hidden flex items-center justify-center"
+                        className="aspect-square w-full border border-gray-200 rounded-md bg-white p-1 overflow-hidden flex items-center justify-center
+                        transition-all duration-300 ease-in-out
+                        hover:border-blue-400 hover:shadow-lg hover:shadow-blue-100 hover:-translate-y-1 hover:scale-105
+                        cursor-pointer group"
                       >
                     {c.image ? (
                       // eslint-disable-next-line @next/next/no-img-element
@@ -170,13 +173,13 @@ You can always visit us at our HQ, we have a friendly staff and a mean cup of co
                         src={c.image}
                         alt={c.name}
                         loading="lazy"
-                            className="max-h-[92%] max-w-[95%] object-contain"
+                            className="max-h-[92%] max-w-[95%] object-contain transition-transform duration-300 ease-in-out group-hover:scale-110"
                         onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
                       />
                     ) : null}
                     {/* Fallback to name if image missing or failed */}
                     {!c.image && (
-                      <span className="text-[11px] font-semibold text-gray-600 truncate px-2 text-center">
+                      <span className="text-[11px] font-semibold text-gray-600 truncate px-2 text-center transition-colors duration-300 group-hover:text-blue-600">
                         {c.name}
                       </span>
                     )}

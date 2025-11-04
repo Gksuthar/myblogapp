@@ -11,7 +11,7 @@ const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'admin@example.com';
 const RESET_PASSWORD = (process.env.ADMIN_RESET_PASSWORD || 'false').toLowerCase() === 'true';
 
 if (!MONGODB_URI) {
-  console.error('❌ MONGODB_URI is not set. Provide it via environment variable.');
+  console.error('MONGODB_URI is not set. Provide it via environment variable.');
   process.exit(1);
 }
 
@@ -48,9 +48,9 @@ async function main() {
     const existing = await Admin.findOne({ username: ADMIN_USERNAME });
 
     if (existing && !RESET_PASSWORD) {
-      console.log('ℹ️  Admin user already exists. Skipping.');
-      console.log(`   Username: ${existing.username}`);
-      console.log('   To reset the password, run with ADMIN_RESET_PASSWORD=true');
+      console.log('ℹAdmin user already exists. Skipping.');
+      console.log(`Username: ${existing.username}`);
+      console.log('To reset the password, run with ADMIN_RESET_PASSWORD=true');
       return 0;
     }
 

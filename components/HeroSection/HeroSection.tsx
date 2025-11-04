@@ -41,18 +41,6 @@ const HeroSection: React.FC<Props> = ({ title, disc, image, showCtas = true }) =
 
         {showCtas && (
           <div className="flex items-center justify-center md:justify-start gap-4">
-            <Link href="/blogs">
-              <CustomButton
-                text={
-                  <span className="flex items-center gap-2">
-                    Explore Blogs <FaArrowRight className="text-sm" />
-                  </span>
-                }
-                variant="primary"
-                className="shadow-md"
-              />
-            </Link>
-
             <Link href="/about">
               <CustomButton text="About Us" variant="transparent" />
             </Link>

@@ -111,8 +111,6 @@ const Footer: React.FC = () => {
             <div className="flex items-start gap-8"> {/* switch to flex so columns hug with no extra space */}
               <ul className="space-y-2 flex-none"> {/* content-width column; no stretching */}
                 {(links.length ? links : [
-                  { label: 'Home', href: '/' },
-                  { label: 'About Us', href: '/about' },
                   { label: 'How We Work', href: '/how-we-work' },
                   { label: 'Contact Us', href: '/Contactus' }
                 ]).slice(0,5).map((l, i) => (
