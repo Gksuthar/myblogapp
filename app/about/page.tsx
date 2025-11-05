@@ -93,8 +93,7 @@ const AboutPage: React.FC = () => {
 
   return (
     <div>
-      {/* Hero Section */}
-      {heroAbout && (
+
         <section className="relative bg-gradient-to-br from-blue-50 to-indigo-100 py-16 md:py-24 overflow-hidden">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 flex flex-col lg:flex-row items-center justify-between gap-12">
             {/* Main Content */}
@@ -211,7 +210,7 @@ const AboutPage: React.FC = () => {
             </div>
           </div>
         </section>
-      )}
+    
 
       {/* Mission & Vision */}
       <section className="py-16 bg-gray-50">
