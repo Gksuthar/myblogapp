@@ -130,17 +130,15 @@ export default function Home() {
                         <div className="absolute inset-0 bg-gradient-to-br from-white via-gray-50 to-blue-50"></div>
 
                         {/* Center Content */}
-                        <div className="relative z-10  mx-auto flex flex-col items-center text-center">
-                          
+                        <div className="relative z-10 mx-auto flex flex-col items-center text-center px-4">
                             {/* Heading */}
                             <motion.h1
-                            style={{width:"32%"}}
+                                style={{ width: "100%", maxWidth: "720px" }}
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ duration: 0.6 }}
-                                className="text-4xl sm:text-5xl md:text-1xl font-bold text-gray-900 mb-6 leading-tight"
+                                className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-6 leading-tight"
                             >
-                                
                                 Dedicated Offshore Teams For CPAs And Accounting Firms
                             </motion.h1>
 
@@ -149,19 +147,18 @@ export default function Home() {
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: 0.2, duration: 0.6 }}
-                                className="text-lg text-gray-600 max-w-2xl mb-8"
+                                className="text-base sm:text-lg text-gray-600 max-w-2xl mb-8"
                             >
                                 Join other CPA firms, empowering their firm with Stanfox's job-ready
                                 outsourcing accounting team.
                             </motion.p>
-
                         </div>
 
                         {/* Profile Layout */}
-                        <div className="relative z-10 w-full  mx-auto mt-16">
-                            {/* Left Main Person */}
-                            <div className="absolute bottom-0 left-6">
-                                <div className="relative w-[320px] h-[320px] rounded-2xl overflow-hidden bg-[#EAF5EE] shadow-lg">
+                        <div className="relative z-10 w-full mx-auto mt-16">
+                            {/* Left Main Person - hidden on mobile */}
+                            <div className="hidden md:block absolute bottom-0 left-6">
+                                <div className="relative w-[280px] h-[280px] rounded-2xl overflow-hidden bg-[#EAF5EE] shadow-lg">
                                     <Image
                                         src="https://cdn.prod.website-files.com/6718c309cc349b579872ddbb/6731b5ddfd1bbd33089db299_hero_left-image.webp"
                                         alt="Raj Sharma"
@@ -202,9 +199,9 @@ export default function Home() {
                                 </div>
                             </div>
 
-                            {/* Right Main Person */}
-                            <div className="absolute right-1 bottom-0">
-                                <div className="relative w-[320px] h-[320px] rounded-2xl overflow-hidden bg-[#EAF5EE] shadow-lg">
+                            {/* Right Main Person - hidden on mobile */}
+                            <div className="hidden md:block absolute right-1 bottom-0">
+                                <div className="relative w-[280px] h-[280px] rounded-2xl overflow-hidden bg-[#EAF5EE] shadow-lg">
                                     <Image
                                         src="https://cdn.prod.website-files.com/6718c309cc349b579872ddbb/673ddddc7484f43263a13818_Group%201000004220.png"
                                         alt="Kajol Shah"
@@ -246,6 +243,7 @@ export default function Home() {
                             </div>
                         </div>
                     </section>
+
                 ) : (
                     <ComponentLoader height="h-96" message="Loading hero section..." />
                 )}
