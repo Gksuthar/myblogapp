@@ -121,8 +121,7 @@ const Footer: React.FC = () => {
               </ul>
               <ul className="space-y-1 flex flex-col justify-start flex-none"> {/* content-width column; no stretching */}
                 {(links.length > 5 ? links.slice(5) : [
-                  { label: 'Sbaccounting Certification', href: '/certification' },
-                  { label: 'Application', href: '/apply' },
+
                   { label: 'Services', href: '/services' },
                   { label: 'Privacy Policy', href: '/privacy' }
                 ]).slice(0,5).map((l, i) => (
