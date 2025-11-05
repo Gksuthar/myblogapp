@@ -7,6 +7,7 @@ import HeroSection from '@/components/HeroSection/HeroSection';
 import { Link } from 'ckeditor5';
 import WhyChooseUsGrid from './WhyChooseUsGrid';
 import WhyChooseUsSection from '../home/WhyChooseUsSection';
+import TestimonialCarousel from './TestimonialCarousel';
 
 interface TeamMember {
   name: string;
@@ -90,130 +91,149 @@ const AboutPage: React.FC = () => {
       .replace(/<a[^>]*>\s*(?:<img[^>]*>\s*)+<\/a>/gi, '');
     return html;
   }, [aboutData?.companyHistory]);
+  const [companies, setCompanies] = useState<any[]>([]);
+  const [loadingCompanies, setLoadingCompanies] = useState<boolean>(true);
+
+  useEffect(() => {
+    let alive = true;
+    (async () => {
+      try {
+        const res = await fetch('/api/tructedCompany', { cache: 'no-store' });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data?.error || 'Failed to load trusted companies');
+        if (alive) setCompanies(Array.isArray(data) ? data : []);
+      } catch (e) {
+        console.error('Failed to fetch trusted companies:', e);
+      } finally {
+        if (alive) setLoadingCompanies(false);
+      }
+    })();
+    return () => { alive = false };
+  }, []);
 
   if (loading) return <ComponentLoader height="h-64" message="Loading about page..." />;
-
+  const skeletonCount = 18;
   return (
     <div>
 
-        <section className="relative bg-gradient-to-br from-blue-50 to-indigo-100 py-16 md:py-24 overflow-hidden">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 flex flex-col lg:flex-row items-center justify-between gap-12">
-            {/* Main Content */}
-            <div className="w-full lg:w-3/5 text-center lg:text-left">
-              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-gray-900 leading-tight mb-6">
-                Work With The Top Accounting Talent; Fast, Skilled, And Specialized
-              </h1>
-              <p className="text-base sm:text-lg md:text-xl text-gray-700 mb-8 max-w-2xl mx-auto lg:mx-0">
-                Partner with Stanfox to elevate your practice. From precision in data to streamlined processes, we
-                handle the heavy lifting, allowing you to focus on what matters most—your clients. Discover the
-                Stanfox difference today
-              </p>
-              {/* <Link href="/contact-us" className="inline-block bg-gray-800 text-white px-8 py-3 rounded-md text-lg font-medium hover:bg-gray-900 transition-colors duration-300 shadow-lg">
+      <section className="relative bg-gradient-to-br from-blue-50 to-indigo-100 py-16 md:py-24 overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 flex flex-col lg:flex-row items-center justify-between gap-12">
+          {/* Main Content */}
+          <div className="w-full lg:w-3/5 text-center lg:text-left">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-gray-900 leading-tight mb-6">
+              Work With The Top Accounting Talent; Fast, Skilled, And Specialized
+            </h1>
+            <p className="text-base sm:text-lg md:text-xl text-gray-700 mb-8 max-w-2xl mx-auto lg:mx-0">
+              Partner with Stanfox to elevate your practice. From precision in data to streamlined processes, we
+              handle the heavy lifting, allowing you to focus on what matters most—your clients. Discover the
+              Stanfox difference today
+            </p>
+            {/* <Link href="/contact-us" className="inline-block bg-gray-800 text-white px-8 py-3 rounded-md text-lg font-medium hover:bg-gray-900 transition-colors duration-300 shadow-lg">
             Get Started
           </Link> */}
+          </div>
+
+          {/* Floating Cards and Images - Positioned Absolutely to mimic the image */}
+          <div className="relative w-full lg:w-2/5 h-[500px] lg:h-[600px] flex items-center justify-center -mt-16 lg:mt-0">
+            {/* Main background gradient circle/blob - to simulate the subtle background effect */}
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-gradient-to-tr from-blue-200 to-purple-100 opacity-30 blur-3xl z-0 animate-pulse-slow"></div>
+
+            {/* Left Side Floating Elements */}
+            <div className="absolute top-1/4 left-0 transform -translate-x-1/4 -translate-y-1/2 z-20">
+              {/* Pinal Mehta Card */}
+              <div className="bg-white rounded-lg shadow-xl p-3 flex items-center space-x-3 min-w-[200px]" style={{ transform: 'rotate(-5deg)' }}>
+                <Image src="https://via.placeholder.com/40" alt="Pinal Mehta" width={40} height={40} className="rounded-full" />
+                <div>
+                  <p className="font-semibold text-gray-800 text-sm">Pinal Mehta</p>
+                  <p className="text-gray-500 text-xs">Fractional CFO</p>
+                </div>
+              </div>
             </div>
 
-            {/* Floating Cards and Images - Positioned Absolutely to mimic the image */}
-            <div className="relative w-full lg:w-2/5 h-[500px] lg:h-[600px] flex items-center justify-center -mt-16 lg:mt-0">
-              {/* Main background gradient circle/blob - to simulate the subtle background effect */}
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-gradient-to-tr from-blue-200 to-purple-100 opacity-30 blur-3xl z-0 animate-pulse-slow"></div>
-
-              {/* Left Side Floating Elements */}
-              <div className="absolute top-1/4 left-0 transform -translate-x-1/4 -translate-y-1/2 z-20">
-                {/* Pinal Mehta Card */}
-                <div className="bg-white rounded-lg shadow-xl p-3 flex items-center space-x-3 min-w-[200px]" style={{ transform: 'rotate(-5deg)' }}>
-                  <Image src="https://via.placeholder.com/40" alt="Pinal Mehta" width={40} height={40} className="rounded-full" />
-                  <div>
-                    <p className="font-semibold text-gray-800 text-sm">Pinal Mehta</p>
-                    <p className="text-gray-500 text-xs">Fractional CFO</p>
-                  </div>
+            <div className="absolute top-2/3 left-1/4 transform -translate-x-1/2 z-20">
+              {/* Chart Card */}
+              <div className="bg-white rounded-lg shadow-xl p-4 min-w-[220px]" style={{ transform: 'rotate(5deg)' }}>
+                <p className="text-xs text-gray-500 mb-1">Weekly Completion Rate</p>
+                <div className="flex items-end justify-between h-20">
+                  {/* Example Bars */}
+                  <div className="w-4 bg-blue-200 h-3/5 rounded-t-sm"></div>
+                  <div className="w-4 bg-blue-300 h-4/5 rounded-t-sm"></div>
+                  <div className="w-4 bg-blue-400 h-full rounded-t-sm"></div>
+                  <div className="w-4 bg-blue-300 h-3/5 rounded-t-sm"></div>
+                  <div className="w-4 bg-blue-200 h-2/5 rounded-t-sm"></div>
+                  <div className="w-4 bg-blue-100 h-1/5 rounded-t-sm"></div>
+                  <div className="w-4 bg-blue-50 h-0.5 rounded-t-sm"></div>
+                </div>
+                <div className="flex justify-between text-xs text-gray-400 mt-2">
+                  <span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span>
                 </div>
               </div>
+            </div>
 
-              <div className="absolute top-2/3 left-1/4 transform -translate-x-1/2 z-20">
-                {/* Chart Card */}
-                <div className="bg-white rounded-lg shadow-xl p-4 min-w-[220px]" style={{ transform: 'rotate(5deg)' }}>
-                  <p className="text-xs text-gray-500 mb-1">Weekly Completion Rate</p>
-                  <div className="flex items-end justify-between h-20">
-                    {/* Example Bars */}
-                    <div className="w-4 bg-blue-200 h-3/5 rounded-t-sm"></div>
-                    <div className="w-4 bg-blue-300 h-4/5 rounded-t-sm"></div>
-                    <div className="w-4 bg-blue-400 h-full rounded-t-sm"></div>
-                    <div className="w-4 bg-blue-300 h-3/5 rounded-t-sm"></div>
-                    <div className="w-4 bg-blue-200 h-2/5 rounded-t-sm"></div>
-                    <div className="w-4 bg-blue-100 h-1/5 rounded-t-sm"></div>
-                    <div className="w-4 bg-blue-50 h-0.5 rounded-t-sm"></div>
-                  </div>
-                  <div className="flex justify-between text-xs text-gray-400 mt-2">
-                    <span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span>
-                  </div>
+            <div className="absolute bottom-1/4 left-1/3 transform -translate-x-1/2 z-20">
+              {/* Small Smiley Card */}
+              <div className="bg-white rounded-lg shadow-xl p-2 flex items-center space-x-2">
+                <span className="text-xl">😊</span>
+                <div>
+                  <p className="text-xs font-semibold text-gray-800">You are doing good!</p>
+                  <p className="text-xs text-gray-500">You almost reached your goal</p>
                 </div>
               </div>
+            </div>
 
-              <div className="absolute bottom-1/4 left-1/3 transform -translate-x-1/2 z-20">
-                {/* Small Smiley Card */}
-                <div className="bg-white rounded-lg shadow-xl p-2 flex items-center space-x-2">
-                  <span className="text-xl">😊</span>
-                  <div>
-                    <p className="text-xs font-semibold text-gray-800">You are doing good!</p>
-                    <p className="text-xs text-gray-500">You almost reached your goal</p>
+
+            {/* Right Side Floating Elements */}
+            <div className="absolute top-1/4 right-0 transform translate-x-1/4 -translate-y-1/2 z-20">
+              {/* Performance Card */}
+              <div className="bg-white rounded-lg shadow-xl p-4 min-w-[180px]" style={{ transform: 'rotate(5deg)' }}>
+                <div className="flex items-center justify-between mb-2">
+                  {/* Dial graphic - simplified */}
+                  <div className="relative w-16 h-16 rounded-full border-4 border-gray-200 flex items-center justify-center">
+                    <div className="absolute w-2 h-2 rounded-full bg-blue-500"></div>
+                    <div className="absolute w-0.5 h-6 bg-blue-500 origin-bottom transform rotate-45 translate-y-[-10px]"></div>
                   </div>
+                  <div className="text-gray-400 text-2xl ml-2">⚙️</div> {/* Gear icon */}
+                </div>
+                <p className="font-semibold text-gray-800 text-lg">Performance</p>
+              </div>
+            </div>
+
+            <div className="absolute bottom-1/4 right-0 transform translate-x-1/4 -translate-y-1/2 z-20">
+              {/* Shiv Panchal Card */}
+              <div className="bg-white rounded-lg shadow-xl p-3 flex items-center space-x-3 min-w-[200px]" style={{ transform: 'rotate(-5deg)' }}>
+                <Image src="https://via.placeholder.com/40" alt="Shiv Panchal" width={40} height={40} className="rounded-full" />
+                <div>
+                  <p className="font-semibold text-gray-800 text-sm">Shiv Panchal</p>
+                  <p className="text-gray-500 text-xs">Auditee</p>
                 </div>
               </div>
+            </div>
 
+            {/* Dotted Lines (Simplified visual representation) */}
+            <div className="absolute inset-0 z-0 opacity-50">
+              <svg className="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+                {/* Left Path */}
+                <path d="M10 20 C20 5, 40 5, 50 20 S80 50, 60 70 S30 90, 20 80"
+                  strokeDasharray="2,2" stroke="#CBD5E0" fill="none" />
+                <circle cx="10" cy="20" r="1" fill="#CBD5E0" />
+                <circle cx="50" cy="20" r="1" fill="#CBD5E0" />
+                <circle cx="60" cy="70" r="1" fill="#CBD5E0" />
+                <circle cx="20" cy="80" r="1" fill="#CBD5E0" />
 
-              {/* Right Side Floating Elements */}
-              <div className="absolute top-1/4 right-0 transform translate-x-1/4 -translate-y-1/2 z-20">
-                {/* Performance Card */}
-                <div className="bg-white rounded-lg shadow-xl p-4 min-w-[180px]" style={{ transform: 'rotate(5deg)' }}>
-                  <div className="flex items-center justify-between mb-2">
-                    {/* Dial graphic - simplified */}
-                    <div className="relative w-16 h-16 rounded-full border-4 border-gray-200 flex items-center justify-center">
-                      <div className="absolute w-2 h-2 rounded-full bg-blue-500"></div>
-                      <div className="absolute w-0.5 h-6 bg-blue-500 origin-bottom transform rotate-45 translate-y-[-10px]"></div>
-                    </div>
-                    <div className="text-gray-400 text-2xl ml-2">⚙️</div> {/* Gear icon */}
-                  </div>
-                  <p className="font-semibold text-gray-800 text-lg">Performance</p>
-                </div>
-              </div>
-
-              <div className="absolute bottom-1/4 right-0 transform translate-x-1/4 -translate-y-1/2 z-20">
-                {/* Shiv Panchal Card */}
-                <div className="bg-white rounded-lg shadow-xl p-3 flex items-center space-x-3 min-w-[200px]" style={{ transform: 'rotate(-5deg)' }}>
-                  <Image src="https://via.placeholder.com/40" alt="Shiv Panchal" width={40} height={40} className="rounded-full" />
-                  <div>
-                    <p className="font-semibold text-gray-800 text-sm">Shiv Panchal</p>
-                    <p className="text-gray-500 text-xs">Auditee</p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Dotted Lines (Simplified visual representation) */}
-              <div className="absolute inset-0 z-0 opacity-50">
-                <svg className="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
-                  {/* Left Path */}
-                  <path d="M10 20 C20 5, 40 5, 50 20 S80 50, 60 70 S30 90, 20 80"
-                    strokeDasharray="2,2" stroke="#CBD5E0" fill="none" />
-                  <circle cx="10" cy="20" r="1" fill="#CBD5E0" />
-                  <circle cx="50" cy="20" r="1" fill="#CBD5E0" />
-                  <circle cx="60" cy="70" r="1" fill="#CBD5E0" />
-                  <circle cx="20" cy="80" r="1" fill="#CBD5E0" />
-
-                  {/* Right Path */}
-                  <path d="M90 10 C80 5, 60 5, 50 15 S20 40, 40 60 S70 80, 80 90"
-                    strokeDasharray="2,2" stroke="#CBD5E0" fill="none" />
-                  <circle cx="90" cy="10" r="1" fill="#CBD5E0" />
-                  <circle cx="50" cy="15" r="1" fill="#CBD5E0" />
-                  <circle cx="40" cy="60" r="1" fill="#CBD5E0" />
-                  <circle cx="80" cy="90" r="1" fill="#CBD5E0" />
-                </svg>
-              </div>
+                {/* Right Path */}
+                <path d="M90 10 C80 5, 60 5, 50 15 S20 40, 40 60 S70 80, 80 90"
+                  strokeDasharray="2,2" stroke="#CBD5E0" fill="none" />
+                <circle cx="90" cy="10" r="1" fill="#CBD5E0" />
+                <circle cx="50" cy="15" r="1" fill="#CBD5E0" />
+                <circle cx="40" cy="60" r="1" fill="#CBD5E0" />
+                <circle cx="80" cy="90" r="1" fill="#CBD5E0" />
+              </svg>
             </div>
           </div>
-        </section>
-    <WhyChooseUsGrid/>
-<WhyChooseUsSection/>
+        </div>
+      </section>
+      <WhyChooseUsGrid />
+      <WhyChooseUsSection />
       {/* Mission & Vision */}
       <section className="py-16 bg-gray-50">
         <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-8">
@@ -288,7 +308,46 @@ const AboutPage: React.FC = () => {
           </div>
         </section>
       ) : null}
-        <section className="relative py-20 overflow-hidden">
+      <section className="py-12 px-4 md:px-8 bg-white">
+        <h2 className="text-3xl font-normal text-center mb-10 text-gray-800">
+          We Are Adroit With Multiple Accounting Tools!
+        </h2>
+
+        {/* Grid container with responsive columns: 3 on mobile, 4 on medium, 5 on large */}
+        <div className="max-w-7xl mx-auto grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 gap-y-10 gap-x-6">
+
+          {/* Skeleton Loader */}
+          {loadingCompanies && (
+            Array.from({ length: skeletonCount }).map((_, i) => (
+              <div
+                key={`skeleton-${i}`}
+                className="h-20 w-full rounded-md bg-gray-100 animate-pulse border border-gray-200"
+              />
+            ))
+          )}
+
+          {/* Actual Logo Display */}
+          {!loadingCompanies && companies.map((c, index) => (
+            <div
+              key={`${c.name}-${index}`}
+              className="flex items-center justify-center p-2 h-20" // Container for centering
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={c.image}
+                alt={c.name}
+                loading="lazy"
+                // Styling for the image: max height/width is 100% of the parent
+                // object-contain ensures the image scales down to fit without cropping.
+                className="max-h-full max-w-full object-contain transition-transform duration-300 ease-in-out hover:scale-105"
+                onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
+              />
+            </div>
+          ))}
+        </div>
+      </section>
+        <TestimonialCarousel />
+      <section className="relative py-20 overflow-hidden">
         {/* Background pattern */}
         <div
           className="absolute inset-0 opacity-20 pointer-events-none"
@@ -298,7 +357,6 @@ const AboutPage: React.FC = () => {
             // backgroundSize: "100px 100px",
           }}
         />
-
         {/* Center content */}
         <div className="relative flex items-center justify-center">
           <div className="rounded-xl border text-center px-10 py-12 max-w-xl w-full mx-4 bg-[rgba(190,238,229,0.1)] border-[color-mix(in_srgb,_var(--primary-color)_45%,_white)] shadow-[0_12px_30px_rgba(53,154,255,0.15)]">
