@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import CustomButton from "../ui/customButtom/Button";
 
 interface Tab {
@@ -16,17 +16,12 @@ interface TabsProps {
 }
 
 const Tabs: React.FC<TabsProps> = ({ tabs = [], onChange, defaultActive }) => {
-  const [active, setActive] = useState<string>("");
-
-  // Initialize active tab safely
-  useEffect(() => {
-    if (tabs.length > 0) {
-      setActive(defaultActive || tabs[0].value);
-    }
-  }, [tabs, defaultActive]);
+  // Controlled-uncontrolled hybrid: prefer user selection, otherwise defaultActive, otherwise first tab.
+  const [selected, setSelected] = useState<string | null>(null);
+  const active = selected ?? defaultActive ?? (tabs[0]?.value || "");
 
   const handleClick = (value: string) => {
-    setActive(value);
+    setSelected(value);
     onChange?.(value);
   };
 
@@ -38,8 +33,9 @@ const Tabs: React.FC<TabsProps> = ({ tabs = [], onChange, defaultActive }) => {
   return (
     <div className="w-full">
       {/* Tabs Navigation */}
+      {/* Make rings/shadows visible at edges by giving extra padding; keep horizontal scroll when needed */}
       <div
-        className="flex overflow-x-auto scrollbar-hide gap-3 md:gap-4 py-4 px-1 md:px-0"
+        className="flex gap-3 md:gap-4 py-4 pl-8 pr-3 md:pl-10 md:pr-4 overflow-x-auto scrollbar-hide"
         role="tablist"
       >
         {tabs.map((tab) => (
@@ -48,7 +44,7 @@ const Tabs: React.FC<TabsProps> = ({ tabs = [], onChange, defaultActive }) => {
             text={tab.label}
             onClick={() => handleClick(tab.value)}
             variant={active === tab.value ? "dark" : "transparent"}
-            className={`whitespace-nowrap rounded-full text-sm md:text-base font-medium transition-all duration-200 px-5 py-2.5 shadow-sm flex-shrink-0 focus:outline-none focus:ring-2 focus:ring-blue-400 ${
+            className={`whitespace-nowrap rounded-full text-sm md:text-base font-medium transition-all duration-200 px-5 py-2.5 shadow-sm flex-shrink-0 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 ${
               active === tab.value
                 ? "bg-gray-900 text-white"
                 : "text-gray-700 border border-gray-300 hover:bg-gray-100"

@@ -74,7 +74,7 @@ const IndustriesSection: React.FC = () => {
       {/* === Cards Section === */}
       <div
         ref={scrollRef}
-        className="max-w-7xl mx-auto flex gap-6 sm:gap-8 overflow-x-hidden py-4"
+        className="max-w-7xl mx-auto flex gap-6 sm:gap-8 overflow-x-auto overflow-y-visible py-4 px-2 scrollbar-hide"
       >
         {loading ? (
           <ComponentLoader height="h-24" />
@@ -82,9 +82,9 @@ const IndustriesSection: React.FC = () => {
           industries.map((item: { id?: string; image?: string; title?: string; description?: string }, i: number) => (
             <motion.div
               key={item.id || i}
-                whileHover={{ y: -8, scale: 1.03 }}
+                whileHover={{ y: -8, scale: 1.02 }}
                 transition={{ duration: 0.25 }}
-                className="group relative overflow-hidden bg-white rounded-2xl shadow-md hover:shadow-xl border border-gray-100 hover:border-[var(--primary-color)] transition-all duration-300 flex-shrink-0 w-72 sm:w-80 md:w-96 p-6 sm:p-8 flex flex-col justify-between"
+        className="group relative overflow-hidden bg-white rounded-2xl shadow-md hover:shadow-xl border border-gray-100 hover:border-[var(--primary-color)] transition-all duration-300 flex-shrink-0 w-72 sm:w-80 md:w-96 p-6 sm:p-8 flex flex-col justify-between will-change-transform"
             >
               <div>
                 {/* === Icon === */}
@@ -117,7 +117,7 @@ const IndustriesSection: React.FC = () => {
               </div>
 
               {/* === Decorative Accent === */}
-              <div className="absolute bottom-0 left-0 right-0 h-1 bg-[var(--primary-color)] opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-b-2xl" />
+              <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-[3px] bg-[var(--primary-color)] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
             </motion.div>
           ))
         ) : (

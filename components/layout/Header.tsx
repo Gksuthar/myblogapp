@@ -117,7 +117,7 @@ export default function Header() {
         <div className="flex items-center space-x-2">
           <Link href="/">
             <Image
-              src="https://web.archive.org/web/20241205104115im_/https://sbaccounting.us/wp-content/uploads/2018/05/logo_big1-1.png"
+              src="https://res.cloudinary.com/dsu49fx2b/image/upload/v1762306740/logo_big1-1_dyd6xs.png"
               alt="Company logo"
               width={180}
               height={48}

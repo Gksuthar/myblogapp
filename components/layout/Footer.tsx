@@ -28,7 +28,7 @@ const isValidImageSrc = (src: string) => {
 };
 
 const Footer: React.FC = () => {
-  const [logoUrl, setLogoUrl] = useState('');
+  const [logoUrl, setLogoUrl] = useState('https://res.cloudinary.com/dsu49fx2b/image/upload/v1762306740/logo_big1-1_dyd6xs.png');
   const [tagline, setTagline] = useState('');
   const [links, setLinks] = useState<CompanyLink[]>([]);
   const [certs, setCerts] = useState<Certification[]>([]);
@@ -111,6 +111,8 @@ const Footer: React.FC = () => {
             <div className="flex items-start gap-8"> {/* switch to flex so columns hug with no extra space */}
               <ul className="space-y-2 flex-none"> {/* content-width column; no stretching */}
                 {(links.length ? links : [
+                  { label: 'Home', href: '/' },
+                  { label: 'About Us', href: '/about' },
                   { label: 'How We Work', href: '/how-we-work' },
                   { label: 'Contact Us', href: '/Contactus' }
                 ]).slice(0,5).map((l, i) => (
