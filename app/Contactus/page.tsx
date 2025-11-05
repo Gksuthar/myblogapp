@@ -127,7 +127,7 @@ const ContactForm: React.FC = () => {
     <Suspense fallback={<ComponentLoader height="h-screen" message="Loading contact form..." />}>
       <div className="min-h-screen relative flex justify-center py-2 md:py-4 px-2 sm:px-6 lg:px-8">
         {/* Left-to-right brand tint on page background */}
-        <div className="pointer-events-none absolute inset-y-0 left-0 w-full md:w-1/2 -z-10 bg-gradient-to-r from-[rgba(53,154,255,0.12)] via-[rgba(53,154,255,0.06)] to-transparent" />
+        <div className="pointer-events-none absolute inset-y-0 left-0 w-full md:w-1/2 -z-10 bg-[linear-gradient(to_right,rgba(53,154,255,0.15)_0%,rgba(53,154,255,0.10)_50%,rgba(53,154,255,0.06)_85%,rgba(53,154,255,0.02)_95%,transparent_100%)]" />
         <div className="w-full rounded-lg overflow-hidden ">
           <div className="grid grid-cols-1 lg:grid-cols-2">
           {/* LEFT SECTION (Info & Partners) */}
