@@ -31,10 +31,10 @@ const BlogServiceCard: React.FC<BlogServiceCardProps> = ({ post }) => {
   }
 
   return (
-    <div className="flex flex-col p-7 bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 group border border-gray-200 hover:border-[var(--primary-color)] h-full min-h-[240px] overflow-hidden">
-      <div className="flex items-center justify-start space-x-5 mb-4">
+    <div className="flex flex-col p-7 bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 group border border-gray-200 hover:border-[var(--primary-color)] h-full min-h-[200px] max-h-[280px] overflow-hidden">
+      <div className=" items-center justify-start space-x-5 mb-4">
         {/* Icon placeholder/Image */}
-        <div className="p-3 bg-[#e6f3ff] rounded-xl border border-[color-mix(in srgb, var(--primary-color) 30%, white)]">
+        <div className="p-3 rounded-xl">
           <Image
             src={post.img}
             alt={`${post.title} icon`}
@@ -54,7 +54,7 @@ const BlogServiceCard: React.FC<BlogServiceCardProps> = ({ post }) => {
       {/* Excerpt */}
       {
         post.desc &&
-      <p className="text-gray-600 text-lg leading-relaxed mt-2 flex-grow max-h-24 overflow-hidden"  >
+      <p className="text-gray-600 leading-relaxed mt-2 flex-grow max-h-24 overflow-hidden"  >
         { post.desc &&   post.desc}
       </p>
       }

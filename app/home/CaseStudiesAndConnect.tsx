@@ -95,13 +95,13 @@ const CaseStudiesAndConnect: React.FC = () => {
           style={{
             backgroundImage:
               "url(https://cdn.prod.website-files.com/6718c309cc349b579872ddbb/6736f52aa2dea93969a896f8_line_cta.svg)",
-            backgroundSize: "100px 100px",
+            // backgroundSize: "100px 100px",
           }}
         />
 
         {/* Center content */}
-        <div className="relative z-10 flex items-center justify-center">
-          <div className="rounded-xl border text-center px-10 py-12 max-w-xl w-full mx-4 bg-[rgba(53,154,255,0.10)] border-[color-mix(in_srgb,_var(--primary-color)_45%,_white)] shadow-[0_12px_30px_rgba(53,154,255,0.15)]">
+        <div className="relative flex items-center justify-center">
+          <div className="rounded-xl border text-center px-10 py-12 max-w-xl w-full mx-4 bg-[rgba(190,238,229,0.1)] border-[color-mix(in_srgb,_var(--primary-color)_45%,_white)] shadow-[0_12px_30px_rgba(53,154,255,0.15)]">
             <h2 className="text-3xl md:text-4xl font-semibold text-gray-900 mb-4">
               Let’s Connect!
             </h2>
