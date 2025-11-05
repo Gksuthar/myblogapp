@@ -43,12 +43,8 @@ const Tabs: React.FC<TabsProps> = ({ tabs = [], onChange, defaultActive }) => {
             key={tab.value}
             text={tab.label}
             onClick={() => handleClick(tab.value)}
-            variant={active === tab.value ? "dark" : "transparent"}
-            className={`whitespace-nowrap rounded-full  text-sm md:text-base font-medium transition-all duration-200 px-5 py-2.5 shadow-sm flex-shrink-0 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 ${
-              active === tab.value
-                ? "bg-gray-900 text-white"
-                : "text-gray-700 border border-gray-300 hover:bg-gray-100"
-            }`}
+            variant={active === tab.value ? "primary" : "transparent"}
+            className={`whitespace-nowrap rounded-full  text-sm md:text-base font-medium transition-all duration-200 px-5 py-2.5 shadow-sm flex-shrink-0 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 `}
           />
         ))}
       </div>

@@ -1,9 +1,17 @@
-
 import type { Metadata } from "next";
+// 1. Import the Lexend font
+import { Lexend } from "next/font/google"; 
 import "./globals.css";
 import { Suspense, lazy } from "react";
 import ComponentLoader from "@/components/ComponentLoader";
 import NextTopLoader from "nextjs-toploader";
+
+// 2. Define the Lexend font instance
+const lexend = Lexend({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-lexend", // Define a CSS variable for Tailwind configuration
+});
 
 // Lazy load layout components
 const Header = lazy(() => import("@/components/layout/Header"));
@@ -24,7 +32,8 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={` antialiased`}
+        // 3. Apply the font's CSS variable class to the body
+        className={`${lexend.variable} antialiased font-lexend`} 
         suppressHydrationWarning
       >
         <NextTopLoader

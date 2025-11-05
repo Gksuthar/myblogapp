@@ -5,6 +5,8 @@ import Image from 'next/image';
 import ComponentLoader from '@/components/ComponentLoader';
 import HeroSection from '@/components/HeroSection/HeroSection';
 import { Link } from 'ckeditor5';
+import WhyChooseUsGrid from './WhyChooseUsGrid';
+import WhyChooseUsSection from '../home/WhyChooseUsSection';
 
 interface TeamMember {
   name: string;
@@ -210,8 +212,8 @@ const AboutPage: React.FC = () => {
             </div>
           </div>
         </section>
-    
-
+    <WhyChooseUsGrid/>
+<WhyChooseUsSection/>
       {/* Mission & Vision */}
       <section className="py-16 bg-gray-50">
         <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-8">
@@ -286,6 +288,33 @@ const AboutPage: React.FC = () => {
           </div>
         </section>
       ) : null}
+        <section className="relative py-20 overflow-hidden">
+        {/* Background pattern */}
+        <div
+          className="absolute inset-0 opacity-20 pointer-events-none"
+          style={{
+            backgroundImage:
+              "url(https://cdn.prod.website-files.com/6718c309cc349b579872ddbb/6736f52aa2dea93969a896f8_line_cta.svg)",
+            // backgroundSize: "100px 100px",
+          }}
+        />
+
+        {/* Center content */}
+        <div className="relative flex items-center justify-center">
+          <div className="rounded-xl border text-center px-10 py-12 max-w-xl w-full mx-4 bg-[rgba(190,238,229,0.1)] border-[color-mix(in_srgb,_var(--primary-color)_45%,_white)] shadow-[0_12px_30px_rgba(53,154,255,0.15)]">
+            <h2 className="text-3xl md:text-4xl font-semibold text-gray-900 mb-4">
+              Let’s Connect!
+            </h2>
+            <p className="text-gray-700 text-base md:text-lg mb-8">
+              Connect with our accounting professionals & get started today!
+            </p>
+
+            <a href="/Contactus" className="inline-block px-6 py-3 bg-[var(--primary-color)] text-white rounded-md hover:bg-[var(--primary-color)] transition-all shadow-md">
+              Contact Us
+            </a>
+          </div>
+        </div>
+      </section>
     </div>
   );
 };

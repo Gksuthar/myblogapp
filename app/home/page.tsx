@@ -134,7 +134,7 @@ export default function Home() {
                           
                             {/* Heading */}
                             <motion.h1
-                            style={{width:"49%"}}
+                            style={{width:"32%"}}
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ duration: 0.6 }}
@@ -254,10 +254,10 @@ export default function Home() {
             {/* Trusted Companies Section */}
             <motion.section
                 {...fadeIn(0.2, 50)}
-                className="relative w-full py-20 bg-gradient-to-b from-white to-gray-50 overflow-hidden"
+                className="relative w-full mt-10 bg-gradient-to-b from-white to-gray-50 overflow-hidden"
             >
-                <div className="max-w-7xl mx-auto px-6">
-                    <div className="text-center mb-12">
+                <div className="max-w-7xl mx-auto">
+                    <div className="text-center mb-3">
                         <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-3">
                             Trusted by Leading Firms
                         </h2>
@@ -267,7 +267,7 @@ export default function Home() {
                     </div>
 
                     {loadingTrusted ? (
-                        <div className="flex justify-center items-center h-32">
+                        <div className="flex justify-center items-center">
                             <ComponentLoader height="h-32" message="Loading companies..." />
                         </div>
                     ) : trustedCompanies.length > 0 ? (

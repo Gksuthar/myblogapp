@@ -27,14 +27,12 @@ const variantClasses: Record<VariantType, string> = {
   primary: "bg-[var(--primary-color)] hover:bg-[var(--primary-color)] text-[var(--primary-color-contrast)]",
   success: "bg-green-600 hover:bg-green-700 text-white",
   danger: "bg-red-600 hover:bg-red-700 text-white",
-  dark: "bg-gray-800 hover:bg-gray-900 text-white",
+  dark: "bg-[#359aff] hover:bg-gray-900 text-white",
   light: "bg-gray-100 hover:bg-gray-200 text-gray-800",
   theme: "bg-[var(--primary-color)] hover:bg-[var(--primary-color)] text-[var(--primary-color-contrast)]",
   silver: "bg-gray-300 hover:bg-gray-400 text-gray-900",
-  transparent:
-    "bg-transparent border border-[var(--primary-color)] text-[var(--primary-color)] hover:bg-[var(--primary-color)] hover:text-white",
-  successTrans:
-    "bg-green-50 text-green-700 border border-green-500 hover:bg-green-100",
+  transparent:"bg-[transparent] border border-[var(--primary-color)] text-[var(--primary-color)] hover:bg-[var(--primary-color)] hover:text-white",
+  successTrans:"bg-green-50 text-green-700 border border-green-500 hover:bg-green-100",
 };
 
 const CustomButton: React.FC<CustomButtonProps> = ({
