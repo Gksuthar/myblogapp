@@ -6,7 +6,7 @@ import ReCAPTCHA from 'react-google-recaptcha';
 import { useRef } from 'react';
 import * as yup from 'yup';
 import ComponentLoader from '@/components/ComponentLoader';
-
+import EmailIcon from '@rsuite/icons/Email';
 export const contactSchema = yup.object({
   name: yup.string().trim().required('Name is required.'),
   email: yup.string().trim().email('Invalid email address.').required('Email is required.'),
@@ -40,9 +40,9 @@ const CustomField: React.FC<CustomFieldProps> = ({ label, name, type = 'text', p
   const { touched, errors } = useFormikContext<ContactFormData>();
   const isError = touched[name] && errors[name];
 
-  const baseClasses = 'p-3 border rounded-md focus:outline-none focus:ring-2 transition-all duration-200';
+  const baseClasses = 'p-3 border rounded-md focus:outline-none focus:ring-2 transition-all duration-200 text-base placeholder:text-gray-400';
   const errorClasses = 'border-red-500 focus:ring-red-500';
-  const defaultClasses = 'border-gray-300 focus:ring-blue-500';
+  const defaultClasses = 'border-gray-300 focus:ring-[var(--primary-color)]';
 
   return (
     <div className="flex flex-col">
@@ -125,14 +125,16 @@ const ContactForm: React.FC = () => {
 
   return (
     <Suspense fallback={<ComponentLoader height="h-screen" message="Loading contact form..." />}>
-      <div className="min-h-screen flex justify-center py-12 px-4 sm:px-6 lg:px-8">
+      <div className="min-h-screen relative flex justify-center py-2 md:py-4 px-2 sm:px-6 lg:px-8">
+        {/* Left-to-right brand tint on page background */}
+        <div className="pointer-events-none absolute inset-y-0 left-0 w-full md:w-1/2 -z-10 bg-gradient-to-r from-[rgba(53,154,255,0.12)] via-[rgba(53,154,255,0.06)] to-transparent" />
         <div className="w-full rounded-lg overflow-hidden ">
           <div className="grid grid-cols-1 lg:grid-cols-2">
           {/* LEFT SECTION (Info & Partners) */}
-          <div className="p-8 md:p-12 lg:p-16 space-y-8 flex flex-col justify-between">
+          <div className="p-8 md:p-6 lg:p-8 space-y-8 flex flex-col justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-gray-800 mb-6">Contact Us</h1>
-              <p className="text-gray-600 max-w-md mb-8">
+              <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900 mb-6 leading-tight">Contact Us</h1>
+<p className="text-gray-600 max-w-2xl mb-5 text-lg md:text-2xl ">
                     Feel free to talk to our representative at any time you please use our contact form on our website or one of our contact numbers. Let us work on your future together.
 
 You can always visit us at our HQ, we have a friendly staff and a mean cup of coffee.
@@ -140,16 +142,20 @@ You can always visit us at our HQ, we have a friendly staff and a mean cup of co
 
               </p>
 
-              <div className="space-y-3 mb-10">
-                <div className="flex items-center space-x-2 text-gray-700">
-                  <span className="font-medium">📧 shalin@sbaccounting.us</span>
+              <div className="space-y-3 mb-6">
+                <div className="flex items-center space-x-2 text-gray-700 mb-5">
+                  <span className="text-gray-900 !text-gray-800">
+                    <EmailIcon className="h-5 w-5 text-gray-900 !text-gray-800" />
+                  </span>
+                  <a href="mailto:shalin@sbaccounting.us" className="text-gray-900 md:text-[20px]   font-medium text-[var(--primary-color)] hover:underline">shalin@sbaccounting.us</a>
                 </div>
                 <div className="flex items-center space-x-2 text-gray-700">
-                  <span className="font-medium">📞 +1 430 755 2828</span>
+                  <span className="font-medium">📞</span>
+                  <a href="tel:+14307552828" className="text-gray-900 md:text-[20px] font-medium text-[var(--primary-color)] hover:underline">+1 430 755 2828</a>
                 </div>
               </div>
 
-        <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wider mb-4">Trusted By</h2>
+        <h2 className="text-sm font-semibold text-gray-700  tracking-wider mb-4 font-extrabold md:text-[23px]">Trusted By</h2>
           <div className="grid grid-cols-4 gap-2">
                 {loadingCompanies && (
                       Array.from({ length: 8 }).map((_, i) => (
@@ -164,7 +170,7 @@ You can always visit us at our HQ, we have a friendly staff and a mean cup of co
                         key={c._id}
                         className="aspect-square w-full border border-gray-200 rounded-md bg-white p-1 overflow-hidden flex items-center justify-center
                         transition-all duration-300 ease-in-out
-                        hover:border-blue-400 hover:shadow-lg hover:shadow-blue-100 hover:-translate-y-1 hover:scale-105
+                        hover:border-[var(--primary-color)] hover:shadow-lg hover:shadow-[rgba(53,154,255,0.15)] hover:-translate-y-1 hover:scale-105
                         cursor-pointer group"
                       >
                     {c.image ? (
@@ -179,7 +185,7 @@ You can always visit us at our HQ, we have a friendly staff and a mean cup of co
                     ) : null}
                     {/* Fallback to name if image missing or failed */}
                     {!c.image && (
-                      <span className="text-[11px] font-semibold text-gray-600 truncate px-2 text-center transition-colors duration-300 group-hover:text-blue-600">
+                      <span className="text-[11px] font-semibold text-gray-600 truncate px-2 text-center transition-colors duration-300 group-hover:text-[var(--primary-color)]">
                         {c.name}
                       </span>
                     )}
@@ -188,8 +194,7 @@ You can always visit us at our HQ, we have a friendly staff and a mean cup of co
               </div>
             </div>
       <div className="mt-8 lg:mt-0 relative hidden lg:block self-end">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="https://cdn.prod.website-files.com/6718c309cc349b579872ddbb/6740588b760df20a1555190c_contact_us.svg" alt="Contact Illustration" />
+        {/* <img src="https://cdn.prod.website-files.com/6718c309cc349b579872ddbb/6740588b760df20a1555190c_contact_us.svg" alt="Contact Illustration" /> */}
             </div>
           </div>
 
@@ -203,7 +208,7 @@ You can always visit us at our HQ, we have a friendly staff and a mean cup of co
               onSubmit={onSubmit}
             >
               {({ isSubmitting, touched, errors }) => (
-                <Form className="space-y-6">
+                <Form className="space-y-6 text-base">
                   {/* Name, Email, Phone each as full-width rows */}
                   <div className="grid grid-cols-1 gap-4">
                     <CustomField label="Name*" name="name" placeholder="Your full name" />
@@ -224,8 +229,8 @@ You can always visit us at our HQ, we have a friendly staff and a mean cup of co
                       name="message"
                       rows={5}
                       placeholder="Leave us a message."
-                      className={`block w-full p-3 border rounded-md focus:outline-none focus:ring-2 transition-all duration-200 
-                        ${touched.message && errors.message ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-blue-500'}`}
+                      className={`block w-full p-3 border rounded-md focus:outline-none focus:ring-2 transition-all duration-200 text-base
+                        ${touched.message && errors.message ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-[var(--primary-color)]'}`}
                     />
                     <ErrorMessage name="message" component="div" className="mt-1 text-sm text-red-500" />
                   </div>
@@ -244,7 +249,7 @@ You can always visit us at our HQ, we have a friendly staff and a mean cup of co
                     <button
                       type="submit"
                       disabled={isSubmitting}
-                      className="w-full py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-slate-700 hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 transition-all duration-200 disabled:opacity-60"
+                      className="w-full py-3.5 px-4 border border-transparent rounded-md shadow-sm text-base font-medium text-[var(--primary-color-contrast)] bg-[var(--primary-color)] hover:bg-[var(--primary-color)] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--primary-color)] transition-all duration-200 disabled:opacity-60"
                     >
                       {isSubmitting ? 'Sending...' : 'Send Message'}
                     </button>
