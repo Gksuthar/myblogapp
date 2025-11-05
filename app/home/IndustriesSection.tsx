@@ -84,7 +84,7 @@ const IndustriesSection: React.FC = () => {
               key={item.id || i}
                 whileHover={{ y: -8, scale: 1.02 }}
                 transition={{ duration: 0.25 }}
-        className="group relative overflow-hidden bg-white rounded-2xl shadow-md hover:shadow-xl border border-gray-100 hover:border-[var(--primary-color)] transition-all duration-300 flex-shrink-0 w-72 sm:w-80 md:w-96 p-6 sm:p-8 flex flex-col justify-between will-change-transform"
+        className="group relative overflow-hidden bg-white rounded-2xl shadow-md hover:shadow-xl border border-gray-100 hover:border-[var(--primary-color)] transition-all duration-300 flex-shrink-0 w-72 sm:w-80 md:w-96 p-6 sm:p-8 flex flex-col justify-between will-change-transform "
             >
               <div>
                 {/* === Icon === */}

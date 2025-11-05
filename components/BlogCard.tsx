@@ -24,17 +24,17 @@ const BlogCard: React.FC<BlogCardProps> = ({
   return (
     <Link
       href={`/blogs/${slug}`}
-className="group bg-gradient-to-r bg-gradient-to-r from-[rgba(53,154,255,0.12)] via-[rgba(53,154,255,0.06)] to-transparent block bg-white rounded-2xl shadow-md hover:shadow-xl overflow-hidden border border-gray-100 transition-all duration-300 hover:-translate-y-1"
+      className="group bg-gradient-to-r from-[rgba(53,154,255,0.12)] via-[rgba(53,154,255,0.06)] to-transparent block rounded-2xl shadow-[0_8px_40px_rgba(53,154,255,0.18)] hover:shadow-[0_12px_50px_rgba(53,154,255,0.28)] overflow-hidden border border-gray-100 transition-all duration-300 hover:-translate-y-1"
     >
       {/* === Image Section === */}
-      <div className="relative w-full h-56 sm:h-48 md:h-60 overflow-hidden">
+      <div className="relative w-full h-56 sm:h-48 md:h-60 overflow-hidden rounded-2xl bg-gradient-to-r from-[rgba(53,154,255,0.12)] via-[rgba(53,154,255,0.06)] to-transparent flex items-center justify-center">
         <img
           src={imageUrl}
           alt={title}
-className="group bg-[radial-gradient(circle_at_center,rgba(53,154,255,0.25)_0%,rgba(53,154,255,0.15)_40%,rgba(53,154,255,0.08)_70%,transparent_100%),linear-gradient(to_right,rgba(53,154,255,0.08),transparent),linear-gradient(to_left,rgba(53,154,255,0.08),transparent)] block bg-white rounded-2xl shadow-md hover:shadow-xl overflow-hidden border border-gray-100 transition-all duration-300 hover:-translate-y-1"
+          className="rounded-2xl object-cover w-full h-full shadow-md border border-gray-100 transition-all duration-300"
         />
         {/* Overlay effect */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+        <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl"></div>
 
         {/* Category badge on image */}
         {category && (

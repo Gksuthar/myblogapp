@@ -19,6 +19,7 @@ interface TeamMember {
 interface Value {
   title: string;
   description: string;
+  image?: string;
 }
 
 interface AboutData {
@@ -235,7 +236,7 @@ const AboutPage: React.FC = () => {
       <WhyChooseUsGrid />
       <WhyChooseUsSection />
       {/* Mission & Vision */}
-      <section className="py-16 bg-gray-50">
+      {/* <section className="py-16 bg-gray-50">
         <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-8">
           <div className="bg-white p-8 rounded-xl shadow-sm">
             <h2 className="text-2xl font-bold mb-3">Our Mission</h2>
@@ -246,10 +247,10 @@ const AboutPage: React.FC = () => {
             <p>{aboutData?.vision || 'We envision a future built on innovation and trust.'}</p>
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* Company History */}
-      <section className="py-16 bg-white">
+      {/* <section className="py-16 bg-white">
         <div className="max-w-4xl mx-auto px-6 text-center">
           <h2 className="text-3xl font-bold mb-6">Our History</h2>
           <div
@@ -259,11 +260,11 @@ const AboutPage: React.FC = () => {
             }}
           />
         </div>
-      </section>
+      </section> */}
 
       {/* Team Section */}
       {aboutData?.team?.length ? (
-        <section className="py-16 bg-gray-50">
+        <section className="py-6 bg-gray-50">
           <div className="max-w-7xl mx-auto px-6">
             <h2 className="text-3xl font-bold text-center mb-8">Our Team</h2>
             <div className="flex flex-wrap justify-center gap-8">
@@ -295,7 +296,16 @@ const AboutPage: React.FC = () => {
             <h2 className="text-3xl font-bold text-center mb-10">Our Values</h2>
             <div className="grid md:grid-cols-2 gap-6">
               {aboutData.values.map((v, idx) => (
-                <div key={idx} className="bg-gray-50 rounded-xl p-6 border border-gray-100">
+                <div key={idx} className="bg-gray-50 rounded-xl p-8 border border-gray-100 flex flex-col items-center">
+                  {/* Logo (if you have a logo/image for each value, otherwise remove this block) */}
+                  {v.image && (
+                    <img
+                      src={v.image}
+                      alt={v.title}
+                      className="mb-4 w-20 h-20 object-contain"
+                      style={{ maxWidth: '80px', maxHeight: '80px' }} // Increase logo size here
+                    />
+                  )}
                   <h3 className="text-xl font-semibold text-gray-900">
                     {v.title}
                   </h3>
@@ -308,44 +318,46 @@ const AboutPage: React.FC = () => {
           </div>
         </section>
       ) : null}
-      <section className="py-12 px-4 md:px-8 bg-white">
-        <h2 className="text-3xl font-normal text-center mb-10 text-gray-800">
-          We Are Adroit With Multiple Accounting Tools!
-        </h2>
+    <section className="py-16 px-4 md:px-10 bg-white">
+  <div className="max-w-6xl mx-auto text-center">
+    <h2 className="text-3xl md:text-4xl font-semibold text-[#4b4b8a] mb-14">
+      We Are Adroit With Multiple Accounting Tools!
+    </h2>
 
-        {/* Grid container with responsive columns: 3 on mobile, 4 on medium, 5 on large */}
-        <div className="max-w-7xl mx-auto grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 gap-y-10 gap-x-6">
+    {/* Grid container with responsive columns: 2 on small, 3 on medium, 5 on large */}
+    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-x-10 gap-y-12 items-center justify-center">
+      {/* Skeleton Loader */}
+      {loadingCompanies &&
+        Array.from({ length: skeletonCount }).map((_, i) => (
+          <div
+            key={`skeleton-${i}`}
+            className="h-16 w-full rounded-md bg-gray-100 animate-pulse border border-gray-200"
+          />
+        ))}
 
-          {/* Skeleton Loader */}
-          {loadingCompanies && (
-            Array.from({ length: skeletonCount }).map((_, i) => (
-              <div
-                key={`skeleton-${i}`}
-                className="h-20 w-full rounded-md bg-gray-100 animate-pulse border border-gray-200"
-              />
-            ))
-          )}
+      {/* Actual Logo Display */}
+      {!loadingCompanies &&
+        companies.map((c, index) => (
+          <div
+            key={`${c.name}-${index}`}
+            className="flex items-center justify-center group"
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={c.image}
+              alt={c.name}
+              loading="lazy"
+              className="max-h-12 md:max-h-14 object-contain opacity-90 transition-all duration-300 ease-in-out hover:opacity-100 hover:scale-105"
+              onError={(e) => {
+                (e.currentTarget as HTMLImageElement).style.display = 'none';
+              }}
+            />
+          </div>
+        ))}
+    </div>
+  </div>
+</section>
 
-          {/* Actual Logo Display */}
-          {!loadingCompanies && companies.map((c, index) => (
-            <div
-              key={`${c.name}-${index}`}
-              className="flex items-center justify-center p-2 h-20" // Container for centering
-            >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={c.image}
-                alt={c.name}
-                loading="lazy"
-                // Styling for the image: max height/width is 100% of the parent
-                // object-contain ensures the image scales down to fit without cropping.
-                className="max-h-full max-w-full object-contain transition-transform duration-300 ease-in-out hover:scale-105"
-                onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
-              />
-            </div>
-          ))}
-        </div>
-      </section>
         <TestimonialCarousel />
       <section className="relative py-20 overflow-hidden">
         {/* Background pattern */}
@@ -358,8 +370,8 @@ const AboutPage: React.FC = () => {
           }}
         />
         {/* Center content */}
-        <div className="relative flex items-center justify-center">
-          <div className="rounded-xl border text-center px-10 py-12 max-w-xl w-full mx-4 bg-[rgba(190,238,229,0.1)] border-[color-mix(in_srgb,_var(--primary-color)_45%,_white)] shadow-[0_12px_30px_rgba(53,154,255,0.15)]">
+        <div className="relative flex items-center justify-center ">
+          <div className="rounded-xl border text-center px-10 py-12 max-w-xl w-full mx-4 group bg-gradient-to-r from-[rgba(53,154,255,0.12)] via-[rgba(53,154,255,0.06)] to-transparent block bg-white rounded-2xl shadow-[0_8px_40px_rgba(53,154,255,0.25)] hover:shadow-[0_12px_50px_rgba(53,154,255,0.35)] overflow-hidden border border-gray-100 transition-all duration-300 hover:-translate-y-1">
             <h2 className="text-3xl md:text-4xl font-semibold text-gray-900 mb-4">
               Let’s Connect!
             </h2>

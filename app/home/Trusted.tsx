@@ -42,7 +42,7 @@ const Trusted: React.FC = () => {
     <div
       key={stat.label}
       className="group flex flex-col items-center bg-white shadow-lg p-6 rounded-2xl border border-gray-100 
-      hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
+      hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group bg-gradient-to-r from-[rgba(53,154,255,0.12)] via-[rgba(53,154,255,0.06)] to-transparent block bg-white rounded-2xl shadow-[0_8px_40px_rgba(53,154,255,0.25)] hover:shadow-[0_12px_50px_rgba(53,154,255,0.35)] overflow-hidden border border-gray-100 transition-all duration-300 hover:-translate-y-1"
     >
       {/* Icon */}
       <div className="mb-4">

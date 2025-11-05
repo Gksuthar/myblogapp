@@ -63,7 +63,7 @@ export default function AboutAdmin() {
           const data = await res.json();
           setInitialData(data);
         } else {
-          setInitialData({
+            setInitialData({
             title: '',
             description: '',
             mission: '',
@@ -71,7 +71,7 @@ export default function AboutAdmin() {
             companyHistory: '',
             team: [{ name: '', position: '', bio: '', image: '' }],
             values: [{ title: '', description: '' }],
-          });
+            });
         }
       } catch (err) {
         console.error(err);
@@ -154,7 +154,7 @@ export default function AboutAdmin() {
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              {/* <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block font-medium">Mission</label>
                   <Field
@@ -183,7 +183,7 @@ export default function AboutAdmin() {
                     className="text-red-500 text-sm"
                   />
                 </div>
-              </div>
+              </div> */}
 
               <div>
                 <TextEditor

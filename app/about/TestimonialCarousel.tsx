@@ -67,7 +67,7 @@ const TestimonialCarousel: React.FC<TestimonialCarouselProps> = ({ data = defaul
     return (
         <section className="bg-white py-16 flex items-center justify-center">
             {/* Main Carousel Card Container */}
-            <div className="max-w-4xl mx-auto p-6 bg-gray-100 rounded-2xl shadow-lg flex flex-col md:flex-row items-center md:items-stretch relative transition-all duration-500 ease-in-out">
+            <div className="w-[70%]  p-6 bg-gray-100 rounded-2xl shadow-lg flex flex-col md:flex-row items-center md:items-stretch relative transition-all duration-500 ease-in-out">
                 
                 {/* Image Section */}
                 <div className="md:w-1/3 flex-shrink-0 mb-6 md:mb-0 md:mr-6">

@@ -66,7 +66,7 @@ interface FeatureCardProps {
     gridArea?: string;
 }
 
-const FeatureCard: React.FC<FeatureCardProps> = ({ icon, title, description, img, bgColorClass, gridArea }) => (
+const FeatureCard: React.FC<FeatureCardProps> = ({ icon, title, description, img, bgColorClass = '#359aff', gridArea }) => (
     <div
         className={`relative flex flex-col p-6 rounded-xl shadow-lg border border-gray-100 ${bgColorClass}`}
         style={{ gridArea }}
@@ -98,7 +98,7 @@ const WhyChooseUsGrid: React.FC = () => {
             title: "Faster Turn Around Time",
             description: "Delivering timely results with accuracy. Stanfox ensures prompt accounting services that meets deadlines & exceeds expectations.",
             img: "https://cdn.prod.website-files.com/6718c309cc349b579872ddbb/673ed4244357102f364e55cd_6324e0bb1a3ea28dbfe17e43_slide-img-03.png.svg",
-            bgColorClass: 'bg-green-50/50 border-green-200/50',
+            bgColorClass: 'bg-gradient-to-r from-[rgba(53,154,255,0.12)] via-[rgba(53,154,255,0.06)] to-transparent border-green-200/50',
         },
         {
             icon: <IconStarBadge />,
@@ -126,7 +126,7 @@ const WhyChooseUsGrid: React.FC = () => {
             title: "Proficient In Accounting Tools",
             description: "Our accounting maestros are adept at multiple accounting tools. Trust us to get accounting done in the most proficient way.",
             img: "https://cdn.prod.website-files.com/6718c309cc349b579872ddbb/673ed4242b3ce9979a56eea2_6324e0bb1a3ea28dbfe17e43_slide-img-03.png-3.svg",
-            bgColorClass: 'bg-green-50/50 border-green-200/50',
+            bgColorClass: 'bg-gradient-to-r from-[rgba(53,154,255,0.12)] via-[rgba(53,154,255,0.06)] to-transparent border-green-200/50',
         },
         {
             icon: <IconSavingsGraph />,
@@ -165,6 +165,8 @@ const WhyChooseUsGrid: React.FC = () => {
                             />
                         ))}
                     </div>
+                    
+
                 </div>
                 <section className="py-16 md:py-24 bg-gray-50 process_section mobile-hide">
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-container container">

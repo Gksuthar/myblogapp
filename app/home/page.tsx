@@ -125,7 +125,7 @@ export default function Home() {
                     //     image={heroData.image ?? ''}
                     // // buttonText={heroData.buttonText}
                     // />
-                    <section className="relative overflow-hidden bg-gray-50 py-24">
+                    <section className="relative overflow-hidden bg-gray-50 py-24 ">
                         {/* Background Gradient */}
                         <div className="absolute inset-0 bg-gradient-to-br from-white via-gray-50 to-blue-50"></div>
 
@@ -157,14 +157,15 @@ export default function Home() {
                         {/* Profile Layout */}
                         <div className="relative z-10 w-full mx-auto mt-16">
                             {/* Left Main Person - hidden on mobile */}
-                            <div className="hidden md:block absolute bottom-0 left-6">
-                                <div className="relative w-[330px] h-[330px] rounded-2xl overflow-hidden bg-[#EAF5EE] shadow-lg">
+                            <div className="hidden md:block absolute bottom-0 left-6 ">
+                                <div className="relative w-[330px] h-[330px] rounded-2xl overflow-hidden bg-gradient-to-r from-[rgba(53,154,255,0.12)] via-[rgba(53,154,255,0.06)] to-transparent">
                                     <Image
                                         src="https://cdn.prod.website-files.com/6718c309cc349b579872ddbb/6731b5ddfd1bbd33089db299_hero_left-image.webp"
                                         alt="Raj Sharma"
                                         fill
                                         className="object-cover"
                                         priority
+                                        style={{ filter: 'hue-rotate(120deg) saturate(1.2)' }}
                                     />
                                 </div>
 
@@ -184,7 +185,7 @@ export default function Home() {
                                 </div>
 
                                 {/* Top-left (Pinky Mehta) */}
-                                <div className="absolute -top-20 left-16 bg-white rounded-2xl p-3 shadow-lg flex items-center gap-3">
+                                <div className="absolute -top-25 left-16 bg-white rounded-2xl p-3 shadow-lg flex items-center gap-3">
                                     <Image
                                         src="https://cdn.prod.website-files.com/6718c309cc349b579872ddbb/6734b1d56763687c6bfcc49d_Rectangle%204599.webp"
                                         alt="Pinky Mehta"
@@ -201,13 +202,14 @@ export default function Home() {
 
                             {/* Right Main Person - hidden on mobile */}
                             <div className="hidden md:block absolute right-1 bottom-0">
-                                <div className="relative w-[280px] h-[280px] rounded-2xl overflow-hidden bg-[#EAF5EE] shadow-lg">
+                                <div className="relative w-[280px] h-[280px] rounded-2xl overflow-hidden bg-gradient-to-r from-[rgba(53,154,255,0.12)] via-[rgba(53,154,255,0.06)] to-transparent">
                                     <Image
                                         src="https://cdn.prod.website-files.com/6718c309cc349b579872ddbb/673ddddc7484f43263a13818_Group%201000004220.png"
                                         alt="Kajol Shah"
                                         fill
                                         className="object-cover"
                                         priority
+                                        style={{ filter: 'hue-rotate(120deg) saturate(1.2)' }}
                                     />
                                 </div>
 

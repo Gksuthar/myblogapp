@@ -31,7 +31,7 @@ const BlogServiceCard: React.FC<BlogServiceCardProps> = ({ post }) => {
   }
 
   return (
-    <div className="flex flex-col p-7 bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 group border border-gray-200 hover:border-[var(--primary-color)] h-full min-h-[200px] max-h-[280px] overflow-hidden">
+    <div className="bg-gradient-to-r from-[rgba(53,154,255,0.12)] via-[rgba(53,154,255,0.06)] to-transparent flex flex-col p-7 bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 group border border-gray-200 hover:border-[var(--primary-color)] h-full min-h-[200px] max-h-[280px] overflow-hidden">
       <div className=" items-center justify-start space-x-5 mb-4">
         {/* Icon placeholder/Image */}
         <div className="p-3 rounded-xl">
