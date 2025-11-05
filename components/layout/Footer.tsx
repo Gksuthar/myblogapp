@@ -141,10 +141,11 @@ const Footer: React.FC = () => {
                     key={i}
                     src={b.image as string}
                     alt={b.label || `Certification ${i+1}`}
-                    width={160}
-                    height={56}
-                    className="h-20 w-auto object-contain"
+                    width={240}
+                    height={84}
+                    className="h-24 w-auto object-contain"
                     unoptimized
+                    quality={100}
                   />
                 ) : (
                   <div key={i} className="w-28 h-10 bg-gray-700 rounded flex items-center justify-center text-xs text-gray-300">

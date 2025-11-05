@@ -31,11 +31,11 @@ const Tabs: React.FC<TabsProps> = ({ tabs = [], onChange, defaultActive }) => {
   }
 
   return (
-    <div className="w-full">
+    <div className="w-full ">
       {/* Tabs Navigation */}
       {/* Make rings/shadows visible at edges by giving extra padding; keep horizontal scroll when needed */}
       <div
-        className="flex gap-3 md:gap-4 py-4 pl-8 pr-3 md:pl-10 md:pr-4 overflow-x-auto scrollbar-hide"
+        className="flex gap-3 md:gap-4 py-4 pl-8 pr-3 md:pl-10 md:pr-4 overflow-x-auto scrollbar-hide "
         role="tablist"
       >
         {tabs.map((tab) => (
@@ -44,7 +44,7 @@ const Tabs: React.FC<TabsProps> = ({ tabs = [], onChange, defaultActive }) => {
             text={tab.label}
             onClick={() => handleClick(tab.value)}
             variant={active === tab.value ? "dark" : "transparent"}
-            className={`whitespace-nowrap rounded-full text-sm md:text-base font-medium transition-all duration-200 px-5 py-2.5 shadow-sm flex-shrink-0 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 ${
+            className={`whitespace-nowrap rounded-full  text-sm md:text-base font-medium transition-all duration-200 px-5 py-2.5 shadow-sm flex-shrink-0 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 ${
               active === tab.value
                 ? "bg-gray-900 text-white"
                 : "text-gray-700 border border-gray-300 hover:bg-gray-100"
@@ -54,7 +54,7 @@ const Tabs: React.FC<TabsProps> = ({ tabs = [], onChange, defaultActive }) => {
       </div>
 
       {/* Active Tab Content */}
-      <div className="w-full mt-8">
+      <div className="w-full mt-8 ">
         {tabs.find((tab) => tab.value === active)?.component ?? null}
       </div>
     </div>

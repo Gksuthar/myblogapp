@@ -21,9 +21,10 @@ const AccountantCard: React.FC<AccountantCardProps> = ({
   return (
     <div className="w-full ">
       {/* Main Card */}
-           <div className="relative bg-white border rounded-[30px] shadow-md flex flex-col md:flex-row items-center md:items-start overflow-hidden w-full mt-4 min-h-[360px]">
+           <div className="relative bg-white border rounded-[30px] shadow-md flex flex-col md:flex-row items-center md:items-start overflow-hidden w-full mt-4 min-h-[360px] bg-gradient-to-r from-[rgba(53,154,255,0.12)] via-[rgba(53,154,255,0.06)] to-transparent
+">
         {/* Left Section */}
-        <div className="p-8 flex-1 space-y-6">
+        <div className="p-8 flex-1 space-y-6 ">
           {/* Tags */}
           <div className="flex flex-wrap gap-3">
             {tags.length > 0

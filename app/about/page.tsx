@@ -133,21 +133,21 @@ const AboutPage: React.FC = () => {
         <section className="py-16 bg-gray-50">
           <div className="max-w-7xl mx-auto px-6">
             <h2 className="text-3xl font-bold text-center mb-8">Our Team</h2>
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="flex flex-wrap justify-center gap-8">
               {aboutData.team.map((member, idx) => (
-                <div key={idx} className="bg-white p-6 rounded-lg shadow-md text-center">
-                  <div className="mx-auto mb-4 w-24 h-24 rounded-full overflow-hidden">
+                <div key={idx} className="bg-gradient-to-r from-[rgba(53,154,255,0.12)] via-[rgba(53,154,255,0.06)] to-transparent bg-white p-8 rounded-lg shadow-md text-center w-full max-w-sm flex-shrink-0">
+                  <div className="mx-auto mb-4 w-32 h-32 rounded-full overflow-hidden">
                     <Image
                       src={member.image || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=300'}
                       alt={member.name}
-                      width={96}
-                      height={96}
+                      width={128}
+                      height={128}
                       className="w-full h-full object-cover"
                     />
                   </div>
-                  <h3 className="text-xl font-bold">{member.name}</h3>
-                  <p className="text-indigo-600">{member.position}</p>
-                  <p className="text-gray-600 text-sm mt-2">{member.bio}</p>
+                  <h3 className="text-2xl font-bold">{member.name}</h3>
+                  <p className="text-indigo-600 text-lg font-medium">{member.position}</p>
+                  <p className="text-gray-600 text-base mt-3 leading-relaxed">{member.bio}</p>
                 </div>
               ))}
             </div>

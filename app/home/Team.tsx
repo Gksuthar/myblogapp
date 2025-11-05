@@ -78,7 +78,7 @@ const tabsData = roles?.map((role) => ({
   label: role?.tabName, // Tab label from API
   value: role?.tabName.toLowerCase().replace(/\s+/g, "-"), // normalized value for Tabs
   component: (
-    <div style={{marginBottom:"20px"}}>
+    <div className="w-full">
       {role?.cards?.map((card, idx) => (
         <AccountantCard key={idx} {...card} />
       ))}
@@ -102,7 +102,7 @@ const tabsData = roles?.map((role) => ({
 
       {/* Tabs Section */}
       {tabsData?.length ? (
-        <div className="mb-12">
+        <div className="mb-12 ">
           <Tabs
             tabs={tabsData}
             defaultActive={tabsData[0]?.value || ""}
@@ -112,7 +112,7 @@ const tabsData = roles?.map((role) => ({
       ) : null}
 
       {/* Services Section */}
-     <div className="flex flex-col-reverse md:flex-row items-center gap-8 md:gap-12">
+     <div className="flex flex-col-reverse md:flex-row items-center gap-8 md:gap-12  ">
       {/* Text Section */}
       <div className="flex-1 text-center md:text-left justify-center mb-8 md:mb-0">
         <h3 className="text-2xl sm:text-3xl md:text-4xl font-semibold text-gray-800 mb-4 leading-snug">

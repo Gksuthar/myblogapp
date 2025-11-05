@@ -15,7 +15,7 @@ interface Props {
 
 const HeroSection: React.FC<Props> = ({ title, disc, image, showCtas = true }) => {
   return (
-    <section className="relative flex flex-col-reverse md:flex-row items-center justify-between gap-10 px-6 md:px-16 py-10 bg-gradient-to-br from-gray-50 to-white overflow-hidden">
+    <section className="relative flex flex-col-reverse md:flex-row items-center justify-between gap-10 px-6 md:px-16 py-10 bg-gradient-to-br from-gray-50 to-white overflow-hidden bg-gradient-to-r from-[rgba(53,154,255,0.12)] via-[rgba(53,154,255,0.06)] to-transparent">
       
       {/* Left content */}
       <motion.div

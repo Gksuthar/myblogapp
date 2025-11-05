@@ -42,7 +42,10 @@ const HowItWorksSection: React.FC = () => {
       // ✅ Only use valid entries
       setSteps(
         data.filter(
-          (item : any): item is StepData => !!item?.title && !!item?.disc
+          (item: unknown): item is StepData => {
+            const step = item as Partial<StepData>;
+            return !!step?.title && !!step?.disc;
+          }
         )
       );
     } catch (error) {
@@ -121,18 +124,18 @@ const HowItWorksSection: React.FC = () => {
             {/* Slider Container */}
             <div className="relative overflow-hidden">
               <div
-                className="flex transition-transform duration-700 ease-in-out"
+                className="flex transition-transform duration-700 ease-in-out justify-center"
                 style={{ transform: `translateX(-${trackShiftPercentage}%)` }}
               >
                 {steps?.map((step, index) => (
                   <div
                     key={step?._id || index}
                     className="flex-shrink-0 p-3"
-                    style={{ width: `calc(100% / ${visibleItems})` }}
+                    style={{ width: `calc(100% / ${visibleItems})`, maxWidth: '400px' }}
                   >
                     {/* Step Card */}
-                    <div className="bg-white rounded-2xl shadow-md hover:shadow-xl transition-shadow duration-300 p-6 sm:p-8 flex flex-col items-center md:items-start text-center md:text-left h-full">
-                      <div className="relative h-40 w-full mb-6 flex items-center justify-center bg-gray-100 rounded-md overflow-hidden">
+                    <div className="relative rounded-2xl shadow-md hover:shadow-xl transition-shadow duration-300 p-6 sm:p-8 flex flex-col items-center text-center h-full overflow-hidden" style={{ background: 'linear-gradient(135deg, #eaf5ff 0%, #f5faff 50%, #ffffff 100%)' }}>
+                      <div className="relative h-40 w-full mb-6 flex items-center justify-center bg-white rounded-md overflow-hidden shadow-sm">
                         {step?.image ? (
                           <Image
                             src={

@@ -142,6 +142,17 @@ export default function ServiceDetailsPage() {
 
       {!loading && !error && service && (
         <>
+          {/* Back to Services Button */}
+          <div className="mb-8">
+            <a
+              href="/services-list"
+              className="inline-flex items-center px-5 py-2.5 rounded-full font-medium hover:shadow-md transition-all duration-200"
+              style={{ backgroundColor: '#359aff', color: '#ffffff' }}
+            >
+              ← Back to Services
+            </a>
+          </div>
+
           {/* Show HeroSection only if hero section exists or if serviceCardView + card sections exist */}
           {shouldShowHero && (
             <Suspense fallback={<ComponentLoader height="h-64" message="Loading hero..." />}>
@@ -155,7 +166,7 @@ export default function ServiceDetailsPage() {
 
           {/* Show ServiceCardView if it exists and card sections exist */}
           {hasServiceCardView && hasCardSections && serviceCardView && (
-            <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm mt-8 mb-8">
+            <div className="rounded-2xl p-6 shadow-md mt-8 mb-8 border border-gray-200" style={{ background: 'linear-gradient(135deg, #eaf5ff 0%, #f5faff 50%, #ffffff 100%)' }}>
               <h2 className="text-2xl font-semibold text-gray-900 mb-2">
                 {serviceCardView.title}
               </h2>
@@ -171,7 +182,8 @@ export default function ServiceDetailsPage() {
               {service.cardSections.map((section, idx) => (
                 <div
                   key={`${section.sectionTitle || 'section'}-${idx}`}
-                  className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm"
+                  className="rounded-2xl p-6 shadow-md border border-gray-200"
+                  style={{ background: 'linear-gradient(135deg, #eaf5ff 0%, #f5faff 50%, #ffffff 100%)' }}
                 >
                   <h2 className="text-2xl font-semibold text-gray-900 mb-2">
                     {section.sectionTitle || 'Section'}

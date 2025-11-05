@@ -96,39 +96,41 @@ export default function Header() {
   ];
 
   const CustomButton = ({ text }: { text: string }) => (
-    <button className="px-4 py-2 bg-[var(--primary-color)] text-white rounded-md text-sm font-medium hover:bg-[var(--primary-color)] transition">
+    <button className="px-5 py-2.5 bg-[var(--primary-color)] text-[var(--primary-color-contrast)] rounded-full text-sm font-semibold shadow-[0_4px_14px_rgba(53,154,255,0.25)] hover:shadow-[0_6px_18px_rgba(53,154,255,0.35)] transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--primary-color)]">
       {text}
     </button>
   );
 
   const renderServiceIcon = (title?: string) => {
     const t = (title || '').toLowerCase();
-    if (t.includes('tax')) return <FaFileInvoiceDollar />;
-    if (t.includes('report')) return <FaChartLine />;
-    if (t.includes('bookkeep')) return <FaBook />;
-    if (t.includes('account')) return <FaCalculator />;
-    return <FaTools />;
+    if (t.includes('tax')) return <FaFileInvoiceDollar className="text-xl" />;
+    if (t.includes('payroll')) return <FaChartLine className="text-xl" />;
+    if (t.includes('report') || t.includes('financial')) return <FaChartLine className="text-xl" />;
+    if (t.includes('bookkeep')) return <FaBook className="text-xl" />;
+    if (t.includes('account') || t.includes('outsourc')) return <FaCalculator className="text-xl" />;
+    if (t.includes('consult') || t.includes('advis')) return <FaTools className="text-xl" />;
+    return <FaCalculator className="text-xl" />;
   };
 
   return (
-    <header className=" w-full bg-white z-50">
-      <div className="max-w-7xl mx-auto flex justify-between items-center p-4 relative">
+    <header className="sticky top-0 w-full z-50 bg-white/90 backdrop-blur supports-[backdrop-filter]:bg-white/75 border-b border-gray-100">
+      <div className="max-w-7xl mx-auto flex justify-between items-center px-4 sm:px-6 lg:px-8 py-4 relative">
         {/* Logo */}
         <div className="flex items-center space-x-2">
           <Link href="/">
             <Image
               src="https://res.cloudinary.com/dsu49fx2b/image/upload/v1762306740/logo_big1-1_dyd6xs.png"
               alt="Company logo"
-              width={180}
-              height={48}
-              className="h-10 w-auto object-contain"
+              width={225}
+              height={60}
+              className="h-10 md:h-12 w-auto object-contain"
               priority
             />
           </Link>
         </div>
 
         {/* Desktop Menu */}
-        <nav className="hidden md:flex items-center gap-6">
+        <nav className="hidden md:flex items-center gap-2 lg:gap-4">
           {List.map((item) => (
             <div
               key={item.id}
@@ -138,7 +140,7 @@ export default function Header() {
               <div className="flex items-center gap-1">
                 <Link
                   href={item.path}
-                  className="text-gray-700 font-medium hover:text-[var(--primary-color)]"
+                  className="text-[15px] text-gray-700 font-medium px-3 py-2 rounded-full hover:bg-gray-100 hover:text-[var(--primary-color)] transition-colors"
                 >
                   {item.link}
                 </Link>
@@ -152,7 +154,7 @@ export default function Header() {
                       e.stopPropagation();
                       toggleServicesMenu();
                     }}
-                    className="p-1 rounded hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--primary-color)]"
+                    className="p-1 rounded-full hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--primary-color)]"
                   >
                     <MdExpandMore className={`transition-transform ${servicesOpen ? 'rotate-180' : ''}`} />
                   </button>
@@ -164,8 +166,8 @@ export default function Header() {
                 <div
                   onMouseEnter={() => setServicesOpen(true)}
                   onMouseLeave={() => setServicesOpen(false)}
-                  className="fixed top-18 left-7/10 -translate-x-1/2 bg-white shadow-2xl rounded-2xl border border-gray-200 z-50 overflow-hidden"
-                  style={{ width: "900px", maxWidth: "90vw" }}
+                  className="fixed top-20 left-1/2 -translate-x-1/2 bg-white shadow-2xl rounded-2xl border border-gray-200 z-50 overflow-hidden"
+                  style={{ width: "940px", maxWidth: "92vw" }}
                 >
                   <div className="flex">
                     {/* Left Sidebar - Category Tabs */}
@@ -181,7 +183,7 @@ export default function Header() {
                             onClick={() => setActiveTab(category._id)}
                             className={`w-full text-left py-3 px-4 rounded-lg text-sm font-medium transition-all duration-200 mb-2 ${
                               activeTab === category._id
-                                ? "bg-[color-mix(in srgb, var(--primary-color) 15%, white)] text-[var(--primary-color)] shadow-sm"
+                                ? "bg-[color-mix(in_srgb,var(--primary-color)_16%,white)] text-[var(--primary-color)] shadow-sm"
                                 : "text-gray-700 hover:bg-gray-100"
                             }`}
                           >
@@ -220,7 +222,7 @@ export default function Header() {
                               }`}
                               className="flex items-start p-4 rounded-xl hover:bg-gray-50 transition-all duration-200 group border border-transparent hover:border-gray-200"
                             >
-                              <div className="w-10 h-10 flex items-center justify-center text-xl bg-[#e6f3ff] text-[var(--primary-color)] rounded-full flex-shrink-0 border border-[color-mix(in srgb, var(--primary-color) 40%, white)]">
+                              <div className="w-10 h-10 flex items-center justify-center text-xl bg-[#e6f3ff] text-[var(--primary-color)] rounded-full flex-shrink-0 border border-[color-mix(in_srgb,var(--primary-color)_40%,white)]">
                                 {renderServiceIcon(svc.heroSection?.title)}
                               </div>
                               <div className="ml-3">
@@ -256,7 +258,7 @@ export default function Header() {
 
         {/* Mobile Menu */}
         {menuOpen && (
-          <div className="absolute top-16 left-0 w-full bg-white shadow-lg flex flex-col items-center gap-4 py-6 md:hidden z-50">
+          <div className="absolute top-16 left-0 w-full bg-white/95 backdrop-blur shadow-lg border-b border-gray-100 flex flex-col items-center gap-4 py-6 md:hidden z-50">
             {List.map((item) => (
               <Link
                 key={item.id}
