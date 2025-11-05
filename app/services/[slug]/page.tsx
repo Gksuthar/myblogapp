@@ -142,17 +142,6 @@ export default function ServiceDetailsPage() {
 
       {!loading && !error && service && (
         <>
-          {/* Back to Services Button */}
-          <div className="mb-8">
-            <a
-              href="/services-list"
-              className="inline-flex items-center px-5 py-2.5 rounded-full font-medium hover:shadow-md transition-all duration-200"
-              style={{ backgroundColor: '#359aff', color: '#ffffff' }}
-            >
-              ← Back to Services
-            </a>
-          </div>
-
           {/* Show HeroSection only if hero section exists or if serviceCardView + card sections exist */}
           {shouldShowHero && (
             <Suspense fallback={<ComponentLoader height="h-64" message="Loading hero..." />}>
@@ -218,6 +207,17 @@ export default function ServiceDetailsPage() {
               <div dangerouslySetInnerHTML={{ __html: service.content }} />
             </section>
           )}
+
+          {/* Back to Services Button (moved to bottom) */}
+          <div className="mt-12 mb-8 flex justify-center">
+            <a
+              href="/services-list"
+              className="inline-flex items-center px-5 py-2.5 rounded-full font-medium hover:shadow-md transition-all duration-200"
+              style={{ backgroundColor: '#359aff', color: '#ffffff' }}
+            >
+              ← Back to Services
+            </a>
+          </div>
         </>
       )}
     </div>

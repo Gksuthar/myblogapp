@@ -158,7 +158,7 @@ export default function Home() {
                         <div className="relative z-10 w-full mx-auto mt-16">
                             {/* Left Main Person - hidden on mobile */}
                             <div className="hidden md:block absolute bottom-0 left-6">
-                                <div className="relative w-[280px] h-[280px] rounded-2xl overflow-hidden bg-[#EAF5EE] shadow-lg">
+                                <div className="relative w-[330px] h-[330px] rounded-2xl overflow-hidden bg-[#EAF5EE] shadow-lg">
                                     <Image
                                         src="https://cdn.prod.website-files.com/6718c309cc349b579872ddbb/6731b5ddfd1bbd33089db299_hero_left-image.webp"
                                         alt="Raj Sharma"
