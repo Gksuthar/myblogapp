@@ -174,14 +174,14 @@ const Footer: React.FC = () => {
             <ul className="space-y-2 text-sm">
               {contactPhoneUSA && (
                 <li className="text-gray-400 flex items-center gap-2">
-                  <span aria-hidden>🇺🇸</span>
+                  <span aria-hidden><img src="https://cdn.prod.website-files.com/6718c309cc349b579872ddbb/673c2e6eab323a15bc059a76_flag-us-svgrepo-com.svg" alt="USA Flag" className="w-4 h-4" /></span>
                   <span className="font-semibold text-white">USA</span>
                   <span>{contactPhoneUSA}</span>
                 </li>
               )}
               {contactPhoneIND && (
                 <li className="text-gray-400 flex items-center gap-2">
-                  <span aria-hidden>🇮🇳</span>
+                  <span aria-hidden><img src="https://cdn.prod.website-files.com/6718c309cc349b579872ddbb/673c2edf97f8bb52c7e28017_india-svgrepo-com.svg" alt="India Flag" className="w-4 h-4" /></span>
                   <span className="font-semibold text-white">IND</span>
                   <span>{contactPhoneIND}</span>
                 </li>
@@ -209,7 +209,7 @@ const Footer: React.FC = () => {
 
           {/* USA Office */}
           <div>
-            <h4 className="font-bold text-base mb-4">🇺🇸 {officeUSA.title}</h4>
+            <h4 className="font-bold text-base mb-4"><img src='https://cdn.prod.website-files.com/6718c309cc349b579872ddbb/673c2e6eab323a15bc059a76_flag-us-svgrepo-com.svg' alt="USA Flag" className="inline-block w-4 h-4 mr-2" />   {officeUSA.title}</h4>
             <p className="text-gray-400 text-sm">
               {officeUSA.lines.map((l, i) => (
                 <span key={i} className="block">{l}</span>
@@ -219,7 +219,7 @@ const Footer: React.FC = () => {
 
           {/* India Office */}
           <div>
-            <h4 className="font-bold text-base mb-4">🇮🇳 {officeIND.title}</h4>
+            <h4 className="font-bold text-base mb-4"><img src='https://cdn.prod.website-files.com/6718c309cc349b579872ddbb/673c2edf97f8bb52c7e28017_india-svgrepo-com.svg' alt="India Flag" className="inline-block w-4 h-4 mr-2" />   {officeIND.title}</h4>
             <p className="text-gray-400 text-sm">
               {officeIND.lines.map((l, i) => (
                 <span key={i} className="block">{l}</span>
