@@ -16,6 +16,16 @@ const IndustriesSection = lazy(() => import("./IndustriesSection"));
 const BlogSection = lazy(() => import("./BlogSection"));
 const JoinTeamSection = lazy(() => import("./JoinTeamSection"));
 const CaseStudiesAndConnect = lazy(() => import("./CaseStudiesAndConnect"));
+// Remove useState from top level. Declare a constant for initial icons.
+const initialServiceIcons: string[] = [
+    'https://cdn.prod.website-files.com/6718c309cc349b579872ddbb/6732eedcfeeebafefe65ebd0_icons8-checklist-94%201.svg',
+    'https://cdn.prod.website-files.com/6718c309cc349b579872ddbb/6732eedee4354c083390f315_icons8-resume-94%201.svg',
+    'https://cdn.prod.website-files.com/6718c309cc349b579872ddbb/6732eedd1ecc3b35a9896b53_icons8-talk-94%201.svg',
+    'https://cdn.prod.website-files.com/6718c309cc349b579872ddbb/6732eedcdff39f1fc7a90b67_icons8-accounting-94%201.svg',
+    'https://cdn.prod.website-files.com/6718c309cc349b579872ddbb/6732eedd58a2203357e2c49d_icons8-investment-94%201.svg',
+    'https://cdn.prod.website-files.com/6718c309cc349b579872ddbb/6732eedc8d7996c335092337_icons8-bill-94%201.svg'
+];
+let countServiceIcons = 0;
 
 const fadeIn = (delay = 0, y = 40) => ({
     initial: { opacity: 0, y },
@@ -354,6 +364,7 @@ export default function Home() {
                         )}
                         {!loadingServices &&
                             serviceCards.map((svc, i) => {
+                                countServiceIcons=countServiceIcons+1;
                                 const slug = svc.slug || toSlug(svc?.categoryId || 'service');
 
                                 // Handle array or object form of serviceCardView
@@ -365,10 +376,11 @@ export default function Home() {
                                     id: i + 1,
                                     title: cardView?.title || svc.heroSection?.title || '',
                                     desc: cardView?.description || svc.heroSection?.description || "",
-                                    img:
-                                        cardView?.image ||
-                                        svc.heroSection?.image ||
-                                        'https://cdn.prod.website-files.com/6718c309cc349b579872ddbb/6732eedcfeeebafefe65ebd0_icons8-checklist-94%201.svg',
+                                    img: initialServiceIcons[countServiceIcons % 6]
+
+                                        // cardView?.image ||
+                                        // svc.heroSection?.image ||
+                                        // 'https://cdn.prod.website-files.com/6718c309cc349b579872ddbb/6732eedcfeeebafefe65ebd0_icons8-checklist-94%201.svg',
                                 };
 
                                 const href = `/services/${slug}`;

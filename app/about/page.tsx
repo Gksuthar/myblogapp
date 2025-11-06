@@ -353,8 +353,8 @@ const AboutPage: React.FC = () => {
       We Are Adroit With Multiple Accounting Tools!
     </h2>
 
-    {/* Grid container with responsive columns: 2 on small, 3 on medium, 5 on large */}
-    <div className="grid grid-cols-4 gap-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-x-10 gap-y-12 items-center justify-center">
+  {/* Grid container: 3 cols on mobile, 3 on small, 4 on md, 5 on lg; reduced gap */}
+  <div className="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6 items-center justify-center">
       {/* Skeleton Loader */}
       {loadingCompanies &&
         Array.from({ length: skeletonCount }).map((_, i) => (

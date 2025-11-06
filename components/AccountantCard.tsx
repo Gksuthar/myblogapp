@@ -62,31 +62,34 @@ const AccountantCard: React.FC<AccountantCardProps> = ({
         </div>
 
         {/* Right Section */}
-        <div className="relative flex-1 flex justify-center items-center p-6">
-          {/* SVG Curve */}
-          <svg
-            className="absolute right-0 top-0 w-full h-full"
-            viewBox="0 0 300 300"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M50 50C150 50 250 150 250 250"
-              stroke="#BFBFBF"
-              strokeWidth="2"
-              strokeDasharray="6 6"
-            />
-          </svg>
+     <div className="relative flex-1 flex justify-center items-center p-6">
+  {/* SVG Curve */}
+  <svg
+    className="absolute right-0 top-0 w-full h-full"
+    viewBox="0 0 300 300"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      d="M50 50C150 50 250 150 250 250"
+      stroke="#BFBFBF"
+      strokeWidth="2"
+      strokeDasharray="6 6"
+    />
+  </svg>
 
-          {/* Image */}
-          <Image
-            src={image}
-            alt={title}
-            width={360}
-            height={240}
-            className="relative w-full max-w-[360px] h-auto object-contain z-10 rounded-2xl shadow-lg"
-          />
-        </div>
+  {/* Image */}
+  <div className="relative w-[90%] sm:w-[400px] md:w-[480px] lg:w-[520px] aspect-[3/2] flex items-center justify-center z-10">
+    <Image
+      src={image}
+      alt={title}
+      fill
+      className="object-cover rounded-2xl shadow-lg"
+      sizes="(max-width: 640px) 90vw, (max-width: 1024px) 480px, 520px"
+    />
+  </div>
+</div>
+
       </div>
     </div>
   );
