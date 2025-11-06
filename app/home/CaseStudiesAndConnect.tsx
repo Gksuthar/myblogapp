@@ -100,8 +100,8 @@ const CaseStudiesAndConnect: React.FC = () => {
         />
 
         {/* Center content */}
-        <div className="relative flex items-center justify-center">
-          <div className="bg-gradient-to-r from-[rgba(53,154,255,0.12)] via-[rgba(53,154,255,0.06)] to-transparent rounded-xl border text-center px-10 py-12 max-w-xl w-full mx-4 bg-[rgba(190,238,229,0.1)] border-[color-mix(in_srgb,_var(--primary-color)_45%,_white)] shadow-[0_12px_30px_rgba(53,154,255,0.15)]">
+        <div className="relative flex items-center justify-center ">
+          <div className="bg-gradient-to-br from-blue-50 to-indigo-100 bg-white rounded-2xl shadow-lg border border-gray-200 transition-all duration-300 text-center px-10 py-12 max-w-xl w-full mx-4">
             <h2 className="text-3xl md:text-4xl font-semibold text-gray-900 mb-4">
               Let’s Connect!
             </h2>

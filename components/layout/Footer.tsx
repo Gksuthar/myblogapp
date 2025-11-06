@@ -93,9 +93,9 @@ const Footer: React.FC = () => {
           
           {/* Logo & Tagline */}
           <div>
-            <div className="flex items-center space-x-2 mb-4">
+            <div className="flex items-center space-x-2 mb-6 h-10 ">
               {isValidImageSrc(logoUrl) ? (
-                <Image src={logoUrl} alt="Logo" width={144} height={32} className="h-8 w-auto" unoptimized />
+                <Image src={logoUrl} alt="Logo" width={144} height={32} className="h-13 w-auto" unoptimized />
               ) : (
                 <span className="text-2xl font-bold text-white">Logo</span>
               )}
@@ -113,7 +113,7 @@ const Footer: React.FC = () => {
                 {(links.length ? links : [
                   { label: 'Home', href: '/' },
                   { label: 'About Us', href: '/about' },
-                  { label: 'How We Work', href: '/how-we-work' },
+                  { label: 'Blogs', href: '/blogs' },
                   { label: 'Contact Us', href: '/Contactus' }
                 ]).slice(0,5).map((l, i) => (
                   <FooterLink key={i} href={l.href}>{l.label}</FooterLink>

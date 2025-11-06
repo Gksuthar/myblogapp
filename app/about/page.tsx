@@ -318,45 +318,7 @@ const AboutPage: React.FC = () => {
           </div>
         </section>
       ) : null}
-    <section className="py-16 px-4 md:px-10 bg-white">
-  <div className="max-w-6xl mx-auto text-center">
-    <h2 className="text-3xl md:text-4xl font-semibold text-[#4b4b8a] mb-14">
-      We Are Adroit With Multiple Accounting Tools!
-    </h2>
 
-    {/* Grid container with responsive columns: 2 on small, 3 on medium, 5 on large */}
-    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-x-10 gap-y-12 items-center justify-center">
-      {/* Skeleton Loader */}
-      {loadingCompanies &&
-        Array.from({ length: skeletonCount }).map((_, i) => (
-          <div
-            key={`skeleton-${i}`}
-            className="h-16 w-full rounded-md bg-gray-100 animate-pulse border border-gray-200"
-          />
-        ))}
-
-      {/* Actual Logo Display */}
-      {!loadingCompanies &&
-        companies.map((c, index) => (
-          <div
-            key={`${c.name}-${index}`}
-            className="flex items-center justify-center group"
-          >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={c.image}
-              alt={c.name}
-              loading="lazy"
-              className="max-h-12 md:max-h-14 object-contain opacity-90 transition-all duration-300 ease-in-out hover:opacity-100 hover:scale-105"
-              onError={(e) => {
-                (e.currentTarget as HTMLImageElement).style.display = 'none';
-              }}
-            />
-          </div>
-        ))}
-    </div>
-  </div>
-</section>
 
         <TestimonialCarousel />
       <section className="relative py-20 overflow-hidden">
@@ -371,7 +333,7 @@ const AboutPage: React.FC = () => {
         />
         {/* Center content */}
         <div className="relative flex items-center justify-center py-16 ">
-          <div className="!border-[color-mix(in_srgb,_var(--primary-color)_45%,_white)] group bg-gradient-to-r from-[rgba(53,154,255,0.12)] via-[rgba(53,154,255,0.06)] to-transparent block bg-white rounded-2xl shadow-[0_8px_40px_rgba(53,154,255,0.25)] hover:shadow-[0_12px_50px_rgba(53,154,255,0.35)] overflow-hidden border border-gray-100 transition-all duration-300 hover:-translate-y-1 rounded-xl border text-center px-10 py-12 max-w-xl w-full mx-4 group bg-gradient-to-br from-blue-50 to-indigo-100 block bg-white rounded-2xl shadow-lg hover:shadow-xl overflow-hidden border border-gray-200 transition-all duration-300 hover:-translate-y-1">
+          <div className="bg-gradient-to-br from-blue-50 to-indigo-100 bg-white rounded-2xl shadow-lg hover:shadow-xl border border-gray-200 transition-all duration-300 hover:-translate-y-1 text-center px-10 py-12 max-w-xl w-full mx-4">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4">
               Let’s Connect!
             </h2>
@@ -385,6 +347,69 @@ const AboutPage: React.FC = () => {
           </div>
         </div>
       </section>
+          <section className="py-16 px-4 md:px-10 bg-gray-50 ">
+  <div className="max-w-6xl mx-auto text-center ">
+    <h2 className="text-3xl md:text-4xl font-semibold text-[#4b4b8a] mb-14">
+      We Are Adroit With Multiple Accounting Tools!
+    </h2>
+
+    {/* Grid container with responsive columns: 2 on small, 3 on medium, 5 on large */}
+    <div className="grid grid-cols-4 gap-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-x-10 gap-y-12 items-center justify-center">
+      {/* Skeleton Loader */}
+      {loadingCompanies &&
+        Array.from({ length: skeletonCount }).map((_, i) => (
+          <div
+            key={`skeleton-${i}`}
+            className="h-16 w-full rounded-md bg-gray-100 animate-pulse border border-gray-200"
+          />
+        ))}
+
+      {/* Actual Logo Display */}
+      {!loadingCompanies &&
+        companies.map((c, index) => (
+                   <div
+                        key={c._id}
+                        className="aspect-square w-full border border-gray-200 rounded-md bg-white p-1 overflow-hidden flex items-center justify-center
+                        transition-all duration-300 ease-in-out
+                        hover:border-[var(--primary-color)] hover:shadow-lg hover:shadow-[rgba(53,154,255,0.15)] hover:-translate-y-1 hover:scale-105
+                        cursor-pointer group"
+                      >
+                    {c.image ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={c.image}
+                        alt={c.name}
+                        loading="lazy"
+                            className="max-h-[92%] max-w-[95%] object-contain transition-transform duration-300 ease-in-out group-hover:scale-110"
+                        onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
+                      />
+                    ) : null}
+                    {/* Fallback to name if image missing or failed */}
+                    {!c.image && (
+                      <span className="text-[11px] font-semibold text-gray-600 truncate px-2 text-center transition-colors duration-300 group-hover:text-[var(--primary-color)]">
+                        {c.name}
+                      </span>
+                    )}
+                  </div>
+
+        ))}
+    </div>
+  </div>
+</section>
+   {/* <div className="grid grid-cols-4 gap-2">
+                {loadingCompanies && (
+                      Array.from({ length: 8 }).map((_, i) => (
+                        <div key={`skeleton-${i}`} className="aspect-square w-full rounded-md bg-gray-100 animate-pulse border border-gray-200" />
+                  ))
+                )}
+                {!loadingCompanies && companies.length === 0 && (
+                  <div className="col-span-4 text-xs text-gray-500">No trusted companies yet.</div>
+                )}
+                {!loadingCompanies && companies.map((c) => (
+             
+                ))}
+              </div> */}
+
     </div>
   );
 };

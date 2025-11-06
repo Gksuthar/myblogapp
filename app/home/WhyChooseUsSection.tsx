@@ -76,7 +76,7 @@ const WhyChooseUsSection: React.FC = () => {
   const ctaText = "Hire expert today →";
   const ctaLink = "/contact"; // Example link
   return (
-  <section className="bg-white py-16 px-4 md:px-16">
+  <section className="bg-white py-16 px-4 md:px-16 ">
       <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-start justify-between gap-12">
         {/* Left Content - Matches Image Structure */}
         <div className="lg:w-1/2">

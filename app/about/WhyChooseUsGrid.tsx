@@ -139,8 +139,8 @@ const WhyChooseUsGrid: React.FC = () => {
 
     return (
         <>
-            <section className="py-16 px-4 md:px-8 bg-gray-50/50" style={{ fontFamily: 'var(--font-lexend)' }}>
-                <div className="max-w-7xl mx-auto">
+            <section className="py-16 px-4 md:px-8 bg-gray-50" style={{ fontFamily: 'var(--font-lexend)' }}>
+                <div className="max-w-7xl mx-auto ">
 
                     {/* Header Block */}
                     <div className="text-center mb-16">
@@ -168,11 +168,11 @@ const WhyChooseUsGrid: React.FC = () => {
                     
 
                 </div>
-                <section className="py-16 md:py-24 bg-gray-50 process_section mobile-hide">
-                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-container container">
+                <section className="py-16 md:py-24 bg-gray-50 process_section mobile-hide  bg-light-gray">
+                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-container bg-light-gray  container">
 
                         {/* Heading Wrapper */}
-                        <div className="text-center heading-wrapper mb-12 md:mb-16">
+                        <div className="text-center heading-wrapper mb-12 md:mb-16 ">
                             <h2 className="text-4xl font-extrabold text-gray-800 heading-h2 width-full">
                                 Hire Top Accounting Professionals in 5 Easy Steps
                             </h2>
