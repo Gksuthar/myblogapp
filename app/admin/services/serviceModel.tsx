@@ -249,6 +249,7 @@ export default function ServiceModal({
                           className="mt-2 h-20 w-32 object-cover rounded"
                         />
                       )}
+                      <button onClick={()=>{setFieldValue("heroSection.image" ,null)}} >remove image </button>
                     </div>
 
                     <Textfield

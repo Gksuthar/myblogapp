@@ -7,8 +7,8 @@ import { FaArrowRight } from "react-icons/fa";
 import CustomButton from "../ui/customButtom/Button";
 
 interface Props {
-  title: string;
-  disc: string;
+  title: any;
+  disc: any;
   image?: string;
   showCtas?: boolean; // optional, default true
 }

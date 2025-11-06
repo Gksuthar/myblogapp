@@ -99,28 +99,15 @@ export default function ServiceDetailsPage() {
   
 
   // Check if hero section has content
-  const hasHeroSection = 
-    service?.heroSection?.title?.trim() || 
-    service?.heroSection?.description?.trim() || 
-    service?.heroSection?.image?.trim();
+  const hasHeroSection =  service?.heroSection?.title?.trim() || service?.heroSection?.description?.trim() || service?.heroSection?.image?.trim();
 
   // Check if serviceCardView has content
-  const serviceCardView = service?.serviceCardView && !Array.isArray(service.serviceCardView) 
-    ? service.serviceCardView 
-    : null;
-  const hasServiceCardView = 
-    serviceCardView?.title?.trim() || 
-    serviceCardView?.description?.trim();
+  const serviceCardView = service?.serviceCardView && !Array.isArray(service.serviceCardView) ? service.serviceCardView : null;
+  const hasServiceCardView =  serviceCardView?.title?.trim() || serviceCardView?.description?.trim();
 
   // Check if card sections exist
-  const hasCardSections = 
-    Array.isArray(service?.cardSections) && 
-    service.cardSections.length > 0;
+  const hasCardSections = Array.isArray(service?.cardSections) &&  service.cardSections.length > 0;
 
-  // Determine what to show
-  // If hero section is empty, don't show it
-  // If serviceCardView title, description, and card sections exist, show both hero and serviceCardView
-  // Use hero section data if available, otherwise use serviceCardView data
   const shouldShowHero = hasHeroSection || (hasServiceCardView && hasCardSections);
   const heroTitle = hasHeroSection && service?.heroSection?.title?.trim()
     ? service.heroSection.title
@@ -140,15 +127,13 @@ export default function ServiceDetailsPage() {
         <>
           {/* Show HeroSection only if hero section exists or if serviceCardView + card sections exist */}
           {shouldShowHero && (
-            // <Suspense fallback={<ComponentLoader height="h-64" message="Loading hero..." />}>
-            //   <HeroSection
-            //     title={heroTitle}
-            //     disc={heroDescription}
-            //     image={heroImage}
-            //   />
-            // </Suspense>
-            <>
-            </>
+            <Suspense fallback={<ComponentLoader height="h-64" message="Loading hero..." />}>
+              <HeroSection
+                title={heroTitle}
+                disc={heroDescription}
+                image={heroImage}
+              />
+            </Suspense>
           )}
 
           {/* Show ServiceCardView if it exists and card sections exist */}

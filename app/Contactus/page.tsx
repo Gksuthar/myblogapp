@@ -6,7 +6,7 @@ import ReCAPTCHA from 'react-google-recaptcha';
 import { useRef } from 'react';
 import * as yup from 'yup';
 import ComponentLoader from '@/components/ComponentLoader';
-import EmailIcon from '@rsuite/icons/Email';
+import { MdEmail } from 'react-icons/md';
 export const contactSchema = yup.object({
   name: yup.string().trim().required('Name is required.'),
   email: yup.string().trim().email('Invalid email address.').required('Email is required.'),
@@ -145,7 +145,7 @@ You can always visit us at our HQ, we have a friendly staff and a mean cup of co
               <div className="space-y-3 mb-6">
                 <div className="flex items-center space-x-2 text-gray-700 mb-5">
                   <span className="text-gray-900 !text-gray-800">
-                    <EmailIcon className="h-5 w-5 text-gray-900 !text-gray-800" />
+                    <MdEmail className="h-5 w-5 text-gray-900 !text-gray-800" />
                   </span>
                   <a href="mailto:shalin@sbaccounting.us" className="text-gray-900 md:text-[20px]   font-medium text-[var(--primary-color)] hover:underline">shalin@sbaccounting.us</a>
                 </div>

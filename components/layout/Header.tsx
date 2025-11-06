@@ -6,13 +6,15 @@ import Image from "next/image";
 import { FaBars, FaTimes, FaFileInvoiceDollar, FaChartLine, FaBook, FaCalculator, FaTools } from "react-icons/fa";
 import { MdExpandMore } from "react-icons/md";
 import axios from "axios";
+import CustomButton from "../ui/customButtom/Button";
+import { useRouter } from 'next/navigation';
 
 interface ServiceItem {
   _id: string;
   heroSection?: { title: string; description: string };
   slug?: string;
   categoryId: string;
-  serviceCardView:{title: string; description: string }
+  serviceCardView: { title: string; description: string }
 }
 
 interface Category {
@@ -23,6 +25,7 @@ interface Category {
 
 // --- Header Component ---
 export default function Header() {
+  const router = useRouter();
   const [menuOpen, setMenuOpen] = useState(false);
   const [servicesOpen, setServicesOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<string>("");
@@ -32,7 +35,7 @@ export default function Header() {
 
   // Toggle Services mega menu
   const toggleServicesMenu = () => setServicesOpen((prev: boolean) => !prev);
-const closeTimer = useRef<NodeJS.Timeout | null>(null);
+  const closeTimer = useRef<NodeJS.Timeout | null>(null);
 
   // Fetch categories
   useEffect(() => {
@@ -61,18 +64,18 @@ const closeTimer = useRef<NodeJS.Timeout | null>(null);
         setLoadingServices(true);
         const response = await axios.get('/api/service');
         // console.log('Services API Response:', response.data[0]?.serviceCardView);
-        
+
         if (response.status === 200 && response.data) {
           const result = response.data;
           // Handle different response formats
           let data: ServiceItem[] = [];
-          
+
           if (Array.isArray(result.data)) {
             data = result.data;
           } else if (Array.isArray(result)) {
             data = result;
           }
-          
+
           console.log('Parsed services data:', data[0].serviceCardView);
           setServices(data);
         } else {
@@ -96,11 +99,11 @@ const closeTimer = useRef<NodeJS.Timeout | null>(null);
     { id: "5", link: "Contact Us", path: "/Contactus" },
   ];
 
-  const CustomButton = ({ text }: { text: string }) => (
-    <button className="px-5 py-2.5 bg-[var(--primary-color)] text-[var(--primary-color-contrast)] rounded-full text-sm font-semibold shadow-[0_4px_14px_rgba(53,154,255,0.25)] hover:shadow-[0_6px_18px_rgba(53,154,255,0.35)] transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--primary-color)]">
-      {text}
-    </button>
-  );
+  // const CustomButton = ({ text }: { text: string }) => (
+  //   <button className="px-5 py-2.5 bg-[var(--primary-color)] text-[var(--primary-color-contrast)] rounded-full text-sm font-semibold shadow-[0_4px_14px_rgba(53,154,255,0.25)] hover:shadow-[0_6px_18px_rgba(53,154,255,0.35)] transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--primary-color)]">
+  //     {text}
+  //   </button>
+  // );
 
   const renderServiceIcon = (title?: string) => {
     const t = (title || '').toLowerCase();
@@ -137,17 +140,17 @@ const closeTimer = useRef<NodeJS.Timeout | null>(null);
               key={item.id}
               className="relative"
               onMouseEnter={() => {
-  if (item.isDropdown) {
-    if (closeTimer.current) clearTimeout(closeTimer.current);
-    setServicesOpen(true);
-  }
-}}
-onMouseLeave={() => {
-  if (item.isDropdown) {
-    closeTimer.current = setTimeout(() => setServicesOpen(false), 200);
-  }
-}}
-// Close on mouse leave
+                if (item.isDropdown) {
+                  if (closeTimer.current) clearTimeout(closeTimer.current);
+                  setServicesOpen(true);
+                }
+              }}
+              onMouseLeave={() => {
+                if (item.isDropdown) {
+                  closeTimer.current = setTimeout(() => setServicesOpen(false), 200);
+                }
+              }}
+            // Close on mouse leave
             >
               <div className="flex items-center gap-1">
                 <Link
@@ -176,13 +179,13 @@ onMouseLeave={() => {
               {/* Mega Menu - Stanfox Style */}
               {item.isDropdown && servicesOpen && (
                 <div
-onMouseEnter={() => {
-  if (closeTimer.current) clearTimeout(closeTimer.current);
-  setServicesOpen(true);
-}}
-onMouseLeave={() => {
-  closeTimer.current = setTimeout(() => setServicesOpen(false), 200);
-}}
+                  onMouseEnter={() => {
+                    if (closeTimer.current) clearTimeout(closeTimer.current);
+                    setServicesOpen(true);
+                  }}
+                  onMouseLeave={() => {
+                    closeTimer.current = setTimeout(() => setServicesOpen(false), 200);
+                  }}
 
                   className="fixed top-20 left-1/2 -translate-x-1/2 bg-white shadow-2xl rounded-2xl border border-gray-200 z-50 overflow-hidden"
                   style={{ width: "940px", maxWidth: "92vw" }}
@@ -199,11 +202,10 @@ onMouseLeave={() => {
                           <button
                             key={category._id}
                             onClick={() => setActiveTab(category._id)}
-                            className={`w-full text-left py-3 px-4 rounded-lg text-sm font-medium transition-all duration-200 mb-2 ${
-                              activeTab === category._id
+                            className={`w-full text-left py-3 px-4 rounded-lg text-sm font-medium transition-all duration-200 mb-2 ${activeTab === category._id
                                 ? "bg-[color-mix(in_srgb,var(--primary-color)_16%,white)] text-[var(--primary-color)] shadow-sm"
                                 : "text-gray-700 hover:bg-gray-100"
-                            }`}
+                              }`}
                           >
                             {category.name}
                           </button>
@@ -218,44 +220,43 @@ onMouseLeave={() => {
                           Loading services...
                         </div>
                       ) : (() => {
-                          const filteredServices = services.filter((svc: ServiceItem) => svc.categoryId === activeTab);
-                          console.log("filteredServices" , filteredServices)
-                          return filteredServices.length === 0 ? (
-                            <div className="flex justify-center items-center h-full text-gray-400">
-                              No services in this category
-                            </div>
-                          ) : (
-                            <div className="grid grid-cols-2 gap-4">
-                              {filteredServices.map((svc) => (
-                            <Link
-                              key={svc._id}
-                              href={`/services/${
-                                svc.slug ||
-                                (svc.heroSection?.title ||  svc.categoryId )
-                                  .toLowerCase()
-                                  .trim()
-                                  .replace(/[^a-z0-9\s-]/g, "")
-                                  .replace(/\s+/g, "-")
-                                  .replace(/-+/g, "-")
-                              }`}
-                              className="flex items-start p-4 rounded-xl hover:bg-gray-50 transition-all duration-200 group border border-transparent hover:border-gray-200"
-                            >
-                              <div className="w-10 h-10 flex items-center justify-center text-xl bg-[#e6f3ff] text-[var(--primary-color)] rounded-full flex-shrink-0 border border-[color-mix(in_srgb,var(--primary-color)_40%,white)]">
-                                {renderServiceIcon(svc.heroSection?.title)}
-                              </div>
-                              <div className="ml-3">
-                                <p className="text-sm font-semibold text-gray-900 group-hover:text-[var(--primary-color)] transition-colors">
-                                  {svc.heroSection?.title || svc.serviceCardView?.title}
-                                </p>
-                                <p className="text-xs text-gray-500 mt-1 line-clamp-2">
-                                  {svc.heroSection?.description ||svc.serviceCardView?.title}
-                                </p>
-                              </div>
-                            </Link>
-                          ))}
-                        </div>
-                          );
-                        })()}
+                        const filteredServices = services.filter((svc: ServiceItem) => svc.categoryId === activeTab);
+                        console.log("filteredServices", filteredServices)
+                        return filteredServices.length === 0 ? (
+                          <div className="flex justify-center items-center h-full text-gray-400">
+                            No services in this category
+                          </div>
+                        ) : (
+                          <div className="grid grid-cols-2 gap-4">
+                            {filteredServices.map((svc) => (
+                              <Link
+                                key={svc._id}
+                                href={`/services/${svc.slug ||
+                                  (svc.heroSection?.title || svc.categoryId)
+                                    .toLowerCase()
+                                    .trim()
+                                    .replace(/[^a-z0-9\s-]/g, "")
+                                    .replace(/\s+/g, "-")
+                                    .replace(/-+/g, "-")
+                                  }`}
+                                className="flex items-start p-4 rounded-xl hover:bg-gray-50 transition-all duration-200 group border border-transparent hover:border-gray-200"
+                              >
+                                <div className="w-10 h-10 flex items-center justify-center text-xl bg-[#e6f3ff] text-[var(--primary-color)] rounded-full flex-shrink-0 border border-[color-mix(in_srgb,var(--primary-color)_40%,white)]">
+                                  {renderServiceIcon(svc.heroSection?.title)}
+                                </div>
+                                <div className="ml-3">
+                                  <p className="text-sm font-semibold text-gray-900 group-hover:text-[var(--primary-color)] transition-colors">
+                                    {svc.heroSection?.title || svc.serviceCardView?.title}
+                                  </p>
+                                  <p className="text-xs text-gray-500 mt-1 line-clamp-2">
+                                    {svc.heroSection?.description || svc.serviceCardView?.title}
+                                  </p>
+                                </div>
+                              </Link>
+                            ))}
+                          </div>
+                        );
+                      })()}
                     </div>
                   </div>
                 </div>
@@ -287,7 +288,7 @@ onMouseLeave={() => {
                 {item.link}
               </Link>
             ))}
-            <CustomButton text="Book A Call" />
+            <CustomButton text="Book A Call" onClick={() => router.push('Contactus')} />
           </div>
         )}
       </div>
