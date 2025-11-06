@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, type MouseEvent } from "react";
+import { useEffect, useRef, useState, type MouseEvent } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { FaBars, FaTimes, FaFileInvoiceDollar, FaChartLine, FaBook, FaCalculator, FaTools } from "react-icons/fa";
@@ -32,6 +32,7 @@ export default function Header() {
 
   // Toggle Services mega menu
   const toggleServicesMenu = () => setServicesOpen((prev: boolean) => !prev);
+const closeTimer = useRef<NodeJS.Timeout | null>(null);
 
   // Fetch categories
   useEffect(() => {
@@ -130,12 +131,23 @@ export default function Header() {
         </div>
 
         {/* Desktop Menu */}
-        <nav className="hidden md:flex items-center gap-2 lg:gap-4">
+        <nav className="hidden md:flex items-center gap-4 lg:gap-4">
           {List.map((item) => (
             <div
               key={item.id}
               className="relative"
-              onMouseEnter={() => item.isDropdown && setServicesOpen(true)}
+              onMouseEnter={() => {
+  if (item.isDropdown) {
+    if (closeTimer.current) clearTimeout(closeTimer.current);
+    setServicesOpen(true);
+  }
+}}
+onMouseLeave={() => {
+  if (item.isDropdown) {
+    closeTimer.current = setTimeout(() => setServicesOpen(false), 200);
+  }
+}}
+// Close on mouse leave
             >
               <div className="flex items-center gap-1">
                 <Link
@@ -164,8 +176,14 @@ export default function Header() {
               {/* Mega Menu - Stanfox Style */}
               {item.isDropdown && servicesOpen && (
                 <div
-                  onMouseEnter={() => setServicesOpen(true)}
-                  onMouseLeave={() => setServicesOpen(false)}
+onMouseEnter={() => {
+  if (closeTimer.current) clearTimeout(closeTimer.current);
+  setServicesOpen(true);
+}}
+onMouseLeave={() => {
+  closeTimer.current = setTimeout(() => setServicesOpen(false), 200);
+}}
+
                   className="fixed top-20 left-1/2 -translate-x-1/2 bg-white shadow-2xl rounded-2xl border border-gray-200 z-50 overflow-hidden"
                   style={{ width: "940px", maxWidth: "92vw" }}
                 >
