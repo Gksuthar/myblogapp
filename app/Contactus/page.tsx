@@ -151,7 +151,7 @@ You can always visit us at our HQ, we have a friendly staff and a mean cup of co
                 </div>
                 <div className="flex items-center space-x-2 text-gray-700">
                   <span className="font-medium">📞</span>
-                  <a href="tel:+14307552828" className="text-gray-900 md:text-[20px] font-medium text-[var(--primary-color)] hover:underline">+1 430 755 2828</a>
+                  <a href="tel:(313)425 8280" className="text-gray-900 md:text-[20px] font-medium text-[var(--primary-color)] hover:underline">(313)425 8280</a>
                 </div>
               </div>
 

@@ -360,9 +360,9 @@ export default function Home() {
 
 <motion.div
   {...fadeIn(0.3, 20)}
-  className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 
+  className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8  
              grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 
-             gap-8 justify-items-center items-stretch"
+             gap-8 justify-items-center items-stretch "
 >
   {loadingServices && (
     <ComponentLoader height="h-64" message="Loading services..." />
@@ -387,10 +387,10 @@ export default function Home() {
       const href = `/services/${slug}`;
 
       return (
-        <a key={svc._id} href={href} className="block w-full h-full">
+        <a key={svc._id} href={href} className="block w-full h-full ">
           <motion.div
             className="h-full flex flex-col justify-between bg-white rounded-2xl shadow-[0_8px_30px_rgba(0,0,0,0.05)] 
-                       hover:shadow-[0_12px_40px_rgba(0,0,0,0.08)] transition-all duration-300"
+                       hover:shadow-[0_12px_40px_rgba(0,0,0,0.08)] transition-all duration-300 "
             whileHover={{ y: -6 }}
             transition={{ duration: 0.3 }}
           >

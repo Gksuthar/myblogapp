@@ -14,10 +14,10 @@ import {
 
 const features = [
   { icon: 'https://res.cloudinary.com/dsu49fx2b/image/upload/v1762438740/download_15_m4vc8u.svg', title: "Faster Turn Around Time" },
-  { icon: 'https://res.cloudinary.com/dsu49fx2b/image/upload/v1762438740/download_16_jmcvpr.svg', title: "10+ Years Of Experience" },
+  { icon: 'https://res.cloudinary.com/dsu49fx2b/image/upload/v1762449314/download_23_pqznkv.svg', title: "10+ Years Of Experience" },
   { icon: 'https://res.cloudinary.com/dsu49fx2b/image/upload/v1762438740/download_17_wfoegu.svg', title: "45+ Dedicated Accountants" },
   { icon: 'https://res.cloudinary.com/dsu49fx2b/image/upload/v1762438740/download_18_lhk9gx.svg', title: "Adept At Multiple Accounting Tools" },
-  { icon: 'https://res.cloudinary.com/dsu49fx2b/image/upload/v1762438740/download_19_tewzel.svg', title: "Flexible Working Models" },
+  { icon: 'https://res.cloudinary.com/dsu49fx2b/image/upload/v1762447337/download_22_db5uyb.svg', title: "Flexible Working Models" },
   { icon: 'https://res.cloudinary.com/dsu49fx2b/image/upload/v1762438740/download_20_wpkjsj.svg', title: "Cost-Efficient Services" },
 ];
 

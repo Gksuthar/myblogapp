@@ -116,7 +116,7 @@ const WhyChooseUsGrid: React.FC = () => {
             icon: <IconStarBadge />,
             title: "10+ Years Of Experience",
             description: "With over a decade of experience in the accounting industry, we bring seasoned expertise to support your financial needs.",
-            img: 'https://res.cloudinary.com/dsu49fx2b/image/upload/v1762433799/download_6_tnsrwq.svg',
+            img: 'https://res.cloudinary.com/dsu49fx2b/image/upload/v1762449314/download_23_pqznkv.svg',
             bgColorClass: 'bg-indigo-50/50 border-indigo-200/50',
         },
         {

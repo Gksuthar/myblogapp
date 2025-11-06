@@ -101,7 +101,7 @@ const AboutPage: React.FC = () => {
     { _id: 6, name: 'Eight', image: 'https://res.cloudinary.com/dsu49fx2b/image/upload/v1762432491/eight_eub5iv.png' },
     { _id: 7, name: 'None', image: 'https://res.cloudinary.com/dsu49fx2b/image/upload/v1762432491/none_trhcky.png' },
     { _id: 8, name: 'Tan', image: 'https://res.cloudinary.com/dsu49fx2b/image/upload/v1762432490/tan_adqseg.png' },
-    { _id: 9, name: 'Tan', image: 'https://res.cloudinary.com/dsu49fx2b/image/upload/v1762432490/tan_adqseg.png' },
+    { _id: 9, name: 'Tan', image: 'https://res.cloudinary.com/dsu49fx2b/image/upload/v1762446913/6720b06e1362c9b92e7b485f_image_376_jfpjzo.png' },
     { _id: 10, name: 'Six', image: 'https://res.cloudinary.com/dsu49fx2b/image/upload/v1762432490/six_dvuxqi.png' },
   ]);
   const [loadingCompanies, setLoadingCompanies] = useState<boolean>(true);

@@ -6,8 +6,6 @@ import Image from "next/image";
 import { FaBars, FaTimes, FaFileInvoiceDollar, FaChartLine, FaBook, FaCalculator, FaTools } from "react-icons/fa";
 import { MdExpandMore } from "react-icons/md";
 import axios from "axios";
-import CustomButton from "../ui/customButtom/Button";
-import { useRouter } from 'next/navigation';
 
 interface ServiceItem {
   _id: string;
@@ -25,7 +23,6 @@ interface Category {
 
 // --- Header Component ---
 export default function Header() {
-  const router = useRouter();
   const [menuOpen, setMenuOpen] = useState(false);
   const [servicesOpen, setServicesOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<string>("");
@@ -264,7 +261,22 @@ export default function Header() {
 
             </div>
           ))}
-          <CustomButton text="Book A Call" />
+          {/* Phone number (click-to-call) and Book A Call (calls the number) */}
+          <div className="flex items-center gap-3 ml-2">
+            <a
+              href="tel:+13134258280"
+              className="text-[15px] text-gray-700 font-medium hover:text-[var(--primary-color)] transition-colors"
+            >
+              {/* (313) 425 8280 */}
+            </a>
+
+            <a
+              href="tel:+13134258280"
+              className="flex items-center justify-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition-all duration-200 bg-[var(--primary-color)] text-[var(--primary-color-contrast)]"
+            >
+              Book A Call
+            </a>
+          </div>
         </nav>
 
         {/* Mobile Menu Button */}
@@ -288,7 +300,14 @@ export default function Header() {
                 {item.link}
               </Link>
             ))}
-            <CustomButton text="Book A Call" onClick={() => router.push('Contactus')} />
+            {/* Mobile: call the number and close the menu */}
+            <a
+              href="tel:+13134258280"
+              onClick={() => setMenuOpen(false)}
+              className="flex items-center justify-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition-all duration-200 bg-[var(--primary-color)] text-[var(--primary-color-contrast)]"
+            >
+              Book A Call
+            </a>
           </div>
         )}
       </div>
