@@ -66,20 +66,31 @@ interface FeatureCardProps {
     gridArea?: string;
 }
 
-const FeatureCard: React.FC<FeatureCardProps> = ({ icon, title, description, img, bgColorClass = '#359aff', gridArea }) => (
+const FeatureCard: React.FC<FeatureCardProps> = ({
+    icon,
+    title,
+    description,
+    img,
+    bgColorClass = '#359aff',
+    gridArea
+}) => (
     <div
         className={`relative flex flex-col p-6 rounded-xl shadow-lg border border-gray-100 ${bgColorClass}`}
         style={{ gridArea }}
     >
-        {/* Main Graphic/Icon (Simulating the 3D-lifted card style) */}
+        {/* 🔥 Image centered horizontally (row center start) */}
+     {/* 🔥 Image centered horizontally (row center start) */}
+<div className="flex !justify-center !items-start w-full">
+    <img
+        src={img}
+        alt=""
+        className="object-contain max-h-48"
+    />
+</div>
 
-        {/* Sub Content / Secondary Graphics (like the "Quality Check" button or avatars) */}
-        <div className="">
-            <img src={img} alt="" className='max-h-50 min-h-50' />
-        </div>
 
         {/* Title and Description */}
-        <div className="mt-auto "> {/* Push content to bottom, compensating for absolute icon */}
+        <div className="mt-auto text-center">
             <h3 className="text-xl font-bold mb-2 text-gray-800" style={{ fontFamily: 'var(--font-lexend)' }}>
                 {title}
             </h3>
@@ -89,6 +100,7 @@ const FeatureCard: React.FC<FeatureCardProps> = ({ icon, title, description, img
         </div>
     </div>
 );
+
 
 
 const WhyChooseUsGrid: React.FC = () => {
@@ -182,114 +194,124 @@ const WhyChooseUsGrid: React.FC = () => {
                         </div>
 
                         {/* Process Wrapper */}
-                        <div className="process_wrapper relative">
+                   <div className="process_wrapper relative">
 
-                            {/* Top Row: Steps 1, 2, 3 in a 3-column layout */}
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-x-8 lg:gap-x-12 relative mb-16 md:mb-8 lg:mb-0">
+  {/* 🔹 Top Row: Steps 1, 2, 3 */}
+  <div className="grid grid-cols-1 md:grid-cols-3 gap-x-8 lg:gap-x-12 relative mb-16 md:mb-8 lg:mb-0 flex myCardScene">
 
-                                {/* 1. Preliminary discussion */}
-                                <div className="bg-white rounded-xl shadow-lg p-6 lg:p-8 flex flex-col items-center text-center how-we-work relative div-block-25">
-                                    <img
-                                        src="https://res.cloudinary.com/dsu49fx2b/image/upload/v1762434016/download_7_h5vjso.svg"
-                                        loading="lazy"
-                                        alt=""
-                                        className="mb-4 "
-                                    />
-                                    <h3 className="text-xl font-semibold mb-2 text-gray-800 heading-6">1. Preliminary discussion</h3>
-                                    <p className="text-gray-600 text-sm paragraph-8">
-                                        We kickstart our working relationship by discussing your business requirements &amp; what you hope to achieve with our help.
-                                    </p>
+    {/* 1️⃣ Preliminary discussion */}
+    <div className="bg-white rounded-xl shadow-lg p-8 flex flex-col items-center text-center justify-center relative transition-all hover:shadow-xl min-h-[350px]">
+      <div className="flex items-center justify-center w-full flex-1 mb-6">
+        <img
+          src="https://res.cloudinary.com/dsu49fx2b/image/upload/v1762434016/download_7_h5vjso.svg"
+          loading="lazy"
+          alt=""
+          className="object-contain max-h-40 mx-auto"
+        />
+      </div>
 
-                                    {/* ➡️ CONNECTOR ARROW (SVG) to Step 2 */}
-                                    <div className="absolute right-[-3rem] top-1/2 transform -translate-y-1/2 hidden md:block w-12 h-4">
-                                        <img
-                                            src="https://cdn.prod.website-files.com/6718c309cc349b579872ddbb/674568a7947b76c8f794f77b_Group%201000004274.svg"
-                                            loading="lazy"
-                                            alt="Process step arrow"
-                                            className="w-full h-full object-contain"
-                                        />
-                                    </div>
-                                </div>
+      <h3 className="text-xl font-semibold mb-3 text-gray-800 heading-6">1. Preliminary discussion</h3>
+      <p className="text-gray-600 text-sm paragraph-8 max-w-xs">
+        We kickstart our working relationship by discussing your business requirements &amp; what you hope to achieve with our help.
+      </p>
 
-                                {/* 2. SLAs setup */}
-                                <div className="bg-white rounded-xl shadow-lg p-6 lg:p-8 flex flex-col items-center text-center how-we-work relative div-block-25 mt-8 md:mt-0">
-                                    <img
-                                        src="https://res.cloudinary.com/dsu49fx2b/image/upload/v1762434590/download_9_k0c4ug.svg"
-                                        loading="lazy"
-                                        alt=""
-                                        className="mb-4 "
-                                    />
-                                    <h3 className="text-xl font-semibold mb-2 text-gray-800 heading-6">2. SLAs setup</h3>
-                                    <p className="text-gray-600 text-sm paragraph-8">
-                                        After discussing your requirements, our team understands your operating procedures, helping us set the right SLAs.
-                                    </p>
+      {/* ➡️ CONNECTOR ARROW */}
+      <div className="absolute right-[-3rem] top-1/2 transform -translate-y-1/2 hidden md:block w-12 h-4">
+        <img
+          src="https://cdn.prod.website-files.com/6718c309cc349b579872ddbb/674568a7947b76c8f794f77b_Group%201000004274.svg"
+          loading="lazy"
+          alt="Process step arrow"
+          className="w-full h-full object-contain"
+        />
+      </div>
+    </div>
 
-                                    {/* ➡️ CONNECTOR ARROW (SVG) to Step 3 */}
-                                    <div className="absolute right-[-3rem] top-1/2 transform -translate-y-1/2 hidden md:block w-12 h-4">
-                                        <img
-                                            src="https://cdn.prod.website-files.com/6718c309cc349b579872ddbb/674568a7947b76c8f794f77b_Group%201000004274.svg"
-                                            loading="lazy"
-                                            alt="Process step arrow"
-                                            className="w-full h-full object-contain"
-                                        />
-                                    </div>
-                                </div>
+    {/* 2️⃣ SLAs setup */}
+    <div className="bg-white rounded-xl shadow-lg p-8 flex flex-col items-center text-center justify-center relative transition-all hover:shadow-xl min-h-[350px] mt-8 md:mt-0">
+      <div className="flex items-center justify-center w-full flex-1 mb-6">
+        <img
+          src="https://res.cloudinary.com/dsu49fx2b/image/upload/v1762434590/download_9_k0c4ug.svg"
+          loading="lazy"
+          alt=""
+          className="object-contain max-h-40 mx-auto"
+        />
+      </div>
 
-                                {/* 3. Contract agreement */}
-                                <div className="bg-white rounded-xl shadow-lg p-6 lg:p-8 flex flex-col items-center text-center how-we-work relative div-block-25 mt-8 md:mt-0">
-                                    <img
-                                        src="https://res.cloudinary.com/dsu49fx2b/image/upload/v1762435338/download_14_q1uax6.svg"
-                                        loading="lazy"
-                                        alt=""
-                                        className="mb-4"
-                                    />
-                                    <h3 className="text-xl font-semibold mb-2 text-gray-800 heading-6">3. Contract agreement</h3>
-                                    <p className="text-gray-600 text-sm paragraph-8">
-                                        Once the SLAs are set up, we officiate things by signing an agreement, outlining– team members, deadlines, clauses, etc.
-                                    </p>
-                                </div>
+      <h3 className="text-xl font-semibold mb-3 text-gray-800 heading-6">2. SLAs setup</h3>
+      <p className="text-gray-600 text-sm paragraph-8 max-w-xs">
+        After discussing your requirements, our team understands your operating procedures, helping us set the right SLAs.
+      </p>
 
-                            </div>
+      {/* ➡️ CONNECTOR ARROW */}
+      <div className="absolute right-[-3rem] top-1/2 transform -translate-y-1/2 hidden md:block w-12 h-4">
+        <img
+          src="https://cdn.prod.website-files.com/6718c309cc349b579872ddbb/674568a7947b76c8f794f77b_Group%201000004274.svg"
+          loading="lazy"
+          alt="Process step arrow"
+          className="w-full h-full object-contain"
+        />
+      </div>
+    </div>
 
-                            {/* --- */}
+    {/* 3️⃣ Contract agreement */}
+    <div className="bg-white rounded-xl shadow-lg p-8 flex flex-col items-center text-center justify-center relative transition-all hover:shadow-xl min-h-[350px] mt-8 md:mt-0">
+      <div className="flex items-center justify-center w-full flex-1 mb-6">
+        <img
+          src="https://res.cloudinary.com/dsu49fx2b/image/upload/v1762435338/download_14_q1uax6.svg"
+          loading="lazy"
+          alt=""
+          className="object-contain max-h-40 mx-auto"
+        />
+      </div>
 
-                            {/* Bottom Row: Steps 5, 4 */}
-                            <div className="grid grid-cols-1 justify-content-centers items-center md:grid-cols-3 gap-x-8 lg:gap-x-12 pt-16 md:pt-0 relative div-block-63 _2-col">
+      <h3 className="text-xl font-semibold mb-3 text-gray-800 heading-6">3. Contract agreement</h3>
+      <p className="text-gray-600 text-sm paragraph-8 max-w-xs">
+        Once the SLAs are set up, we officiate things by signing an agreement, outlining– team members, deadlines, clauses, etc.
+      </p>
+    </div>
+  </div>
 
-                                {/* Placeholder/Empty div to push the content to the right (to align step 4) */}
-                                <div className="hidden md:block"></div>
+  {/* 🔹 Bottom Row: Steps 4, 5 */}
+  <div className="grid grid-cols-1 md:grid-cols-3 gap-x-8 lg:gap-x-12 pt-16 md:pt-0 relative myCardScene">
+    {/* Placeholder to center bottom row */}
+    <div className="hidden md:block"></div>
 
-                                {/* 5. Weekly review meetings (Visually on the left of the bottom row) */}
-                                <div className="bg-white rounded-xl shadow-lg p-6 lg:p-8 flex flex-col items-center text-center how-we-work relative div-block-25 mt-10">
-                                    <img
-                                        src="https://res.cloudinary.com/dsu49fx2b/image/upload/v1762434925/download_11_ufvebw.svg"
-                                        loading="lazy"
-                                        alt=""
-                                        className="mb-4"
-                                    />
-                                    <h3 className="text-xl font-semibold mb-2 text-gray-800 heading-6">5. Weekly review meetings</h3>
-                                    <p className="text-gray-600 text-sm paragraph-8">
-                                        We conduct weekly meets, ensuring we address any concern &amp; keep client satisfaction at the heart of our support.
-                                    </p>
-                                </div>
+    {/* 4️⃣ Service commencement */}
+    <div className="bg-white rounded-xl shadow-lg p-8 flex flex-col items-center text-center justify-center relative transition-all hover:shadow-xl min-h-[350px] mt-10">
+      <div className="flex items-center justify-center w-full flex-1 mb-6">
+        <img
+          src="https://res.cloudinary.com/dsu49fx2b/image/upload/v1762434925/download_12_soxysp.svg"
+          loading="lazy"
+          alt=""
+          className="object-contain max-h-40 mx-auto"
+        />
+      </div>
 
-                                {/* 4. Service commencement (Visually on the right of the bottom row) */}
-                                <div className="bg-white  rounded-xl shadow-lg p-6 lg:p-8 flex flex-col items-center text-center how-we-work relative div-block-25 mt-10">
-                                    <img
-                                        src="https://res.cloudinary.com/dsu49fx2b/image/upload/v1762434925/download_12_soxysp.svg"
-                                        loading="lazy"
-                                        alt=""
-                                        className="mb-4"
-                                    />
-                                    <h3 className="text-xl font-semibold mb-2 text-gray-800 heading-6">4. Service commencement</h3>
-                                    <p className="text-gray-600 text-sm paragraph-8">
-                                        After finalizing all paperwork, we begin executing the pre-defined tasks and required functions.
-                                    </p>
-                                </div>
+      <h3 className="text-xl font-semibold mb-3 text-gray-800 heading-6">4. Service commencement</h3>
+      <p className="text-gray-600 text-sm paragraph-8 max-w-xs">
+        After finalizing all paperwork, we begin executing the pre-defined tasks and required functions.
+      </p>
+    </div>
 
-                            </div>
+    {/* 5️⃣ Weekly review meetings */}
+    <div className="bg-white rounded-xl shadow-lg p-8 flex flex-col items-center text-center justify-center relative transition-all hover:shadow-xl min-h-[350px] mt-10">
+      <div className="flex items-center justify-center w-full flex-1 mb-6">
+        <img
+          src="https://res.cloudinary.com/dsu49fx2b/image/upload/v1762434925/download_11_ufvebw.svg"
+          loading="lazy"
+          alt=""
+          className="object-contain max-h-40 mx-auto"
+        />
+      </div>
 
-                        </div>
+      <h3 className="text-xl font-semibold mb-3 text-gray-800 heading-6">5. Weekly review meetings</h3>
+      <p className="text-gray-600 text-sm paragraph-8 max-w-xs">
+        We conduct weekly meets, ensuring we address any concern &amp; keep client satisfaction at the heart of our support.
+      </p>
+    </div>
+  </div>
+</div>
+
                     </div>
                 </section>
             </section>

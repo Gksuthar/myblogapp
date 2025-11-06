@@ -13,12 +13,12 @@ import {
 } from "react-icons/fa";
 
 const features = [
-  { icon: 'https://cdn.prod.website-files.com/6718c309cc349b579872ddbb/673353cc7b96883c00d791d3_watch_icon.svg', title: "Faster Turn Around Time" },
-  { icon: 'https://cdn.prod.website-files.com/6718c309cc349b579872ddbb/6734afc1da67ea2bf3c75fe0_award_icon.svg', title: "10+ Years Of Experience" },
-  { icon: 'https://cdn.prod.website-files.com/6718c309cc349b579872ddbb/67335458958dace9fee945cd_iconn.svg', title: "45+ Dedicated Accountants" },
-  { icon: 'https://cdn.prod.website-files.com/6718c309cc349b579872ddbb/6734afe660d081bdda9dd2a0_carbon_icon.svg', title: "Adept At Multiple Accounting Tools" },
-  { icon: 'https://cdn.prod.website-files.com/6718c309cc349b579872ddbb/673354584e4f6d1d4e5474c3_634d8c995ae78d70b3f7d82e_icon-right__card--why%252001.webp.svg', title: "Flexible Working Models" },
-  { icon: 'https://cdn.prod.website-files.com/6718c309cc349b579872ddbb/67335458f3f97e32549a38ec_634d8c995ae78d70b3f7d82e_icon-right__card--why%252001.webp-1.svg', title: "Cost-Efficient Services" },
+  { icon: 'https://res.cloudinary.com/dsu49fx2b/image/upload/v1762438740/download_15_m4vc8u.svg', title: "Faster Turn Around Time" },
+  { icon: 'https://res.cloudinary.com/dsu49fx2b/image/upload/v1762438740/download_16_jmcvpr.svg', title: "10+ Years Of Experience" },
+  { icon: 'https://res.cloudinary.com/dsu49fx2b/image/upload/v1762438740/download_17_wfoegu.svg', title: "45+ Dedicated Accountants" },
+  { icon: 'https://res.cloudinary.com/dsu49fx2b/image/upload/v1762438740/download_18_lhk9gx.svg', title: "Adept At Multiple Accounting Tools" },
+  { icon: 'https://res.cloudinary.com/dsu49fx2b/image/upload/v1762438740/download_19_tewzel.svg', title: "Flexible Working Models" },
+  { icon: 'https://res.cloudinary.com/dsu49fx2b/image/upload/v1762438740/download_20_wpkjsj.svg', title: "Cost-Efficient Services" },
 ];
 
 interface ServiceItem {
