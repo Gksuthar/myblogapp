@@ -20,7 +20,7 @@ const JoinTeamSection: React.FC = () => {
             calm needed to deliver exceptional results, every day.
           </p>
 
-          <button className="mt-6 px-7 py-3 bg-[var(--primary-color)] text-white rounded-lg hover:bg-[var(--primary-color)] transition-all shadow-md hover:shadow-lg">
+          <button onClick={() => {window.location.href = '/Contactus'}} className="mt-6 px-7 py-3 bg-[var(--primary-color)] text-white rounded-lg hover:bg-[var(--primary-color)] transition-all shadow-md hover:shadow-lg">
             Join The Team
           </button>
         </div>

@@ -96,13 +96,7 @@ export default function ServiceDetailsPage() {
 
   // const pageTitle = useMemo(() => service?.heroSection?.title || 'Service', [service]);
 
-  const defaultHero = {
-    title: 'Our Services',
-    description:
-      'We provide reliable, professional, and customizable business solutions designed to fit your goals.',
-    image:
-      'https://cdn.prod.website-files.com/6718c309cc349b579872ddbb/6732eedcfeeebafefe65ebd0_icons8-checklist-94%201.svg',
-  };
+  
 
   // Check if hero section has content
   const hasHeroSection = 
@@ -130,14 +124,11 @@ export default function ServiceDetailsPage() {
   const shouldShowHero = hasHeroSection || (hasServiceCardView && hasCardSections);
   const heroTitle = hasHeroSection && service?.heroSection?.title?.trim()
     ? service.heroSection.title
-    : serviceCardView?.title?.trim() || defaultHero.title;
+    : serviceCardView?.title?.trim() ;
   const heroDescription = hasHeroSection && service?.heroSection?.description?.trim()
     ? service.heroSection.description
-    : serviceCardView?.description?.trim() || defaultHero.description;
+    : serviceCardView?.description?.trim() ;
   const heroImage = service?.heroSection?.image?.trim()
-    ? service.heroSection.image
-    : defaultHero.image;
-
   return (
     <>
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-10">
@@ -149,13 +140,15 @@ export default function ServiceDetailsPage() {
         <>
           {/* Show HeroSection only if hero section exists or if serviceCardView + card sections exist */}
           {shouldShowHero && (
-            <Suspense fallback={<ComponentLoader height="h-64" message="Loading hero..." />}>
-              <HeroSection
-                title={heroTitle}
-                disc={heroDescription}
-                image={heroImage}
-              />
-            </Suspense>
+            // <Suspense fallback={<ComponentLoader height="h-64" message="Loading hero..." />}>
+            //   <HeroSection
+            //     title={heroTitle}
+            //     disc={heroDescription}
+            //     image={heroImage}
+            //   />
+            // </Suspense>
+            <>
+            </>
           )}
 
           {/* Show ServiceCardView if it exists and card sections exist */}
