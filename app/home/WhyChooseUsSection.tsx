@@ -126,10 +126,10 @@ const WhyChooseUsSection: React.FC = () => {
 
         {/* Right Illustration/Graphic Area - Matches Image Structure */}
         <div className="lg:w-1/2 flex justify-center lg:justify-end mt-8 lg:mt-0">
-          <div className="p-4 sm:p-6 w-full max-w-[560px] flex items-center justify-center" >
+          <div className="md:mr-[20px] sm:p-6 w-full max-w-[560px] flex items-center justify-center" >
             {/* Placeholder for the complex illustration shown in the image */}
-            <div className="relative w-full h-[400px] flex items-center justify-center">
-            <img src="https://cdn.prod.website-files.com/6718c309cc349b579872ddbb/67348d71d96b43d96eea23f1_why_choose.svg" alt="" />
+            <div className="relative w-full h-[400px] flex items-center justify-center rounded-[12px]">
+            <img src="https://res.cloudinary.com/dsu49fx2b/image/upload/v1762371393/ChatGPT_Image_Nov_6_2025_01_06_07_AM_nrmdjs.png" className="!borounded-[12px]" style={{borderRadius: '12px'}} alt="" />
             </div>
           </div>
         </div>

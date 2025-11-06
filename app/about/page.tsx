@@ -370,16 +370,16 @@ const AboutPage: React.FC = () => {
           }}
         />
         {/* Center content */}
-        <div className="relative flex items-center justify-center ">
-          <div className="rounded-xl border text-center px-10 py-12 max-w-xl w-full mx-4 group bg-gradient-to-r from-[rgba(53,154,255,0.12)] via-[rgba(53,154,255,0.06)] to-transparent block bg-white rounded-2xl shadow-[0_8px_40px_rgba(53,154,255,0.25)] hover:shadow-[0_12px_50px_rgba(53,154,255,0.35)] overflow-hidden border border-gray-100 transition-all duration-300 hover:-translate-y-1">
-            <h2 className="text-3xl md:text-4xl font-semibold text-gray-900 mb-4">
+        <div className="relative flex items-center justify-center py-16 ">
+          <div className="!border-[color-mix(in_srgb,_var(--primary-color)_45%,_white)] group bg-gradient-to-r from-[rgba(53,154,255,0.12)] via-[rgba(53,154,255,0.06)] to-transparent block bg-white rounded-2xl shadow-[0_8px_40px_rgba(53,154,255,0.25)] hover:shadow-[0_12px_50px_rgba(53,154,255,0.35)] overflow-hidden border border-gray-100 transition-all duration-300 hover:-translate-y-1 rounded-xl border text-center px-10 py-12 max-w-xl w-full mx-4 group bg-gradient-to-br from-blue-50 to-indigo-100 block bg-white rounded-2xl shadow-lg hover:shadow-xl overflow-hidden border border-gray-200 transition-all duration-300 hover:-translate-y-1">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4">
               Let’s Connect!
             </h2>
-            <p className="text-gray-700 text-base md:text-lg mb-8">
+            <p className="text-gray-600 text-base md:text-lg mb-8">
               Connect with our accounting professionals & get started today!
             </p>
 
-            <a href="/Contactus" className="inline-block px-6 py-3 bg-[var(--primary-color)] text-white rounded-md hover:bg-[var(--primary-color)] transition-all shadow-md">
+            <a href="/Contactus" className="inline-block px-6 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-all shadow-md">
               Contact Us
             </a>
           </div>

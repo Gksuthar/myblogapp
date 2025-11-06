@@ -12,7 +12,7 @@ const stats = [
 const Trusted: React.FC = () => {
   return (
     <section
-      className="relative w-full bg-cover bg-center py-20"
+      className="relative w-full bg-cover bg-center md:py-20 py-4"
       style={{
         backgroundImage:
           "url('https://cdn.prod.website-files.com/6718c309cc349b579872ddbb/67332d1aaa9780c12cdd3d8a_glob-p-1080.png')",

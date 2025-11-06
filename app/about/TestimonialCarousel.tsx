@@ -65,66 +65,50 @@ const TestimonialCarousel: React.FC<TestimonialCarouselProps> = ({ data = defaul
     }
 
     return (
-        <section className="bg-white py-16 flex items-center justify-center">
+        <section className="bg-white py-8 md:py-16 flex items-center justify-center min-h-0">
             {/* Main Carousel Card Container */}
-            <div className="w-[70%]  p-6 bg-gray-100 rounded-2xl shadow-lg flex flex-col md:flex-row items-center md:items-stretch relative transition-all duration-500 ease-in-out">
+            <div className="w-[90%] md:w-[70%] p-6 bg-gray-50 rounded-2xl shadow-lg flex flex-col items-center relative transition-all duration-500 ease-in-out">
                 
                 {/* Image Section */}
-                <div className="md:w-1/3 flex-shrink-0 mb-6 md:mb-0 md:mr-6">
-                    <div className="w-48 h-48 md:w-full md:h-full overflow-hidden rounded-xl mx-auto md:mx-0">
-                        {/* TypeScript allows us to suppress the next/image lint rule using a comment */}
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img 
-                            src={currentTestimonial.image} 
-                            alt={currentTestimonial.name} 
-                            className="w-full h-full object-cover grayscale transition-opacity duration-500"
-                            onError={handleImageError} // Using the typed handler
-                        />
-                    </div>
+                <div className="w-40 h-40 overflow-hidden rounded-full bg-gray-200 flex items-center justify-center mb-6">
+                    <img 
+                        src={currentTestimonial.image} 
+                        alt={currentTestimonial.name} 
+                        className="w-full h-full object-cover"
+                        onError={handleImageError}
+                    />
                 </div>
 
                 {/* Testimonial Content Section */}
-                <div className="md:w-2/3 flex max-h-100 min-h-100 flex-col justify-between relative pl-4 pr-16 md:pr-4">
-                    <div className="relative">
-                        {/* Quote Icon - top left */}
-                        <span className="absolute -top-4 -left-0 text-5xl font-serif text-gray-400 opacity-75 transform -translate-x-full">
-                            &ldquo;
-                        </span>
-                        
-                        <p className="text-lg italic text-gray-700 leading-relaxed mt-4 md:mt-0 mb-6 transition-opacity duration-500">
-                            {currentTestimonial.quote}
-                        </p>
-                        
-                        {/* Quote Icon - bottom right */}
-                        <span className="absolute -bottom-6 right-0 text-5xl font-serif text-gray-400 opacity-75 transform translate-x-full">
-                            &rdquo;
-                        </span>
-                    </div>
-
-                    <div className=" transition-opacity duration-500">
-                        <p className="font-bold text-gray-800">{currentTestimonial.name}</p>
-                        <p className="text-sm text-gray-600">{currentTestimonial.title}</p>
-                    </div>
+                <div className="text-center">
+                    <p className="text-lg italic text-gray-700 leading-relaxed mb-4">
+                        {currentTestimonial.quote}
+                    </p>
+                    <p className="font-bold text-gray-800 text-xl">
+                        {currentTestimonial.name}
+                    </p>
+                    <p className="text-gray-600 text-sm">
+                        {currentTestimonial.title}
+                    </p>
                 </div>
 
-                {/* Navigation Arrows (Functional) */}
-                <div className="absolute bottom-6 right-6 flex space-x-2  z-10">
+                {/* Navigation Arrows */}
+                <div className="flex space-x-4 mt-6">
                     <button 
                         onClick={prevSlide}
-                        className="flex items-center justify-center w-10 h-10 rounded-full bg-white shadow-md text-gray-700 hover:bg-gray-200 transition"
+                        className="w-10 h-10 rounded-full bg-gray-300 hover:bg-gray-400 flex items-center justify-center"
                         aria-label="Previous testimonial"
                     >
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7"></path></svg>
                     </button>
                     <button 
                         onClick={nextSlide}
-                        className="flex items-center justify-center w-10 h-10 rounded-full bg-white shadow-md text-gray-700 hover:bg-gray-200 transition"
+                        className="w-10 h-10 rounded-full bg-gray-300 hover:bg-gray-400 flex items-center justify-center"
                         aria-label="Next testimonial"
                     >
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path></svg>
                     </button>
                 </div>
-
             </div>
         </section>
     );
