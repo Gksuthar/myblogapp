@@ -92,7 +92,18 @@ const AboutPage: React.FC = () => {
       .replace(/<a[^>]*>\s*(?:<img[^>]*>\s*)+<\/a>/gi, '');
     return html;
   }, [aboutData?.companyHistory]);
-  const [companies, setCompanies] = useState<any[]>([]);
+  const [companies, setCompanies] = useState<any[]>([
+    { _id: 1, name: 'Seven', image: 'https://res.cloudinary.com/dsu49fx2b/image/upload/v1762432492/seven_itm1wc.png' },
+    { _id: 2, name: 'Third', image: 'https://res.cloudinary.com/dsu49fx2b/image/upload/v1762432491/third_a7rozp.png' },
+    { _id: 3, name: 'Four', image: 'https://res.cloudinary.com/dsu49fx2b/image/upload/v1762432491/four_udda39.png' },
+    { _id: 4, name: 'First', image: 'https://res.cloudinary.com/dsu49fx2b/image/upload/v1762432491/first_j29tcj.png' },
+    { _id: 5, name: 'Five', image: 'https://res.cloudinary.com/dsu49fx2b/image/upload/v1762432491/five_igwygo.png' },
+    { _id: 6, name: 'Eight', image: 'https://res.cloudinary.com/dsu49fx2b/image/upload/v1762432491/eight_eub5iv.png' },
+    { _id: 7, name: 'None', image: 'https://res.cloudinary.com/dsu49fx2b/image/upload/v1762432491/none_trhcky.png' },
+    { _id: 8, name: 'Tan', image: 'https://res.cloudinary.com/dsu49fx2b/image/upload/v1762432490/tan_adqseg.png' },
+    { _id: 9, name: 'Tan', image: 'https://res.cloudinary.com/dsu49fx2b/image/upload/v1762432490/tan_adqseg.png' },
+    { _id: 10, name: 'Six', image: 'https://res.cloudinary.com/dsu49fx2b/image/upload/v1762432490/six_dvuxqi.png' },
+  ]);
   const [loadingCompanies, setLoadingCompanies] = useState<boolean>(true);
 
   useEffect(() => {
@@ -102,7 +113,7 @@ const AboutPage: React.FC = () => {
         const res = await fetch('/api/tructedCompany', { cache: 'no-store' });
         const data = await res.json();
         if (!res.ok) throw new Error(data?.error || 'Failed to load trusted companies');
-        if (alive) setCompanies(Array.isArray(data) ? data : []);
+        // if (alive) setCompanies(Array.isArray(data) ? data : []);
       } catch (e) {
         console.error('Failed to fetch trusted companies:', e);
       } finally {
@@ -171,7 +182,7 @@ const AboutPage: React.FC = () => {
               </div>
             </div>
 
-            <div className="absolute bottom-1/4 left-1/3 transform -translate-x-1/2 z-20">
+            <div className="absolute bottom-1/4 left-1/3 transform -translate-x-1/2 z-20 mb-20">
               {/* Small Smiley Card */}
               <div className="bg-white rounded-lg shadow-xl p-2 flex items-center space-x-2">
                 <span className="text-xl">😊</span>

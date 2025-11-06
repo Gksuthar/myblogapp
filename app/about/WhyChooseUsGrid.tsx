@@ -97,14 +97,14 @@ const WhyChooseUsGrid: React.FC = () => {
             icon: <IconClockCheck />,
             title: "Faster Turn Around Time",
             description: "Delivering timely results with accuracy. Stanfox ensures prompt accounting services that meets deadlines & exceeds expectations.",
-            img: "https://cdn.prod.website-files.com/6718c309cc349b579872ddbb/673ed4244357102f364e55cd_6324e0bb1a3ea28dbfe17e43_slide-img-03.png.svg",
+            img: "https://res.cloudinary.com/dsu49fx2b/image/upload/v1762432820/download_mlevwu.svg",
             bgColorClass: 'bg-gradient-to-r from-[rgba(53,154,255,0.12)] via-[rgba(53,154,255,0.06)] to-transparent border-green-200/50',
         },
         {
             icon: <IconStarBadge />,
             title: "10+ Years Of Experience",
             description: "With over a decade of experience in the accounting industry, we bring seasoned expertise to support your financial needs.",
-            img: 'https://cdn.prod.website-files.com/6718c309cc349b579872ddbb/673ed4246d7aa5692381b5c1_6324e0bb1a3ea28dbfe17e43_slide-img-03.png-2.svg',
+            img: 'https://res.cloudinary.com/dsu49fx2b/image/upload/v1762433799/download_6_tnsrwq.svg',
             bgColorClass: 'bg-indigo-50/50 border-indigo-200/50',
         },
         {
@@ -112,20 +112,20 @@ const WhyChooseUsGrid: React.FC = () => {
             title: "Flexible Working Models",
             description: "We adapt to your workflow and requirements. Choose from convenient timing models that fit your firm's needs.",
             bgColorClass: 'bg-blue-50/50 border-blue-200/50',
-            img: "https://cdn.prod.website-files.com/6718c309cc349b579872ddbb/673ed424a0876d851a06fe42_6324e0bb1a3ea28dbfe17e43_slide-img-03.png-4.svg"
+            img: "https://res.cloudinary.com/dsu49fx2b/image/upload/v1762433207/download_2_zcrim1.svg"
         },
         {
             icon: <IconAccountants />,
             title: "45+ Dedicated Accountants",
             description: "Our team consists of 45+ dedicated accountants, committed to delivering reliable support & expertise tailored to your needs.",
-            img: "https://cdn.prod.website-files.com/6718c309cc349b579872ddbb/673da781928a767c7df5b414_6324e0bb1a3ea28dbfe17e43_slide-img-03.png.svg",
+            img: "https://res.cloudinary.com/dsu49fx2b/image/upload/v1762435132/download_13_ngl0d1.svg",
             bgColorClass: 'bg-gray-50/50 border-gray-200/50',
         },
         {
             icon: <IconToolLogos />,
             title: "Proficient In Accounting Tools",
             description: "Our accounting maestros are adept at multiple accounting tools. Trust us to get accounting done in the most proficient way.",
-            img: "https://cdn.prod.website-files.com/6718c309cc349b579872ddbb/673ed4242b3ce9979a56eea2_6324e0bb1a3ea28dbfe17e43_slide-img-03.png-3.svg",
+            img: "https://res.cloudinary.com/dsu49fx2b/image/upload/v1762433558/download_4_eb7bjq.svg",
             bgColorClass: 'bg-gradient-to-r from-[rgba(53,154,255,0.12)] via-[rgba(53,154,255,0.06)] to-transparent border-green-200/50',
         },
         {
@@ -133,7 +133,7 @@ const WhyChooseUsGrid: React.FC = () => {
             title: "Cost-Efficient Services",
             description: "Optimize your budget without sacrificing quality. Empower your firm with cost-effective services without missing a safety beat.",
             bgColorClass: 'bg-gray-50/50 border-gray-200/50',
-            img: "https://cdn.prod.website-files.com/6718c309cc349b579872ddbb/673ed424a120863760c602d8_6324e0bb1a3ea28dbfe17e43_slide-img-03.png-5.svg",
+            img: "https://res.cloudinary.com/dsu49fx2b/image/upload/v1762433681/download_5_hqkymk.svg",
         },
     ];
 
@@ -190,7 +190,7 @@ const WhyChooseUsGrid: React.FC = () => {
                                 {/* 1. Preliminary discussion */}
                                 <div className="bg-white rounded-xl shadow-lg p-6 lg:p-8 flex flex-col items-center text-center how-we-work relative div-block-25">
                                     <img
-                                        src="https://cdn.prod.website-files.com/6718c309cc349b579872ddbb/67456867b1b64daaefc7a5d4_6324e0bb1a3ea28dbfe17e43_slide-img-03.png.svg"
+                                        src="https://res.cloudinary.com/dsu49fx2b/image/upload/v1762434016/download_7_h5vjso.svg"
                                         loading="lazy"
                                         alt=""
                                         className="mb-4 "
@@ -214,7 +214,7 @@ const WhyChooseUsGrid: React.FC = () => {
                                 {/* 2. SLAs setup */}
                                 <div className="bg-white rounded-xl shadow-lg p-6 lg:p-8 flex flex-col items-center text-center how-we-work relative div-block-25 mt-8 md:mt-0">
                                     <img
-                                        src="https://cdn.prod.website-files.com/6718c309cc349b579872ddbb/6745686752e3879cd3fcbdcf_6324e0bb1a3ea28dbfe17e43_slide-img-03.png-1.svg"
+                                        src="https://res.cloudinary.com/dsu49fx2b/image/upload/v1762434590/download_9_k0c4ug.svg"
                                         loading="lazy"
                                         alt=""
                                         className="mb-4 "
@@ -238,7 +238,7 @@ const WhyChooseUsGrid: React.FC = () => {
                                 {/* 3. Contract agreement */}
                                 <div className="bg-white rounded-xl shadow-lg p-6 lg:p-8 flex flex-col items-center text-center how-we-work relative div-block-25 mt-8 md:mt-0">
                                     <img
-                                        src="https://cdn.prod.website-files.com/6718c309cc349b579872ddbb/67456867aa5d5c07369f70c9_6324e0bb1a3ea28dbfe17e43_slide-img-03.png-2.svg"
+                                        src="https://res.cloudinary.com/dsu49fx2b/image/upload/v1762435338/download_14_q1uax6.svg"
                                         loading="lazy"
                                         alt=""
                                         className="mb-4"
@@ -262,7 +262,7 @@ const WhyChooseUsGrid: React.FC = () => {
                                 {/* 5. Weekly review meetings (Visually on the left of the bottom row) */}
                                 <div className="bg-white rounded-xl shadow-lg p-6 lg:p-8 flex flex-col items-center text-center how-we-work relative div-block-25 mt-10">
                                     <img
-                                        src="https://cdn.prod.website-files.com/6718c309cc349b579872ddbb/67456886b79c31b9e7728967_6324e0bb1a3ea28dbfe17e43_slide-img-03.png-3.svg"
+                                        src="https://res.cloudinary.com/dsu49fx2b/image/upload/v1762434925/download_11_ufvebw.svg"
                                         loading="lazy"
                                         alt=""
                                         className="mb-4"
@@ -276,7 +276,7 @@ const WhyChooseUsGrid: React.FC = () => {
                                 {/* 4. Service commencement (Visually on the right of the bottom row) */}
                                 <div className="bg-white  rounded-xl shadow-lg p-6 lg:p-8 flex flex-col items-center text-center how-we-work relative div-block-25 mt-10">
                                     <img
-                                        src="https://cdn.prod.website-files.com/6718c309cc349b579872ddbb/6745686768bf12387047a9a4_6324e0bb1a3ea28dbfe17e43_slide-img-03.png-4.svg"
+                                        src="https://res.cloudinary.com/dsu49fx2b/image/upload/v1762434925/download_12_soxysp.svg"
                                         loading="lazy"
                                         alt=""
                                         className="mb-4"

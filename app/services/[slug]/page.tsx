@@ -1,6 +1,7 @@
 'use client';
 
 import React, { Suspense, useEffect, useState } from 'react';
+import { motion } from 'framer-motion';
 import axios from 'axios';
 import { useParams } from 'next/navigation';
 import ComponentLoader from '@/components/ComponentLoader';
@@ -58,21 +59,24 @@ export default function ServiceDetailsPage() {
             ? res.data
             : [];
 
-          // Check if slug is a MongoDB ObjectId (24 hex characters)
-          const isObjectId = /^[0-9a-fA-F]{24}$/.test(slug);
           
+          // Normalize and match robustly: prefer direct _id match; otherwise compare normalized slugs
+          const requested = (slug || '').toString();
+          const requestedSlug = toSlug(requested);
+
           const match = (rawData as ServiceDoc[]).find((s) => {
-            if (isObjectId) {
-              // Match by _id first (most specific), then categoryId
-              // Convert _id to string for comparison
-              const serviceId = s._id?.toString();
-              const serviceCategoryId = s.categoryId?.toString();
-              return serviceId === slug || serviceCategoryId === slug;
-            } else {
-              // Match by slug or generated slug from title
-              const dbSlug = s.slug || toSlug(s.heroSection?.title || '');
-              return dbSlug === slug;
-            }
+            const sid = s._id?.toString();
+            if (sid && sid === requested) return true;
+
+            // Also match categoryId directly if provided
+            const catId = s.categoryId?.toString();
+            if (catId && catId === requested) return true;
+
+            // Build a normalized slug from available fields on the DB record
+            const candidate = s.slug || s.heroSection?.title || s.serviceCardView?.title || '';
+            const dbSlug = toSlug(candidate.toString());
+
+            return dbSlug === requestedSlug;
           });
 
           if (match) setService(match);
@@ -135,6 +139,7 @@ export default function ServiceDetailsPage() {
     : defaultHero.image;
 
   return (
+    <>
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-10">
       {loading && <ComponentLoader height="h-24" />}
 
@@ -218,8 +223,51 @@ export default function ServiceDetailsPage() {
               ← Back to Services
             </a>
           </div>
+
+          {/* CTA was intentionally removed from inside the centered container — a full-width CTA is rendered below */}
         </>
       )}
     </div>
+
+    {/* Full-bleed CTA: width 100vw, flush with footer (no extra bottom margin/padding) */}
+<section
+  aria-label="site-cta"
+  className="bg-[#2A80FF] relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] w-screen"
+>
+  <div className="mx-auto text-center px-6 sm:px-6 lg:px-8 pt-20 pb-10">
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6 }}
+      viewport={{ once: true }}
+      className="space-y-6"
+    >
+      {/* Heading */}
+      <h2 className="text-4xl md:text-5xl font-bold text-white">
+        Ready to Streamline Your Business?
+      </h2>
+
+      {/* Subheading */}
+      <p className="text-lg text-[rgba(255,255,255,0.9)] max-w-2xl mx-auto">
+        Join hundreds of businesses who trust Stanfox with their accounting needs.
+      </p>
+
+      {/* Button */}
+      <div className="flex flex-col sm:flex-row gap-4 justify-center">
+        <motion.button
+          onClick={() => (window.location.href = '/Contactus')}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          className="px-8 py-4 bg-white text-[#2A80FF] font-semibold rounded-lg hover:bg-gray-100 transition-all duration-300 shadow-lg"
+        >
+          Start Free Trial
+        </motion.button>
+      </div>
+    </motion.div>
+  </div>
+</section>
+
+
+    </>
   );
 }

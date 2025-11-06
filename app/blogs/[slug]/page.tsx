@@ -31,7 +31,7 @@ export default function BlogPage() {
       setLoading(true);
       try {
         // First try the main blogs API
-        let res = await fetch(`/api/blogs?slug=${slug}`);
+        const res = await fetch(`/api/blogs?slug=${slug}`);
         
         if (!res.ok) {
           throw new Error('Blog not found');

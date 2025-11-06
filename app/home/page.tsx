@@ -355,52 +355,55 @@ export default function Home() {
                     </div>
 
                     {/* Services Grid (from /api/service) */}
-                    <motion.div
-                        {...fadeIn(0.3, 20)}
-                        className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-                    >
-                        {loadingServices && (
-                            <ComponentLoader height="h-64" message="Loading services..." />
-                        )}
-                        {!loadingServices &&
-                            serviceCards.map((svc, i) => {
-                                countServiceIcons=countServiceIcons+1;
-                                const slug = svc.slug || toSlug(svc?.categoryId || 'service');
+             {/* Services Grid (from /api/service) */}
+{/* Services Grid (from /api/service) */}
 
-                                // Handle array or object form of serviceCardView
-                                const cardView = Array.isArray(svc.serviceCardView)
-                                    ? svc.serviceCardView[0]
-                                    : svc.serviceCardView;
+<motion.div
+  {...fadeIn(0.3, 20)}
+  className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 
+             grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 
+             gap-8 justify-items-center items-stretch"
+>
+  {loadingServices && (
+    <ComponentLoader height="h-64" message="Loading services..." />
+  )}
 
-                                const post = {
-                                    id: i + 1,
-                                    title: cardView?.title || svc.heroSection?.title || '',
-                                    desc: cardView?.description || svc.heroSection?.description || "",
-                                    img: initialServiceIcons[countServiceIcons % 6]
+  {!loadingServices &&
+    serviceCards.map((svc, i) => {
+      countServiceIcons++;
+      const slug = svc.slug || toSlug(svc?.categoryId || 'service');
 
-                                        // cardView?.image ||
-                                        // svc.heroSection?.image ||
-                                        // 'https://cdn.prod.website-files.com/6718c309cc349b579872ddbb/6732eedcfeeebafefe65ebd0_icons8-checklist-94%201.svg',
-                                };
+      const cardView = Array.isArray(svc.serviceCardView)
+        ? svc.serviceCardView[0]
+        : svc.serviceCardView;
 
-                                const href = `/services/${slug}`;
+      const post = {
+        id: i + 1,
+        title: cardView?.title || svc.heroSection?.title || '',
+        desc: cardView?.description || svc.heroSection?.description || "",
+        img: initialServiceIcons[countServiceIcons % 6],
+      };
 
-                                return (
-                                    <a key={svc._id} href={href} className="block h-full">
-                                        <motion.div
-                                            className="h-full"
-                                            whileHover={{ y: -6 }}
-                                            transition={{ duration: 0.3 }}
-                                        >
-                                            <Suspense fallback={<ComponentLoader height="h-64" message="Loading service card..." />}>
-                                                <BlogServiceCard post={post} />
-                                            </Suspense>
-                                        </motion.div>
-                                    </a>
-                                );
-                            })}
+      const href = `/services/${slug}`;
 
-                    </motion.div>
+      return (
+        <a key={svc._id} href={href} className="block w-full h-full">
+          <motion.div
+            className="h-full flex flex-col justify-between bg-white rounded-2xl shadow-[0_8px_30px_rgba(0,0,0,0.05)] 
+                       hover:shadow-[0_12px_40px_rgba(0,0,0,0.08)] transition-all duration-300"
+            whileHover={{ y: -6 }}
+            transition={{ duration: 0.3 }}
+          >
+            <Suspense fallback={<ComponentLoader height="h-64" message="Loading service card..." />}>
+              <BlogServiceCard post={post} />
+            </Suspense>
+          </motion.div>
+        </a>
+      );
+    })}
+</motion.div>
+
+
                 </motion.div>
 
                 {/* Additional Sections with motion */}

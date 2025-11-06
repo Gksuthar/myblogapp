@@ -1,5 +1,6 @@
 "use client";
 import React, { Suspense } from "react";
+import { motion } from "framer-motion";
 import ComponentLoader from "@/components/ComponentLoader";
 
 // Long-form service page inspired by SB Accounting's "Outsource Accounting Services"
@@ -80,23 +81,43 @@ export default function OutsourceAccountingServicesPage() {
         </Section>
 
         {/* CTA */}
-        <section className="py-10">
-          <div className="max-w-3xl mx-auto px-4 sm:px-6 text-center">
-            <div className="bg-slate-50 border border-slate-200 rounded-2xl p-6 sm:p-8">
-              <h3 className="text-lg sm:text-xl font-semibold text-gray-900">
-                Ready to modernize your accounting?
-              </h3>
-              <p className="mt-2 text-gray-600">
-                Let’s discuss your current process and map a quick, risk‑free migration plan.
-              </p>
-              <div className="mt-4">
-                <a href="/Contactus" className="inline-flex items-center justify-center px-5 py-3 rounded-md bg-slate-800 text-white hover:bg-slate-900">
-                  Talk to an expert
-                </a>
-              </div>
-            </div>
-          </div>
-        </section>
+    <section
+  aria-label="site-cta"
+  className="bg-[#2A80FF] relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] w-screen"
+>
+  <div className="mx-auto text-center px-6 sm:px-6 lg:px-8 pt-20 pb-10">
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6 }}
+      viewport={{ once: true }}
+      className="space-y-6"
+    >
+      {/* Heading */}
+      <h2 className="text-4xl md:text-5xl font-bold text-white">
+        Ready to Streamline Your Business?
+      </h2>
+
+      {/* Subheading */}
+      <p className="text-lg text-[rgba(255,255,255,0.9)] max-w-2xl mx-auto">
+        Join hundreds of businesses who trust Stanfox with their accounting needs.
+      </p>
+
+      {/* Button */}
+      <div className="flex flex-col sm:flex-row gap-4 justify-center">
+        <motion.button
+          onClick={() => (window.location.href = '/Contactus')}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          className="px-8 py-4 bg-white text-[#2A80FF] font-semibold rounded-lg hover:bg-gray-100 transition-all duration-300 shadow-lg"
+        >
+          Start Free Trial
+        </motion.button>
+      </div>
+    </motion.div>
+  </div>
+</section>
+
       </main>
     </Suspense>
   );

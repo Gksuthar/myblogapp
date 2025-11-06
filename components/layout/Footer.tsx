@@ -42,6 +42,8 @@ const Footer: React.FC = () => {
   const [internationalNote, setInternationalNote] = useState('');
   const [copyrightText, setCopyrightText] = useState('');
 
+  const currentYear = new Date().getFullYear();
+
   useEffect(() => {
     const load = async () => {
       try {
@@ -123,7 +125,6 @@ const Footer: React.FC = () => {
                 {(links.length > 5 ? links.slice(5) : [
 
                   { label: 'Services', href: '/services' },
-                  { label: 'Privacy Policy', href: '/privacy' }
                 ]).slice(0,5).map((l, i) => (
                   <FooterLink key={i} href={l.href}>{l.label}</FooterLink>
                 ))}
@@ -245,8 +246,11 @@ const Footer: React.FC = () => {
 
         {/* Footer Bar: Copyright and Social Icons */}
         <div className="flex flex-col md:flex-row justify-between items-center pt-4 border-t border-gray-700/50">
-          <p className="text-xs mb-4 md:mb-0">
-            {copyrightText || '© 2025. All rights reserved.'}
+          <p className="text-xs mb-4 md:mb-0 flex items-center gap-2">
+            <span aria-hidden className="text-sm">&copy;</span>
+            <span>
+              {copyrightText || `${currentYear} SB Accounting. All rights reserved.`}
+            </span>
           </p>
           <div className="flex space-x-4">
             {/* Social Icons Placeholder */}

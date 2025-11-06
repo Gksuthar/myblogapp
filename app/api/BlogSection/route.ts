@@ -34,7 +34,7 @@ export async function POST(req: Request) {
     }
 
     // Generate slug from title
-    let slug = createSlug(title);
+    const slug = createSlug(title);
     
     // Ensure slug is unique by appending a number if needed
     let counter = 1;
@@ -65,7 +65,7 @@ export async function PATCH(req: Request) {
     }
 
     // If title changed, regenerate slug
-    let updateData: any = { title, image, disc };
+    const updateData: any = { title, image, disc };
     if (title !== existingBlog.title) {
       const baseSlug = createSlug(title);
       let counter = 1;

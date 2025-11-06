@@ -9,7 +9,7 @@ import CustomButton from "../ui/customButtom/Button";
 interface Props {
   title: string;
   disc: string;
-  image: string;
+  image?: string;
   showCtas?: boolean; // optional, default true
 }
 
@@ -48,26 +48,28 @@ const HeroSection: React.FC<Props> = ({ title, disc, image, showCtas = true }) =
         )}
       </motion.div>
 
-      {/* Right image */}
-      <motion.div
-        initial={{ opacity: 0, x: 40 }}
-        whileInView={{ opacity: 1, x: 0 }}
-        transition={{ duration: 0.6 }}
-        className="flex-1 flex justify-center md:justify-center relative"
-      >
-        {/* Decorative glow */}
-        <div className="absolute -top-10 -right-10 w-56 h-56 bg-[rgba(53,154,255,0.14)] blur-3xl rounded-full" aria-hidden="true" />
-        <div className="relative w-full max-w-[640px] lg:max-w-[720px] xl:max-w-[820px]">
-          <Image
-            src={image}
-            alt="Accounting & bookkeeping illustration"
-            width={820}
-            height={560}
-            priority
-            className="rounded-2xl shadow-lg object-cover w-full h-auto"
-          />
-        </div>
-      </motion.div>
+      {/* Right image (render only if image provided) */}
+      {image && (
+        <motion.div
+          initial={{ opacity: 0, x: 40 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.6 }}
+          className="flex-1 flex justify-center md:justify-center relative"
+        >
+          {/* Decorative glow */}
+          <div className="absolute -top-10 -right-10 w-56 h-56 bg-[rgba(53,154,255,0.14)] blur-3xl rounded-full" aria-hidden="true" />
+          <div className="relative w-full max-w-[640px] lg:max-w-[720px] xl:max-w-[820px]">
+            <Image
+              src={image}
+              alt="Accounting & bookkeeping illustration"
+              width={820}
+              height={560}
+              priority
+              className="rounded-2xl shadow-lg object-cover w-full h-auto"
+            />
+          </div>
+        </motion.div>
+      )}
     </section>
   );
 };

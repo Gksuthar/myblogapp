@@ -269,7 +269,7 @@ export default function BookkeepingServices() {
         )}
 
         {/* CTA Section */}
-  <section className="py-20 bg-[var(--primary-color)]">
+         <section className="py-20 bg-[var(--primary-color)]">
           <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
             <motion.div
               {...fadeIn(0.2)}
@@ -283,18 +283,12 @@ export default function BookkeepingServices() {
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <motion.button
+                  onClick={() => window.location.href = '/Contactus'}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   className="px-8 py-4 bg-white text-[var(--primary-color)] font-semibold rounded-lg hover:bg-gray-100 transition-all duration-300 shadow-lg"
                 >
                   Start Free Trial
-                </motion.button>
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="px-8 py-4 border-2 border-white text-white font-semibold rounded-lg hover:bg-white hover:text-[var(--primary-color)] transition-all duration-300"
-                >
-                  Schedule Consultation
                 </motion.button>
               </div>
             </motion.div>
