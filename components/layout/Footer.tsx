@@ -73,7 +73,7 @@ const Footer: React.FC = () => {
   // Deduplicate certifications by image URL (or label) so each badge shows only once
   const getUniqueCerts = (): Certification[] => {
     const fallback: Certification[] = [
-      { image: 'https://cdn.prod.website-files.com/6718c309cc349b579872ddbb/6745677652e3879cd3fbd23b_Badges-Clear%201.png', label: 'Certification' },
+      { image: 'https://res.cloudinary.com/dsu49fx2b/image/upload/v1762443832/unnamed-artguru_g7ubr9.png', label: 'Certification' },
     ];
     const src = (certs && certs.length > 0 ? certs : fallback);
     const seen = new Set<string>();
