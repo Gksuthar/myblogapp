@@ -116,7 +116,7 @@ const WhyChooseUsGrid: React.FC = () => {
             icon: <IconStarBadge />,
             title: "10+ Years Of Experience",
             description: "With over a decade of experience in the accounting industry, we bring seasoned expertise to support your financial needs.",
-            img: 'https://res.cloudinary.com/dsu49fx2b/image/upload/v1762449314/download_23_pqznkv.svg',
+            img: 'https://res.cloudinary.com/dsu49fx2b/image/upload/v1762433021/download_1_yvzrrk.svg',
             bgColorClass: 'bg-indigo-50/50 border-indigo-200/50',
         },
         {
@@ -197,7 +197,7 @@ const WhyChooseUsGrid: React.FC = () => {
                    <div className="process_wrapper relative">
 
   {/* 🔹 Top Row: Steps 1, 2, 3 */}
-  <div className="grid grid-cols-1 md:grid-cols-3 gap-x-8 lg:gap-x-12 relative mb-16 md:mb-8 lg:mb-0 flex myCardScene">
+  <div className="grid grid-cols-1 md:grid-cols-3 gap-x-8 lg:gap-x-12 relative mb-16 md:mb-8 lg:mb-0 flex md:myCardSceneColumn">
 
     {/* 1️⃣ Preliminary discussion */}
     <div className="bg-white rounded-xl shadow-lg p-8 flex flex-col items-center text-center justify-center relative transition-all hover:shadow-xl min-h-[350px]">
@@ -272,7 +272,7 @@ const WhyChooseUsGrid: React.FC = () => {
   </div>
 
   {/* 🔹 Bottom Row: Steps 4, 5 */}
-  <div className="grid grid-cols-1 md:grid-cols-3 gap-x-8 lg:gap-x-12 pt-16 md:pt-0 relative myCardScene">
+<div className="flex flex-col md:flex-row justify-center gap-x-8 lg:gap-x-12 md:pt-0 relative md:myCardSceneColumn">
     {/* Placeholder to center bottom row */}
     <div className="hidden md:block"></div>
 

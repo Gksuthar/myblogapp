@@ -92,7 +92,7 @@ const WhyChooseUsSection: React.FC = () => {
           
           {/* CTA Link */}
           <Link 
-            href={ctaLink} 
+            href={'/Contactus'} 
             className="text-lg font-semibold border-b-2 border-blue-600 pb-1 inline-flex items-center hover:text-blue-800 transition-colors"
             style={{ color: '#4C51BF' /* Blue/Indigo color for link */, borderColor: '#4C51BF' }}
           >

@@ -111,7 +111,7 @@ export default function OutsourceAccountingServicesPage() {
           whileTap={{ scale: 0.95 }}
           className="px-8 py-4 bg-white text-[#2A80FF] font-semibold rounded-lg hover:bg-gray-100 transition-all duration-300 shadow-lg"
         >
-          Start Free Trial
+          Contact Us
         </motion.button>
       </div>
     </motion.div>

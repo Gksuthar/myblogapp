@@ -77,10 +77,18 @@
   z-index: 70 !important;
 }
 .myCardScene {
-  display: flex;              /* Enable flex layout */
-  justify-content: center !important;    /* Horizontally center content */
-  align-items: flex-start !important;        /* Vertically center content */
-  flex-direction: row;     /* Stack content vertically (optional, for card layout) */
+  display: flex;             
+  justify-content: center !important;
+  align-items: flex-start !important;
+  flex-direction: row;     
+  gap: 1rem;    
+              /* Optional: space between elements */
+}
+.myCardSceneColumn {
+  display: flex;             
+  justify-content: center !important;
+  align-items: flex-start !important;
+  flex-direction: column;     
   gap: 1rem;    
               /* Optional: space between elements */
 }

@@ -227,7 +227,7 @@ export default function AccountingOutsourcingServices() {
                 whileTap={{ scale: 0.95 }}
                 className="px-8 py-4 bg-white text-[var(--primary-color)] font-semibold rounded-lg hover:bg-gray-100 transition-all duration-300 shadow-lg"
               >
-                Start Free Trial
+                Contact Us
               </motion.button>
               <motion.button
                 whileHover={{ scale: 1.05 }}
