@@ -152,34 +152,32 @@ const WhyChooseUsGrid: React.FC = () => {
     return (
         <>
             <section className="py-16 px-4 md:px-8 bg-gray-50" style={{ fontFamily: 'var(--font-lexend)' }}>
-                <div className="max-w-7xl mx-auto ">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+  {/* Header Block */}
+  <div className="text-center mb-16">
+    <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 mb-4">
+      Why Choose Sbaccounting?
+    </h2>
+    <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+      Experience the Sbaccounting difference. Choose the perfect combo of expertise combined with adhering to the U.S. standards.
+    </p>
+  </div>
 
-                    {/* Header Block */}
-                    <div className="text-center mb-16">
-                        <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 mb-4">
-                            Why Choose Sbaccounting?
-                        </h2>
-                        <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-                            Experience the Sbaccounting difference. Choose the perfect combo of expertise combined with adhering to the U.S. standards.
-                        </p>
-                    </div>
+  {/* Responsive Grid Layout */}
+  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
+    {features.map((feature, index) => (
+      <FeatureCard
+        key={index}
+        icon={feature.icon}
+        title={feature.title}
+        description={feature.description}
+        img={feature.img}
+        bgColorClass={feature.bgColorClass}
+      />
+    ))}
+  </div>
+</div>
 
-                    {/* Grid Layout (3 columns, 2 rows) */}
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                        {features.map((feature, index) => (
-                            <FeatureCard
-                                key={index}
-                                icon={feature.icon}
-                                title={feature.title}
-                                description={feature.description}
-                                img={feature.img}
-                                bgColorClass={feature.bgColorClass}
-                            />
-                        ))}
-                    </div>
-                    
-
-                </div>
                 <section className="py-16 md:py-24 bg-gray-50 process_section mobile-hide  bg-light-gray">
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-container bg-light-gray  container">
 

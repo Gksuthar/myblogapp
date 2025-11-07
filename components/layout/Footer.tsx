@@ -73,7 +73,7 @@ const Footer: React.FC = () => {
   // Deduplicate certifications by image URL (or label) so each badge shows only once
   const getUniqueCerts = (): Certification[] => {
     const fallback: Certification[] = [
-      { image: 'https://res.cloudinary.com/dsu49fx2b/image/upload/v1762443832/unnamed-artguru_g7ubr9.png', label: 'Certification' },
+      { image: 'https://res.cloudinary.com/dsu49fx2b/image/upload/v1762546210/lastsave_lr47kb.gif', label: '' },
     ];
     const src = (certs && certs.length > 0 ? certs : fallback);
     const seen = new Set<string>();
@@ -135,13 +135,13 @@ const Footer: React.FC = () => {
           {/* Certification */}
           <div>
             <h4 className="font-bold text-base mb-4">Certification:</h4>
-            <div className="flex flex-nowrap items-center gap-8 mb-4">
+            <div className="flex flex-nowrap items-center gap-8 mb-4 overflow-x-auto pb-2" style={{ WebkitOverflowScrolling: 'touch' }}>
               {getUniqueCerts().slice(0,3).map((b, i) => (
                 isValidImageSrc(b.image || '') ? (
                   <Image
                     key={i}
                     src={b.image as string}
-                    alt={b.label || `Certification ${i+1}`}
+                    alt={b.label ? b.label : `Certification ${i+1}`}
                     width={240}
                     height={84}
                     className="h-24 w-auto object-contain"
@@ -150,7 +150,7 @@ const Footer: React.FC = () => {
                   />
                 ) : (
                   <div key={i} className="w-28 h-10 bg-gray-700 rounded flex items-center justify-center text-xs text-gray-300">
-                    {b.label || `Badge ${i+1}`}
+                    {b.label ? b.label : `Badge ${i+1}`}
                   </div>
                 )
               ))}

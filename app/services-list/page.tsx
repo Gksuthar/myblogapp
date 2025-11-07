@@ -89,7 +89,7 @@ export default function ServicesListPage() {
   }, []);
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 ">
       <div className="text-center mb-10">
         <h1 className="text-3xl md:text-4xl font-bold text-gray-900">All Services</h1>
         <p className="mt-3 text-gray-600">Browse all available services.</p>
@@ -106,7 +106,7 @@ export default function ServicesListPage() {
       )}
 
       {!loading && !error && items.length > 0 && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 flex ">
           {items.map((item, idx) => {
             // Prefer heroSection, fallback to serviceCardView (array or object)
             const svcCard = Array.isArray(item.serviceCardView) ? item.serviceCardView[0] : item.serviceCardView;
@@ -125,7 +125,7 @@ export default function ServicesListPage() {
             const post = { id: idx, title: title, desc: desc || '—', img };
 
             return (
-              <a key={item._id || idx} href={href} className="block w-full h-full">
+              <a key={item._id || idx} href={href} className="block w-full h-full  !justify-center ">
                 <motion.div
                   {...fadeIn(0.05)}
                   className="h-full flex flex-col justify-between bg-white rounded-2xl shadow-[0_8px_30px_rgba(0,0,0,0.05)] hover:shadow-[0_12px_40px_rgba(0,0,0,0.08)] transition-all duration-300"
