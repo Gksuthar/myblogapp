@@ -159,7 +159,7 @@ export default function Home() {
                                 transition={{ delay: 0.2, duration: 0.6 }}
                                 className="text-base sm:text-lg text-gray-600 max-w-2xl mb-8"
                             >
-                                Join other CPA firms, empowering their firm with Stanfox's job-ready
+                                Join other CPA firms, empowering their firm with Sbaccounting's job-ready
                                 outsourcing accounting team.
                             </motion.p>
                         </div>

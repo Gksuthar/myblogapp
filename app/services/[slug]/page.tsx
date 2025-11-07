@@ -227,7 +227,7 @@ export default function ServiceDetailsPage() {
 
       {/* Subheading */}
       <p className="text-lg text-[rgba(255,255,255,0.9)] max-w-2xl mx-auto">
-        Join hundreds of businesses who trust Stanfox with their accounting needs.
+        Join hundreds of businesses who trust Sbaccounting with their accounting needs.
       </p>
 
       {/* Button */}

@@ -313,7 +313,7 @@ const professionalData = {
 <h3>Conclusion</h3>
 <p>By avoiding these mistakes and working with professional accountants, you can ensure your business stays financially healthy.</p>`,
       image: "https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=800",
-      author: "Stanfox Team",
+      author: "Sbaccounting Team",
       published: true
     },
     {
@@ -333,7 +333,7 @@ const professionalData = {
 <h3>Popular Options</h3>
 <p>QuickBooks, Xero, and FreshBooks are among the most popular choices for small businesses.</p>`,
       image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800",
-      author: "Stanfox Team",
+      author: "Sbaccounting Team",
       published: true
     },
     {
@@ -352,7 +352,7 @@ const professionalData = {
 </ul>
 <p>Consult with a tax professional to implement these strategies effectively.</p>`,
       image: "https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=800",
-      author: "Stanfox Team",
+      author: "Sbaccounting Team",
       published: true
     },
   ],

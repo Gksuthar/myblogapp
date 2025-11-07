@@ -71,8 +71,8 @@ const WhyChooseUsSection: React.FC = () => {
     fetchWhy();
   }, []);
   // Static content to match the image
-  const title = "Why Choose Stanfox For Outsourcing Accounting Services";
-  const description = "Experience the Stanfox difference. Choose the perfect combo of expertise combined with adhering to the U.S. standards.";
+  const title = "Why Choose Sbaccounting For Outsourcing Accounting Services";
+  const description = "Experience the Sbaccounting difference. Choose the perfect combo of expertise combined with adhering to the U.S. standards.";
   const ctaText = "Hire expert today →";
   const ctaLink = "/contact"; // Example link
   return (

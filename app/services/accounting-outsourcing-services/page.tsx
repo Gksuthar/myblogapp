@@ -98,7 +98,7 @@ export default function AccountingOutsourcingServices() {
               </h1>
               
               <p className="text-lg md:text-xl text-gray-600 leading-relaxed">
-                Looking for certified bookkeepers from India for your CPA? Add Stanfox&apos;s skilled Indian bookkeepers to your USA team & readily manage bookkeeping, reconciliations & more.
+                Looking for certified bookkeepers from India for your CPA? Add Sbaccounting&apos;s skilled Indian bookkeepers to your USA team & readily manage bookkeeping, reconciliations & more.
               </p>
               
               <motion.button

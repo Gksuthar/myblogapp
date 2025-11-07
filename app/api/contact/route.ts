@@ -7,6 +7,7 @@ export async function GET() {
   try {
     await connectDB();
     const contacts = await ContactModel.find().sort({ createdAt: -1 });
+    console.log("Fetched Contacts:", contacts);
     return NextResponse.json({ data: contacts, count: contacts.length });
   } catch (error) {
     console.error("GET Contact Error:", error);

@@ -136,9 +136,9 @@ const AboutPage: React.FC = () => {
               Work With The Top Accounting Talent; Fast, Skilled, And Specialized
             </h1>
             <p className="text-base sm:text-lg md:text-xl text-gray-700 mb-8 max-w-2xl mx-auto lg:mx-0">
-              Partner with Stanfox to elevate your practice. From precision in data to streamlined processes, we
+              Partner with Sbaccounting to elevate your practice. From precision in data to streamlined processes, we
               handle the heavy lifting, allowing you to focus on what matters most—your clients. Discover the
-              Stanfox difference today
+              Sbaccounting difference today
             </p>
             {/* <Link href="/contact-us" className="inline-block bg-gray-800 text-white px-8 py-3 rounded-md text-lg font-medium hover:bg-gray-900 transition-colors duration-300 shadow-lg">
             Get Started

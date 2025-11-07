@@ -9,6 +9,7 @@ import {
   AiOutlineFileAdd,
   AiOutlineAppstore,
   AiOutlineUser,
+  AiOutlineMail,
   AiOutlineSetting,
   AiOutlineLogout,
   AiOutlineHome
@@ -67,6 +68,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
     { title: 'hero sections', href: '/admin/hero', icon: <AiOutlineAppstore size={20} /> },
     { title: 'latest Blogs', href: '/admin/BlogSection', icon: <AiOutlineFileAdd size={20} /> }, 
     { title: 'About Us', href: '/admin/about', icon: <AiOutlineUser size={20} /> },
+  { title: 'Contacts', href: '/admin/contact-bootstrap', icon: <AiOutlineMail size={20} /> },
     { title: 'Team', href: '/admin/team', icon: <AiOutlineUser size={20} /> },
     { title: 'Study Case', href: '/admin/caseStudy', icon: <AiOutlineAppstore size={20} /> },
     { title: 'Tructed company', href: '/admin/trusted', icon: <AiOutlineUser size={20} /> },

@@ -173,7 +173,7 @@ export default function Header() {
                 )}
               </div>
 
-              {/* Mega Menu - Stanfox Style */}
+              {/* Mega Menu - Sbaccounting Style */}
               {item.isDropdown && servicesOpen && (
                 <div
                   onMouseEnter={() => {
