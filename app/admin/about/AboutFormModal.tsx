@@ -10,7 +10,7 @@ interface TeamMember {
   name: string;
   position: string;
   bio: string;
-  image: string; // base64
+  image: string;
 }
 
 interface Value {
@@ -54,7 +54,6 @@ export default function AboutAdmin() {
   const [loading, setLoading] = useState(true);
   const [initialData, setInitialData] = useState<AboutData | null>(null);
 
-  // === Fetch About Data ===
   useEffect(() => {
     const fetchAbout = async () => {
       try {
@@ -63,7 +62,7 @@ export default function AboutAdmin() {
           const data = await res.json();
           setInitialData(data);
         } else {
-            setInitialData({
+          setInitialData({
             title: '',
             description: '',
             mission: '',
@@ -71,7 +70,7 @@ export default function AboutAdmin() {
             companyHistory: '',
             team: [{ name: '', position: '', bio: '', image: '' }],
             values: [{ title: '', description: '' }],
-            });
+          });
         }
       } catch (err) {
         console.error(err);
@@ -82,7 +81,6 @@ export default function AboutAdmin() {
     fetchAbout();
   }, []);
 
-  // === Convert File to Base64 ===
   const toBase64 = (file: File): Promise<string> =>
     new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -94,8 +92,8 @@ export default function AboutAdmin() {
   if (loading || !initialData) return <LoadingSpinner />;
 
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold mb-6">Manage About Us Page</h1>
+    <div className="p-6 max-w-6xl mx-auto">
+      <h1 className="text-3xl font-bold mb-8 text-gray-800">🛠 Manage About Us Page</h1>
 
       <Formik
         initialValues={initialData}
@@ -110,252 +108,197 @@ export default function AboutAdmin() {
               body: JSON.stringify(values),
             });
             if (!res.ok) throw new Error('Failed to save');
-            alert('About data saved successfully!');
+            alert('✅ About data saved successfully!');
           } catch (err) {
             console.error(err);
-            alert('Error saving About data');
+            alert('❌ Error saving About data');
           } finally {
             setSubmitting(false);
           }
         }}
       >
         {({ values, setFieldValue, isSubmitting }) => (
-          <Form className="space-y-6">
-            {/* === Basic Info === */}
-            <div className="space-y-4">
-              <h2 className="text-xl font-semibold">Basic Information</h2>
+          <Form className="space-y-10">
+            {/* === Basic Info Section === */}
+            <div className="bg-white shadow-md rounded-xl p-6 space-y-5 border border-gray-100">
+              <h2 className="text-2xl font-semibold text-gray-700 border-b pb-2">
+                📋 Basic Information
+              </h2>
 
               <div>
-                <label className="block font-medium">Title</label>
+                <label className="block font-medium mb-1">Title</label>
                 <Field
                   name="title"
-                  className="w-full border rounded p-2"
-                  placeholder="Title"
+                  className="w-full border-gray-300 border rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                  placeholder="Enter About Page Title"
                 />
-                <ErrorMessage
-                  name="title"
-                  component="div"
-                  className="text-red-500 text-sm"
-                />
+                <ErrorMessage name="title" component="div" className="text-red-500 text-sm mt-1" />
               </div>
 
               <div>
-                <label className="block font-medium">Description</label>
+                <label className="block font-medium mb-1">Description</label>
                 <Field
                   as="textarea"
                   name="description"
-                  className="w-full border rounded p-2"
+                  className="w-full border-gray-300 border rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
                   rows={3}
                 />
-                <ErrorMessage
-                  name="description"
-                  component="div"
-                  className="text-red-500 text-sm"
-                />
+                <ErrorMessage name="description" component="div" className="text-red-500 text-sm mt-1" />
               </div>
-
-              {/* <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block font-medium">Mission</label>
-                  <Field
-                    as="textarea"
-                    name="mission"
-                    className="w-full border rounded p-2"
-                    rows={3}
-                  />
-                  <ErrorMessage
-                    name="mission"
-                    component="div"
-                    className="text-red-500 text-sm"
-                  />
-                </div>
-                <div>
-                  <label className="block font-medium">Vision</label>
-                  <Field
-                    as="textarea"
-                    name="vision"
-                    className="w-full border rounded p-2"
-                    rows={3}
-                  />
-                  <ErrorMessage
-                    name="vision"
-                    component="div"
-                    className="text-red-500 text-sm"
-                  />
-                </div>
-              </div> */}
 
               <div>
                 <TextEditor
-                  label="company History"
+                  label="Company History"
                   initialContent={values.companyHistory}
-                  onContentChange={(value: string) =>
-                    setFieldValue('companyHistory', value)
-                  }
+                  onContentChange={(value: string) => setFieldValue('companyHistory', value)}
                 />
-                <ErrorMessage
-                  name="companyHistory"
-                  component="div"
-                  className="text-red-500 text-sm"
-                />
+                <ErrorMessage name="companyHistory" component="div" className="text-red-500 text-sm mt-1" />
               </div>
             </div>
 
-            {/* === Team Members === */}
+            {/* === Team Members Section === */}
             <FieldArray name="team">
               {({ push, remove }) => (
-                <div className="space-y-4">
-                  <div className="flex justify-between items-center">
-                    <h2 className="text-xl font-semibold">Team Members</h2>
+                <div className="bg-white shadow-md rounded-xl p-6 border border-gray-100 space-y-5">
+                  <div className="flex justify-between items-center border-b pb-2">
+                    <h2 className="text-2xl font-semibold text-gray-700">👥 Team Members</h2>
                     <button
                       type="button"
-                      onClick={() =>
-                        push({ name: '', position: '', bio: '', image: '' })
-                      }
-                      className="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700"
+                      onClick={() => push({ name: '', position: '', bio: '', image: '' })}
+                      className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
                     >
                       + Add Member
                     </button>
                   </div>
 
-                  {values.team.map((member, index) => (
-                    <div
-                      key={index}
-                      className="p-4 border rounded-md bg-gray-50 space-y-3"
-                    >
-                      <div className="flex justify-between items-center">
-                        <h3 className="font-medium">
-                          Team Member {index + 1}
-                        </h3>
+                  <div className="grid md:grid-cols-2 gap-6">
+                    {values.team.map((member, index) => (
+                      <div key={index} className="p-4 border rounded-lg bg-gray-50 space-y-3 relative">
                         <button
                           type="button"
                           onClick={() => remove(index)}
-                          className="text-red-600 hover:text-red-800"
+                          className="absolute top-3 right-3 text-red-500 hover:text-red-700 text-sm"
                         >
-                          Remove
+                          ✕
                         </button>
-                      </div>
 
-                      <div>
-                        <label className="block font-medium">Name</label>
-                        <Field
-                          name={`team.${index}.name`}
-                          className="w-full border rounded p-2"
-                        />
-                        <ErrorMessage
-                          name={`team.${index}.name`}
-                          component="div"
-                          className="text-red-500 text-sm"
-                        />
-                      </div>
+                        <h3 className="font-medium text-gray-700">Member {index + 1}</h3>
 
-                      <div>
-                        <label className="block font-medium">Position</label>
-                        <Field
-                          name={`team.${index}.position`}
-                          className="w-full border rounded p-2"
-                        />
-                      </div>
-
-                      <div>
-                        <label className="block font-medium">Bio</label>
-                        <Field
-                          as="textarea"
-                          name={`team.${index}.bio`}
-                          rows={3}
-                          className="w-full border rounded p-2"
-                        />
-                      </div>
-
-                      <div>
-                        <label className="block font-medium">Image</label>
-                        <input
-                          type="file"
-                          accept="image/*"
-                          onChange={async (e) => {
-                            const file = e.target.files?.[0];
-                            if (file) {
-                              const b64 = await toBase64(file);
-                              setFieldValue(`team.${index}.image`, b64);
-                            }
-                          }}
-                        />
-                        {member.image && (
-                          <img
-                            src={member.image}
-                            alt="Preview"
-                            className="w-24 h-24 rounded mt-2 object-cover"
+                        <div>
+                          <label className="block text-sm font-medium mb-1">Name</label>
+                          <Field
+                            name={`team.${index}.name`}
+                            className="w-full border-gray-300 border rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
                           />
-                        )}
+                        </div>
+
+                        <div>
+                          <label className="block text-sm font-medium mb-1">Position</label>
+                          <Field
+                            name={`team.${index}.position`}
+                            className="w-full border-gray-300 border rounded-lg p-2"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-sm font-medium mb-1">Bio</label>
+                          <Field
+                            as="textarea"
+                            name={`team.${index}.bio`}
+                            rows={3}
+                            className="w-full border-gray-300 border rounded-lg p-2"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-sm font-medium mb-1">Image</label>
+                          <input
+                            type="file"
+                            accept="image/*"
+                            onChange={async (e) => {
+                              const file = e.target.files?.[0];
+                              if (file) {
+                                const b64 = await toBase64(file);
+                                setFieldValue(`team.${index}.image`, b64);
+                              }
+                            }}
+                            className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-3 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                          />
+                          {member.image && (
+                            <img
+                              src={member.image}
+                              alt="Preview"
+                              className="w-24 h-24 rounded-lg mt-2 object-cover border"
+                            />
+                          )}
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
               )}
             </FieldArray>
 
-            {/* === Company Values === */}
+            {/* === Values Section === */}
             <FieldArray name="values">
               {({ push, remove }) => (
-                <div className="space-y-4">
-                  <div className="flex justify-between items-center">
-                    <h2 className="text-xl font-semibold">Company Values</h2>
+                <div className="bg-white shadow-md rounded-xl p-6 border border-gray-100 space-y-5">
+                  <div className="flex justify-between items-center border-b pb-2">
+                    <h2 className="text-2xl font-semibold text-gray-700">💎 Company Values</h2>
                     <button
                       type="button"
                       onClick={() => push({ title: '', description: '' })}
-                      className="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700"
+                      className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
                     >
                       + Add Value
                     </button>
                   </div>
 
-                  {values.values.map((value, index) => (
-                    <div
-                      key={index}
-                      className="p-4 border rounded-md bg-gray-50 space-y-3"
-                    >
-                      <div className="flex justify-between items-center">
-                        <h3 className="font-medium">Value {index + 1}</h3>
+                  <div className="grid md:grid-cols-2 gap-6">
+                    {values.values.map((value, index) => (
+                      <div key={index} className="p-4 border rounded-lg bg-gray-50 space-y-3 relative">
                         <button
                           type="button"
                           onClick={() => remove(index)}
-                          className="text-red-600 hover:text-red-800"
+                          className="absolute top-3 right-3 text-red-500 hover:text-red-700 text-sm"
                         >
-                          Remove
+                          ✕
                         </button>
-                      </div>
 
-                      <div>
-                        <label className="block font-medium">Title</label>
-                        <Field
-                          name={`values.${index}.title`}
-                          className="w-full border rounded p-2"
-                        />
-                      </div>
+                        <h3 className="font-medium text-gray-700">Value {index + 1}</h3>
 
-                      <div>
-                        <label className="block font-medium">Description</label>
-                        <Field
-                          as="textarea"
-                          name={`values.${index}.description`}
-                          rows={3}
-                          className="w-full border rounded p-2"
-                        />
+                        <div>
+                          <label className="block text-sm font-medium mb-1">Title</label>
+                          <Field
+                            name={`values.${index}.title`}
+                            className="w-full border-gray-300 border rounded-lg p-2"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-sm font-medium mb-1">Description</label>
+                          <Field
+                            as="textarea"
+                            name={`values.${index}.description`}
+                            rows={3}
+                            className="w-full border-gray-300 border rounded-lg p-2"
+                          />
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
               )}
             </FieldArray>
 
-            {/* === Save Button === */}
+            {/* === Submit Button === */}
             <div className="flex justify-end">
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 disabled:bg-green-400"
+                className="px-6 py-2 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700 transition disabled:opacity-60"
               >
-                {isSubmitting ? 'Saving...' : 'Save About Us'}
+                {isSubmitting ? 'Saving...' : '💾 Save About Us'}
               </button>
             </div>
           </Form>
