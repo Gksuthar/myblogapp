@@ -1,9 +1,8 @@
 'use client';
 
-import React, { Suspense, useEffect, useState } from 'react';
-import { Formik, Form, Field, ErrorMessage, useFormikContext, FormikHelpers } from 'formik';
+import React, { Suspense, useEffect, useState, useRef } from 'react';
 import ReCAPTCHA from 'react-google-recaptcha';
-import { useRef } from 'react';
+import { Formik, Form, Field, ErrorMessage, useFormikContext, FormikHelpers } from 'formik';
 import * as yup from 'yup';
 import ComponentLoader from '@/components/ComponentLoader';
 import { MdEmail } from 'react-icons/md';
@@ -65,7 +64,49 @@ const CustomField: React.FC<CustomFieldProps> = ({ label, name, type = 'text', p
 const ContactForm: React.FC = () => {
   const [companies, setCompanies] = useState<TrustedCompany[]>([]);
   const [loadingCompanies, setLoadingCompanies] = useState<boolean>(true);
+
+  // reCAPTCHA mode: support v3 (invisible) and v2 (checkbox).
+  // Set NEXT_PUBLIC_RECAPTCHA_VERSION=v2 to render the visible checkbox (requires v2 keys).
+  const recaptchaMode = process.env.NEXT_PUBLIC_RECAPTCHA_VERSION || 'v3';
+
   const recaptchaRef = useRef<ReCAPTCHA | null>(null);
+  const [recaptchaError, setRecaptchaError] = useState<string | null>(null);
+
+  // reCAPTCHA v3: lazy-load grecaptcha and execute an action to get a token
+  async function loadGreCaptcha(siteKey?: string) {
+    if (!siteKey || typeof window === 'undefined') return;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  if ((window as any).grecaptcha) return;
+    return new Promise<void>((resolve, reject) => {
+      const s = document.createElement('script');
+      s.src = `https://www.google.com/recaptcha/api.js?render=${siteKey}`;
+      s.async = true;
+      s.defer = true;
+      s.onload = () => resolve();
+      s.onerror = (e) => reject(e);
+      document.head.appendChild(s);
+    });
+  }
+
+  async function getRecaptchaToken(action = 'contact_form') {
+    const siteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY;
+    if (!siteKey) return '';
+    try {
+      await loadGreCaptcha(siteKey);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const grecaptcha = (window as any).grecaptcha;
+      if (!grecaptcha || !grecaptcha.execute) return '';
+      return await grecaptcha.execute(siteKey, { action });
+    } catch (e) {
+      console.error('Failed to load/execute grecaptcha', e);
+      return '';
+    }
+  }
+
+  // Called when the v2 checkbox changes value
+  function handleRecaptchaChange(token: string | null) {
+    if (token) setRecaptchaError(null);
+  }
 
   useEffect(() => {
     let alive = true;
@@ -97,7 +138,29 @@ const ContactForm: React.FC = () => {
   ) => {
     try {
       setSubmitting(true);
-      const recaptchaToken = recaptchaRef.current?.getValue() || '';
+      // Determine token source depending on reCAPTCHA version
+      const recaptchaMode = process.env.NEXT_PUBLIC_RECAPTCHA_VERSION || 'v3';
+      let recaptchaToken = '';
+      if (recaptchaMode === 'v2') {
+        recaptchaToken = recaptchaRef.current?.getValue() || '';
+        if (!recaptchaToken) {
+          setRecaptchaError('Please complete the reCAPTCHA');
+          setSubmitting(false);
+          return;
+        } else {
+          setRecaptchaError(null);
+        }
+      } else {
+        // v3
+        recaptchaToken = await getRecaptchaToken('contact_form');
+        if (!recaptchaToken) {
+          setRecaptchaError('reCAPTCHA token not obtained. Please try again.');
+          setSubmitting(false);
+          return;
+        } else {
+          setRecaptchaError(null);
+        }
+      }
       const response = await fetch('/api/contact', {
         method: 'POST',
         headers: {
@@ -114,10 +177,12 @@ const ContactForm: React.FC = () => {
 
       alert('✅ Thank you! Your message has been sent successfully. We\'ll get back to you soon.');
       resetForm();
-      recaptchaRef.current?.reset();
+      if ((process.env.NEXT_PUBLIC_RECAPTCHA_VERSION || 'v3') === 'v2') {
+        recaptchaRef.current?.reset();
+      }
     } catch (error) {
       console.error('Form submission error:', error);
-      alert('❌ Oops! Something went wrong. Please try again or contact us directly at info@stantaxes.com');
+      alert('❌ Oops! Something went wrong. Please try again or contact us directly at shalin@sbaccounting.us');
     } finally {
       setSubmitting(false);
     }
@@ -235,12 +300,25 @@ You can always visit us at our HQ, we have a friendly staff and a mean cup of co
                     <ErrorMessage name="message" component="div" className="mt-1 text-sm text-red-500" />
                   </div>
 
-                  {/* reCAPTCHA */}
+                  {/* reCAPTCHA widget (v2) or invisible v3 token flow */}
                   <div>
-                    {process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY ? (
-                      <ReCAPTCHA sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY as string} ref={recaptchaRef} />
+                    {recaptchaMode === 'v2' ? (
+                      process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY ? (
+                        <>
+                          <ReCAPTCHA sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY as string} ref={recaptchaRef} onChange={handleRecaptchaChange} />
+                          {recaptchaError && <div className="mt-1 text-sm text-red-500">{recaptchaError}</div>}
+                        </>
+                      ) : (
+                        <p className="text-xs text-amber-600">reCAPTCHA not configured. Set NEXT_PUBLIC_RECAPTCHA_SITE_KEY to enable spam protection.</p>
+                      )
                     ) : (
-                      <p className="text-xs text-amber-600">reCAPTCHA not configured. Set NEXT_PUBLIC_RECAPTCHA_SITE_KEY to enable spam protection.</p>
+                      // v3 is invisible — nothing to render in the UI
+                      <>
+                        {!process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY && (
+                          <p className="text-xs text-amber-600">reCAPTCHA not configured. Set NEXT_PUBLIC_RECAPTCHA_SITE_KEY to enable spam protection.</p>
+                        )}
+                        {recaptchaError && <div className="mt-1 text-sm text-red-500">{recaptchaError}</div>}
+                      </>
                     )}
                   </div>
 

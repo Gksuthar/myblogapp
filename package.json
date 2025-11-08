@@ -27,6 +27,7 @@
     "dotenv": "^17.2.3",
     "formik": "^2.4.6",
     "framer-motion": "^12.23.24",
+    "jose": "^6.1.0",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.19.2",
     "next": "16.0.0",
@@ -43,6 +44,7 @@
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
+    "@types/nodemailer": "^7.0.3",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "@types/react-google-recaptcha": "^2.1.9",

@@ -2,8 +2,9 @@ import mongoose from "mongoose";
 
 const contactSchema = new mongoose.Schema(
   {
-    firstName: { type: String, required: true },
-    lastName: { type: String, required: true },
+  firstName: { type: String, required: true },
+  // Allow lastName to be optional because some contact forms submit a single full name
+  lastName: { type: String, required: false, default: "" },
     email: { type: String, required: true },
     phone: { type: String, required: true },
     companyName: { type: String, default: "" },

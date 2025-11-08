@@ -2,6 +2,8 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   images: {
+    // Allow image quality 100 (used by some Cloudinary URLs in logs) and 75 as fallback
+    qualities: [100, 75],
     remotePatterns: [
       {
         protocol: 'https',
