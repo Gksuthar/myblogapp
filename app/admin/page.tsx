@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import ComponentLoader from '@/components/ComponentLoader';
 
 export default function AdminDashboard() {
@@ -10,8 +11,37 @@ export default function AdminDashboard() {
     services: 0
   });
   const [loading, setLoading] = useState(true);
+  const [authLoading, setAuthLoading] = useState(true);
+  const router = useRouter();
 
   useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const response = await fetch('/api/auth', {
+          method: 'GET',
+          credentials: 'include',
+        });
+        
+        const data = await response.json();
+        
+        if (!data.authenticated) {
+          router.push('/login?redirect=/admin');
+          return;
+        }
+        
+        setAuthLoading(false);
+      } catch (error) {
+        console.error('Auth check error:', error);
+        router.push('/login?redirect=/admin');
+      }
+    };
+
+    checkAuth();
+  }, [router]);
+
+  useEffect(() => {
+    if (authLoading) return;
+
     const fetchStats = async () => {
       try {
         // Fetch blog count
@@ -34,7 +64,15 @@ export default function AdminDashboard() {
     };
 
     fetchStats();
-  }, []);
+  }, [authLoading]);
+
+  if (authLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <ComponentLoader height="h-24" />
+      </div>
+    );
+  }
 
   return (
     <div>

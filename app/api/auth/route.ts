@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import jwt from "jsonwebtoken";
+import bcrypt from "bcryptjs";
 import Admin from "../model/admin";
 import { connectDB } from "@/lib/mongodb";
 
@@ -8,33 +9,71 @@ const JWT_SECRET = process.env.JWT_SECRET || "your-secret-key"; // Use environme
 
 export async function POST(request: NextRequest) {
   try {
-   await connectDB();
+    await connectDB();
     const body = await request.json();
     const { username, password } = body;
 
-    // Find admin by username
-    const admin = await Admin.findOne({ username });
-    
-    // If admin not found or password doesn't match
-    if (!admin) {
+    // Input validation and sanitization
+    if (!username || typeof username !== 'string' || username.trim().length === 0) {
       return NextResponse.json(
-        { error: "Invalid username or password" },
-        { status: 401 }
+        { error: "Username is required" },
+        { status: 400 }
       );
     }
+
+    if (!password || typeof password !== 'string' || password.length === 0) {
+      return NextResponse.json(
+        { error: "Password is required" },
+        { status: 400 }
+      );
+    }
+
+    // Prevent extremely long inputs (potential DoS)
+    if (username.length > 100 || password.length > 200) {
+      return NextResponse.json(
+        { error: "Invalid input length" },
+        { status: 400 }
+      );
+    }
+
+    // Trim username (exact match required - case sensitive)
+    const normalizedUsername = username.trim();
+
+    // Find admin by username (case-sensitive exact match)
+    const admin = await Admin.findOne({ username: normalizedUsername });
     
-    // Compare password
-    const isPasswordValid = await admin.comparePassword(password);
-    if (!isPasswordValid) {
+    // Security: Always perform password comparison to prevent timing attacks
+    // Use a dummy comparison if admin not found
+    let isPasswordValid = false;
+    if (admin) {
+      isPasswordValid = await admin.comparePassword(password);
+      // Log for debugging (remove in production)
+      if (!isPasswordValid) {
+        console.log('Password mismatch for user:', normalizedUsername);
+      }
+    } else {
+      // Perform dummy bcrypt comparison to prevent timing attacks
+      // This ensures similar response time whether user exists or not
+      const dummyHash = '$2a$10$dummy.hash.to.prevent.timing.attacks';
+      await bcrypt.compare(password, dummyHash);
+      console.log('Admin not found with username:', normalizedUsername);
+    }
+    
+    // If admin not found or password doesn't match
+    if (!admin || !isPasswordValid) {
       return NextResponse.json(
         { error: "Invalid username or password" },
         { status: 401 }
       );
     }
 
-    // Create JWT token
+    // Create JWT token with secure payload
     const token = jwt.sign(
-      { username, id: admin._id, role: "admin" },
+      { 
+        username: normalizedUsername, 
+        id: admin._id.toString(), 
+        role: "admin" 
+      },
       JWT_SECRET,
       { expiresIn: "24h" }
     );

@@ -5,8 +5,8 @@ require('dotenv').config();
 
 // 1) Configuration
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/appblog';
-const ADMIN_USERNAME = process.env.ADMIN_USERNAME || 'admin';
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'admin123';
+const ADMIN_USERNAME = process.env.ADMIN_USERNAME || 'AdminDashboard';
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'Admin@1234';
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'admin@example.com';
 const RESET_PASSWORD = (process.env.ADMIN_RESET_PASSWORD || 'false').toLowerCase() === 'true';
 

@@ -29,7 +29,33 @@ interface MenuItem {
 
 export default function AdminLayout({ children }: AdminLayoutProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [authLoading, setAuthLoading] = useState(true);
   const router = useRouter();
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const response = await fetch('/api/auth', {
+          method: 'GET',
+          credentials: 'include',
+        });
+        
+        const data = await response.json();
+        
+        if (!data.authenticated) {
+          router.push('/login?redirect=' + encodeURIComponent(window.location.pathname));
+          return;
+        }
+        
+        setAuthLoading(false);
+      } catch (error) {
+        console.error('Auth check error:', error);
+        router.push('/login');
+      }
+    };
+
+    checkAuth();
+  }, [router]);
 
   const handleLogout = async () => {
     try {
@@ -78,6 +104,17 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
     { title: 'Logout', action: handleLogout, icon: <AiOutlineLogout size={20} /> },
     { title: 'Back to Website', href: '/', icon: <AiOutlineHome size={20} /> },
   ];
+
+  if (authLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Verifying authentication...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col md:flex-row min-h-screen bg-gray-100">

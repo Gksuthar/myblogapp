@@ -144,7 +144,7 @@ const Page = () => {
               className="rounded-lg mb-4 w-full object-cover h-60"
             />
             <div
-              className="prose prose-slate max-w-none"
+              className="prose prose-slate max-w-none ck-content"
               dangerouslySetInnerHTML={{ __html: selectedBlog?.content || '' }}
             />
           </div>

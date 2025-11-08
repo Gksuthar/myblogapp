@@ -1,23 +1,37 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
 import LoadingSpinner from '@/components/LoadingSpinner';
 
-export default function ResetPasswordPage({ params }: { params: { token: string } }) {
+export default function ResetPasswordPage() {
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
   const router = useRouter();
-  const { token } = params;
+  const params = useParams<{ token: string }>();
+  const token = params?.token as string;
+
+  // Validate token on mount
+  useEffect(() => {
+    if (!token) {
+      setError('Invalid reset link. Please request a new password reset.');
+    }
+  }, [token]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     setSuccess('');
+
+    // Validate token
+    if (!token) {
+      setError('Invalid reset token. Please check your reset link.');
+      return;
+    }
 
     // Validate passwords
     if (newPassword !== confirmPassword) {
@@ -25,8 +39,16 @@ export default function ResetPasswordPage({ params }: { params: { token: string 
       return;
     }
 
-    if (newPassword.length < 6) {
-      setError('Password must be at least 6 characters long');
+    // Validate password length (must match API requirements)
+    if (newPassword.length < 8) {
+      setError('Password must be at least 8 characters long');
+      return;
+    }
+
+    // Validate password strength
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/;
+    if (!passwordRegex.test(newPassword)) {
+      setError('Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character');
       return;
     }
 
@@ -38,7 +60,7 @@ export default function ResetPasswordPage({ params }: { params: { token: string 
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ token, newPassword }),
+        body: JSON.stringify({ token: token.trim(), newPassword }),
       });
 
       const data = await response.json();
@@ -103,7 +125,7 @@ export default function ResetPasswordPage({ params }: { params: { token: string 
                 placeholder="New Password"
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
-                minLength={6}
+                minLength={8}
               />
             </div>
             <div>
@@ -117,7 +139,7 @@ export default function ResetPasswordPage({ params }: { params: { token: string 
                 placeholder="Confirm Password"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                minLength={6}
+                minLength={8}
               />
             </div>
           </div>

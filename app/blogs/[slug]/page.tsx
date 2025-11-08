@@ -83,7 +83,7 @@ export default function BlogPage() {
           </div>
         )}
         <div
-          className="prose prose-lg max-w-none"
+          className="prose prose-lg max-w-none ck-content"
           dangerouslySetInnerHTML={{ __html: blog?.content || '' }}
         />
         <div className="mt-6 flex flex-wrap gap-2">

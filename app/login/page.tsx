@@ -1,7 +1,7 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import LoadingSpinner from '@/components/LoadingSpinner';
 
@@ -11,6 +11,7 @@ export default function LoginPage() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -32,8 +33,9 @@ export default function LoginPage() {
         throw new Error(data.error || 'Login failed');
       }
 
-      // Redirect to admin dashboard on successful login
-      router.push('/admin');
+      // Redirect to admin dashboard or the redirect URL if provided
+      const redirectUrl = searchParams.get('redirect') || '/admin';
+      router.push(redirectUrl);
     } catch (err: any) {
       setError(err.message || 'Login failed. Please try again.');
     } finally {
