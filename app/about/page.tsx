@@ -4,7 +4,6 @@ import React, { useEffect, useMemo, useState } from 'react';
 import Image from 'next/image';
 import ComponentLoader from '@/components/ComponentLoader';
 import HeroSection from '@/components/HeroSection/HeroSection';
-import { Link } from 'ckeditor5';
 import WhyChooseUsGrid from './WhyChooseUsGrid';
 import WhyChooseUsSection from '../home/WhyChooseUsSection';
 import TestimonialCarousel from './TestimonialCarousel';

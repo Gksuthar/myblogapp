@@ -1,34 +1,14 @@
-'use client'
+"use client";
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import dynamic from 'next/dynamic';
-import 'ckeditor5/ckeditor5.css';
 
+// Use the official build to avoid mixing modular packages which can cause duplicated module errors.
 export const RichTextEditor = dynamic(
   async () => {
     const { CKEditor } = await import('@ckeditor/ckeditor5-react');
-    // Use modular CKEditor to avoid duplicated modules. Import required editor and plugins from 'ckeditor5'.
-    const {
-      ClassicEditor,
-      Essentials,
-      Paragraph,
-      Heading,
-      Bold,
-      Italic,
-      Link,
-      BlockQuote,
-      List,
-      Indent,
-      Table,
-      TableToolbar,
-      Alignment,
-    } = await import('ckeditor5');
-    // Using modular CKEditor: Alignment comes from 'ckeditor5' and will be enabled via config.plugins
+    const ClassicEditor = (await import('@ckeditor/ckeditor5-build-classic')).default;
 
-    return function Editor({
-      value,
-      onChange,
-      onBlur,
-      placeholder,
-    }: {
+    return function Editor({ value, onChange, onBlur, placeholder }: {
       value: string;
       onChange: (v: string) => void;
       onBlur?: () => void;
@@ -36,45 +16,17 @@ export const RichTextEditor = dynamic(
     }) {
       const config = {
         placeholder: placeholder ?? 'Write your post...',
-        plugins: [
-          Essentials,
-          Paragraph,
-          Heading,
-          Bold,
-          Italic,
-          Link,
-          BlockQuote,
-          List,
-          Indent,
-          Table,
-          TableToolbar,
-          Alignment,
-        ],
         toolbar: [
-          'undo',
-          'redo',
-          '|',
-          'heading',
-          '|',
-          'bold',
-          'italic',
-          'link',
-          'blockQuote',
-          '|',
-          'alignment',
-          '|',
-          'bulletedList',
-          'numberedList',
-          'outdent',
-          'indent',
-          '|',
-          'insertTable',
+          'undo', 'redo', '|', 'heading', '|', 'bold', 'italic', 'link', 'blockQuote', '|',
+          'bulletedList', 'numberedList', 'outdent', 'indent', '|', 'insertTable'
         ],
       };
 
+      const EditorAny: any = ClassicEditor;
+
       return (
         <CKEditor
-          editor={ClassicEditor}
+          editor={EditorAny}
           data={value}
           onChange={(_, editor) => onChange((editor as { getData: () => string }).getData())}
           onBlur={onBlur}
