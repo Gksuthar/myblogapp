@@ -55,6 +55,7 @@ export default function AdminServices() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [catLoading, setCatLoading] = useState(false);
   const [catError, setCatError] = useState('');
+  const [editingCategory, setEditingCategory] = useState<Category | null>(null);
 
   // ✅ Fetch services
   const fetchServices = async () => {
@@ -233,7 +234,7 @@ export default function AdminServices() {
             <CategoryTable
               data={categories}
               loading={catLoading}
-              handleEdit={() => console.log('edit category')}
+              handleEdit={(cat) => { setEditingCategory(cat); setIsModalOpen(true); }}
               handleDelete={handleDeleteCategory}
             />
           )}
@@ -243,8 +244,9 @@ export default function AdminServices() {
       {/* ---------- MODALS ---------- */}
       <CategoryModal
         isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        onClose={() => { setIsModalOpen(false); setEditingCategory(null); }}
         onSuccess={() => fetchCategories()}
+        editingCategory={editingCategory}
       />
 
       <ServiceModal

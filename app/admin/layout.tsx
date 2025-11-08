@@ -13,9 +13,8 @@ import {
   AiOutlineSetting,
   AiOutlineLogout,
   AiOutlineHome,
-  AiOutlineMenu,
-  AiOutlineClose
 } from 'react-icons/ai';
+import Image from 'next/image';
 
 interface AdminLayoutProps {
   children: ReactNode;
@@ -82,29 +81,18 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
 
   return (
     <div className="flex flex-col md:flex-row min-h-screen bg-gray-100">
-      {/* Mobile Header */}
-      <div className="md:hidden bg-indigo-700 p-4 flex justify-between items-center shadow-md">
-        <h1 className="text-lg font-semibold text-white">Admin Panel</h1>
-        <button
-          id="menu-button"
-          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          className="text-white focus:outline-none"
-        >
-          {isMobileMenuOpen ? <AiOutlineClose size={24} /> : <AiOutlineMenu size={24} />}
-        </button>
-      </div>
-
       {/* Sidebar */}
       <div
         id="sidebar"
         className={`fixed md:static top-0 left-0 h-full w-64 bg-gradient-to-b from-indigo-800 to-indigo-900 text-white transform ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
           } md:translate-x-0 transition-transform duration-300 ease-in-out z-50 shadow-xl`}
       >
-        <div className="p-6 mt-12 md:mt-0">
-          <h1 className="text-xl font-bold mb-8 text-center hidden md:block">
-            Admin Dashboard
-          </h1>
-          <nav>
+        <div className="flex flex-col items-center p-6 pt-8">
+          {/* Logo at top */}
+          <Link href="/admin">
+            <Image src="https://res.cloudinary.com/dsu49fx2b/image/upload/v1762306740/logo_big1-1_dyd6xs.png" alt="Logo" width={160} height={48} className="mb-8 object-contain" />
+          </Link>
+          <nav className="w-full">
             <ul className="space-y-2">
               {menuItems.map((item, index) => (
                 <li key={index}>
@@ -142,7 +130,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
       )}
 
       {/* Main Content */}
-      <div className="flex-1 p-4 md:p-8 overflow-x-hidden bg-gray-50 mt-16 md:mt-0">
+      <div className="flex-1 p-4 md:p-8 overflow-x-hidden bg-gray-50">
         {children}
       </div>
     </div>

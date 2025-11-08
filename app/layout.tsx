@@ -14,8 +14,8 @@ const lexend = Lexend({
 });
 
 // Lazy load layout components
-const Header = lazy(() => import("@/components/layout/Header"));
-const Footer = lazy(() => import("@/components/layout/Footer"));
+const ConditionalHeader = lazy(() => import("@/components/layout/ConditionalHeader"));
+const ConditionalFooter = lazy(() => import("@/components/layout/ConditionalFooter"));
 
 // === Metadata ===
 export const metadata: Metadata = {
@@ -46,7 +46,7 @@ export default function RootLayout({
         <Suspense
           fallback={<ComponentLoader height="h-16" message="Loading header..." />}
         >
-          <Header />
+          <ConditionalHeader />
         </Suspense>
 
         <main>{children}</main>
@@ -54,7 +54,7 @@ export default function RootLayout({
         <Suspense
           fallback={<ComponentLoader height="h-32" message="Loading footer..." />}
         >
-          <Footer />
+          <ConditionalFooter />
         </Suspense>
       </body>
     </html>

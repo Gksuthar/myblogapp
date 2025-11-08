@@ -120,7 +120,7 @@ export default function ServicesListPage() {
             const href = `/services/${toSlug(slugSource)}`;
 
             // Use the map index for selecting fallback icons (stable and predictable)
-            const img = (item.heroSection?.image || svcCard?.image) || INITIAL_SERVICE_ICONS[idx % INITIAL_SERVICE_ICONS.length];
+            const img =  INITIAL_SERVICE_ICONS[idx % INITIAL_SERVICE_ICONS.length];
 
             const post = { id: idx, title: title, desc: desc || '—', img };
 

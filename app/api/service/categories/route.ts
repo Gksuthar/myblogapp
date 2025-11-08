@@ -31,6 +31,23 @@ export async function POST(req: Request) {
     }
 }
 
+// PUT: update a category by id
+export async function PUT(req: Request) {
+  try {
+    await connectDB();
+    const payload = await req.json();
+    const { id, name, description } = payload || {};
+    if (!id) return NextResponse.json({ error: 'id is required' }, { status: 400 });
+    if (!name || !description) return NextResponse.json({ error: 'name and description are required' }, { status: 400 });
+
+    const updated = await CategoryModel.findByIdAndUpdate(id, { name, description }, { new: true });
+    if (!updated) return NextResponse.json({ error: 'Category not found' }, { status: 404 });
+    return NextResponse.json({ data: { id: updated._id.toString(), name: updated.name, description: updated.description } });
+  } catch (err: unknown) {
+    return NextResponse.json({ error: err instanceof Error ? err.message : 'Failed to update category' }, { status: 500 });
+  }
+}
+
 // DELETE: remove categories by ids or names
 export async function DELETE(req: Request) {
   try {

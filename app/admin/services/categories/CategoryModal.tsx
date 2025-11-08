@@ -22,9 +22,10 @@ interface CategoryModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSuccess?: () => void;
+  editingCategory?: { _id: string; name: string; description: string } | null;
 }
 
-export default function CategoryModal({ isOpen, onClose, onSuccess }: CategoryModalProps) {
+export default function CategoryModal({ isOpen, onClose, onSuccess, editingCategory }: CategoryModalProps) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
@@ -53,7 +54,7 @@ export default function CategoryModal({ isOpen, onClose, onSuccess }: CategoryMo
             {/* Header */}
             <div className="flex justify-between items-center border-b border-gray-100 pb-4 mb-6"> {/* Lighter separator */}
               <h2 className="text-2xl font-extrabold text-gray-900 flex items-center"> {/* Larger, bolder title */}
-                🗂️ Add New Category
+                {editingCategory ? '✏️ Edit Category' : '🗂️ Add New Category'}
               </h2>
               <button
                 onClick={onClose}
@@ -68,31 +69,39 @@ export default function CategoryModal({ isOpen, onClose, onSuccess }: CategoryMo
 
             {/* ✅ Formik Form */}
             <Formik
-              initialValues={{ name: '', description: '' }}
+              initialValues={{ name: editingCategory?.name || '', description: editingCategory?.description || '' }}
               validationSchema={CategorySchema}
               onSubmit={async (values, { resetForm }) => {
                 try {
                   setLoading(true);
                   setErrorMsg('');
                   setSuccessMsg('');
-
-                  const response = await axios.post('/api/service/categories', values, {
-                    headers: { 'Content-Type': 'application/json' },
-                  });
+                  let response;
+                  if (editingCategory && editingCategory._id) {
+                    // update
+                    response = await axios.put('/api/service/categories', { id: editingCategory._id, ...values }, {
+                      headers: { 'Content-Type': 'application/json' },
+                    });
+                  } else {
+                    // create
+                    response = await axios.post('/api/service/categories', values, {
+                      headers: { 'Content-Type': 'application/json' },
+                    });
+                  }
 
                   if (response.status === 201 || response.status === 200) {
-                    setSuccessMsg('Category created successfully!');
+                    setSuccessMsg(editingCategory ? 'Category updated successfully!' : 'Category created successfully!');
                     resetForm();
                     if (onSuccess) onSuccess();
                     setTimeout(() => {
                       setSuccessMsg('');
                       onClose();
                       router.push('/admin/services');
-                    }, 1000);
+                    }, 800);
                   }
                 } catch (error: any) {
                   console.error('Error creating category:', error);
-                  setErrorMsg(error.response?.data?.error || 'Failed to create category.');
+                  setErrorMsg(error.response?.data?.error || 'Failed to save category.');
                 } finally {
                   setLoading(false);
                 }

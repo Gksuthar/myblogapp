@@ -34,6 +34,8 @@ export default function Header() {
   const toggleServicesMenu = () => setServicesOpen((prev: boolean) => !prev);
   const closeTimer = useRef<NodeJS.Timeout | null>(null);
 
+  
+
   // Fetch categories
   useEffect(() => {
     const fetchCategories = async () => {
