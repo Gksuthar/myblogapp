@@ -131,7 +131,7 @@ const WhyChooseUsGrid: React.FC = () => {
             title: "45+ Dedicated Accountants",
             description: "Our team consists of 45+ dedicated accountants, committed to delivering reliable support & expertise tailored to your needs.",
             bgColorClass: 'bg-blue-50/50 border-blue-200/50',
-            img: "https://res.cloudinary.com/dsu49fx2b/image/upload/v1762585788/svgviewer-output_d5fft2.svg",
+            img: "https://res.cloudinary.com/dsu49fx2b/image/upload/v1762586075/download_24_dkrmee.svg",
         },
         {
             icon: <IconToolLogos />,
