@@ -82,22 +82,22 @@ const IndustriesSection: React.FC = () => {
           industries.map((item: { id?: string; image?: string; title?: string; description?: string }, i: number) => (
             <motion.div
               key={item.id || i}
-                whileHover={{ y: -8, scale: 1.02 }}
-                transition={{ duration: 0.25 }}
-        className="group relative overflow-hidden bg-white rounded-2xl shadow-md hover:shadow-xl border border-gray-100 hover:border-[var(--primary-color)] transition-all duration-300 flex-shrink-0 w-72 sm:w-80 md:w-96 p-6 sm:p-8 flex flex-col justify-between will-change-transform "
+              whileHover={{ y: -8, scale: 1.02 }}
+              transition={{ duration: 0.25 }}
+              className="group relative overflow-hidden bg-white rounded-2xl shadow-md hover:shadow-xl border border-gray-100 hover:border-[var(--primary-color)] transition-all duration-300 flex-shrink-0 w-72 sm:w-80 md:w-96 p-6 sm:p-8 flex flex-col justify-between will-change-transform "
             >
               <div>
                 {/* === Icon === */}
-                  <div className="overflow-hidden mb-6 h-40 rounded-lg">
-                    <Image
-                      src={item?.image || ''}
-                      alt={item?.title || ''}
-                      width={600}
-                      height={400}
-                      className="object-cover w-full h-40 transform transition-transform duration-300 group-hover:scale-110"
-                      unoptimized
-                    />
-                  </div>
+                <div className="overflow-hidden mb-6 h-40 rounded-lg">
+                  <Image
+                    src={item?.image || ''}
+                    alt={item?.title || ''}
+                    width={600}
+                    height={400}
+                    className="object-cover w-full h-40 transform transition-transform duration-300 group-hover:scale-110"
+                    unoptimized
+                  />
+                </div>
 
                 {/* === Title === */}
                 <h3

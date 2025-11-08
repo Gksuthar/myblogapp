@@ -1,4 +1,4 @@
-"use client";
+  "use client";
 
 import AccountantCard from "@/components/AccountantCard";
 import Tabs from "@/components/Tabs/Tabs";

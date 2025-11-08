@@ -48,6 +48,7 @@ export default function ServiceDetailsPage() {
 
   useEffect(() => {
     const fetchService = async () => {
+      // ... (fetch logic remains the same)
       try {
         setLoading(true);
         setError('');
@@ -94,9 +95,6 @@ export default function ServiceDetailsPage() {
     if (slug) fetchService();
   }, [slug]);
 
-  // const pageTitle = useMemo(() => service?.heroSection?.title || 'Service', [service]);
-
-  
 
   // Check if hero section has content
   const hasHeroSection =  service?.heroSection?.title?.trim() || service?.heroSection?.description?.trim() || service?.heroSection?.image?.trim();
@@ -118,6 +116,7 @@ export default function ServiceDetailsPage() {
   const heroImage = service?.heroSection?.image?.trim()
   return (
     <>
+    {/* 🌟 Responsive Container: Centers content, limits max width, and applies responsive horizontal padding (px-4 for small, sm:px-6 for medium, lg:px-8 for large screens) */}
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-10">
       {loading && <ComponentLoader height="h-24" />}
 
@@ -125,7 +124,7 @@ export default function ServiceDetailsPage() {
 
       {!loading && !error && service && (
         <>
-          {/* Show HeroSection only if hero section exists or if serviceCardView + card sections exist */}
+          {/* HeroSection content */}
           {shouldShowHero && (
             <Suspense fallback={<ComponentLoader height="h-64" message="Loading hero..." />}>
               <HeroSection
@@ -136,7 +135,7 @@ export default function ServiceDetailsPage() {
             </Suspense>
           )}
 
-          {/* Show ServiceCardView if it exists and card sections exist */}
+          {/* ServiceCardView content */}
           {hasServiceCardView && hasCardSections && serviceCardView && (
             <div className="rounded-2xl p-6 shadow-md mt-8 mb-8 border border-gray-200" style={{ background: 'linear-gradient(135deg, #eaf5ff 0%, #f5faff 50%, #ffffff 100%)' }}>
               <h2 className="text-2xl font-semibold text-gray-900 mb-2">
@@ -163,6 +162,7 @@ export default function ServiceDetailsPage() {
                   {section.sectionDescription && (
                     <p className="text-gray-600 mb-4">{section.sectionDescription}</p>
                   )}
+                  {/* 🌟 Responsive Grid: Stacks cards on small screens, 2 columns on medium (sm), 3 columns on large (lg) */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                     {Array.isArray(section.cards) &&
                       section.cards.map((card, i) => (
@@ -187,11 +187,12 @@ export default function ServiceDetailsPage() {
           {/* Content */}
           {service.content && (
             <section className="prose max-w-none mt-10">
+              {/* prose class provides responsive typography based on screen size */}
               <div dangerouslySetInnerHTML={{ __html: service.content }} />
             </section>
           )}
 
-          {/* Back to Services Button (moved to bottom) */}
+          {/* Back to Services Button */}
           <div className="mt-12 mb-8 flex justify-center">
             <a
               href="/services-list"
@@ -201,49 +202,48 @@ export default function ServiceDetailsPage() {
               ← Back to Services
             </a>
           </div>
-
-          {/* CTA was intentionally removed from inside the centered container — a full-width CTA is rendered below */}
         </>
       )}
     </div>
 
-    {/* Full-bleed CTA: width 100vw, flush with footer (no extra bottom margin/padding) */}
-<section
-  aria-label="site-cta"
-  className="bg-[#2A80FF] relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] w-screen"
->
-  <div className="mx-auto text-center px-6 sm:px-6 lg:px-8 pt-20 pb-10">
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6 }}
-      viewport={{ once: true }}
-      className="space-y-6"
+    {/* Full-bleed CTA */}
+    <section
+      aria-label="site-cta"
+      // Full-bleed responsiveness achieved by pushing the component off-screen and expanding it to screen width
+      className="bg-[#2A80FF] relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] w-screen"
     >
-      {/* Heading */}
-      <h2 className="text-4xl md:text-5xl font-bold text-white">
-        Ready to Streamline Your Business?
-      </h2>
-
-      {/* Subheading */}
-      <p className="text-lg text-[rgba(255,255,255,0.9)] max-w-2xl mx-auto">
-        Join hundreds of businesses who trust Sbaccounting with their accounting needs.
-      </p>
-
-      {/* Button */}
-      <div className="flex flex-col sm:flex-row gap-4 justify-center">
-        <motion.button
-          onClick={() => (window.location.href = '/Contactus')}
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          className="px-8 py-4 bg-white text-[#2A80FF] font-semibold rounded-lg hover:bg-gray-100 transition-all duration-300 shadow-lg"
+      <div className="mx-auto text-center px-6 sm:px-6 lg:px-8 pt-20 pb-10">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          viewport={{ once: true }}
+          className="space-y-6"
         >
-          Contact Us
-        </motion.button>
+          {/* 🌟 Responsive Heading: text-4xl on small, md:text-5xl on medium screens and up */}
+          <h2 className="text-4xl md:text-5xl font-bold text-white">
+            Ready to Streamline Your Business?
+          </h2>
+
+          {/* Subheading: max-w-2xl ensures text remains readable even on very large screens */}
+          <p className="text-lg text-[rgba(255,255,255,0.9)] max-w-2xl mx-auto">
+            Join hundreds of businesses who trust Sbaccounting with their accounting needs.
+          </p>
+
+          {/* 🌟 Responsive Buttons: Stacks buttons vertically (flex-col) on small screens, and lays them side-by-side (sm:flex-row) on medium screens and up */}
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <motion.button
+              onClick={() => (window.location.href = '/Contactus')}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="px-8 py-4 bg-white text-[#2A80FF] font-semibold rounded-lg hover:bg-gray-100 transition-all duration-300 shadow-lg"
+            >
+              Contact Us
+            </motion.button>
+          </div>
+        </motion.div>
       </div>
-    </motion.div>
-  </div>
-</section>
+    </section>
 
 
     </>

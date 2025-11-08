@@ -47,9 +47,9 @@ const CaseStudiesAndConnect: React.FC = () => {
   }, []);
 
   return (
-    <section className="bg-white text-gray-800">
+    <section className="bg-white text-gray-800 mt-10">
       {/* ======================= Case Studies Section ======================= */}
-      <div className="max-w-6xl mx-auto px-5 py-20">
+      <div className="max-w-6xl mx-auto ">
         <h2 className="text-2xl sm:text-3xl font-semibold text-[var(--primary-color)] mb-8 text-center sm:text-left">
           Case Studies
         </h2>
