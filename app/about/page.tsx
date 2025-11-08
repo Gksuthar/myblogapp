@@ -41,6 +41,9 @@ const AboutPage: React.FC = () => {
   const [aboutData, setAboutData] = useState<AboutData | null>(null);
   const [heroAbout, setHeroAbout] = useState<HeroType | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const [touchStart, setTouchStart] = useState(0);
+  const [touchEnd, setTouchEnd] = useState(0);
 
   // Fetch About Data
   const fetchAboutData = async () => {
@@ -79,18 +82,14 @@ const AboutPage: React.FC = () => {
     const raw = aboutData?.companyHistory || '';
     if (!raw) return '';
     const html = raw
-      // remove <img /> tags
       .replace(/<img[^>]*>/gi, '')
-      // remove <picture>..</picture>
       .replace(/<picture[^>]*>[\s\S]*?<\/picture>/gi, '')
-      // remove <figure>..</figure>
       .replace(/<figure[^>]*>[\s\S]*?<\/figure>/gi, '')
-      // remove inline svgs
       .replace(/<svg[^>]*>[\s\S]*?<\/svg>/gi, '')
-      // remove anchors that only wrap images
       .replace(/<a[^>]*>\s*(?:<img[^>]*>\s*)+<\/a>/gi, '');
     return html;
   }, [aboutData?.companyHistory]);
+
   const [companies, setCompanies] = useState<any[]>([
     { _id: 1, name: 'Seven', image: 'https://res.cloudinary.com/dsu49fx2b/image/upload/v1762432492/seven_itm1wc.png' },
     { _id: 2, name: 'Third', image: 'https://res.cloudinary.com/dsu49fx2b/image/upload/v1762432491/third_a7rozp.png' },
@@ -122,16 +121,63 @@ const AboutPage: React.FC = () => {
     return () => { alive = false };
   }, []);
 
+  // Touch handlers for swipe
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchEnd = () => {
+    if (!aboutData?.team?.length) return;
+    
+    const minSwipeDistance = 50;
+    const distance = touchStart - touchEnd;
+    
+    if (distance > minSwipeDistance) {
+      setCurrentSlide((prev) => 
+        prev === aboutData.team.length - 1 ? 0 : prev + 1
+      );
+    }
+    
+    if (distance < -minSwipeDistance) {
+      setCurrentSlide((prev) => 
+        prev === 0 ? aboutData.team.length - 1 : prev - 1
+      );
+    }
+  };
+
+  const goToSlide = (index: number) => {
+    setCurrentSlide(index);
+  };
+
+  const nextSlide = () => {
+    if (!aboutData?.team?.length) return;
+    setCurrentSlide((prev) => 
+      prev === aboutData.team.length - 1 ? 0 : prev + 1
+    );
+  };
+
+  const prevSlide = () => {
+    if (!aboutData?.team?.length) return;
+    setCurrentSlide((prev) => 
+      prev === 0 ? aboutData.team.length - 1 : prev - 1
+    );
+  };
+
   if (loading) return <ComponentLoader height="h-64" message="Loading about page..." />;
+  
   const skeletonCount = 18;
+
   return (
     <div>
-
       <section className="relative bg-gradient-to-br from-blue-50 to-indigo-100 py-16 md:py-24 overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 flex flex-col lg:flex-row items-center justify-between gap-12">
           {/* Main Content */}
           <div className="w-full lg:w-3/5 text-center lg:text-left">
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-gray-900 leading-tight mb-6">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold text-gray-900 leading-tight mb-6">
               Work With The Top Accounting Talent; Fast, Skilled, And Specialized
             </h1>
             <p className="text-base sm:text-lg md:text-xl text-gray-700 mb-8 max-w-2xl mx-auto lg:mx-0">
@@ -139,9 +185,6 @@ const AboutPage: React.FC = () => {
               handle the heavy lifting, allowing you to focus on what matters most—your clients. Discover the
               Sbaccounting difference today
             </p>
-            {/* <Link href="/contact-us" className="inline-block bg-gray-800 text-white px-8 py-3 rounded-md text-lg font-medium hover:bg-gray-900 transition-colors duration-300 shadow-lg">
-            Get Started
-          </Link> */}
           </div>
 
           {/* Floating Cards and Images - Positioned Absolutely to mimic the image */}
@@ -191,7 +234,6 @@ const AboutPage: React.FC = () => {
                 </div>
               </div>
             </div>
-
 
             {/* Right Side Floating Elements */}
             <div className="absolute top-1/4 right-0 transform translate-x-1/4 -translate-y-1/2 z-20">
@@ -243,41 +285,18 @@ const AboutPage: React.FC = () => {
           </div>
         </div>
       </section>
+
       <WhyChooseUsGrid />
       <WhyChooseUsSection />
-      {/* Mission & Vision */}
-      {/* <section className="py-16 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-8">
-          <div className="bg-white p-8 rounded-xl shadow-sm">
-            <h2 className="text-2xl font-bold mb-3">Our Mission</h2>
-            <p>{aboutData?.mission || 'Our mission is to deliver excellence.'}</p>
-          </div>
-          <div className="bg-white p-8 rounded-xl shadow-sm">
-            <h2 className="text-2xl font-bold mb-3">Our Vision</h2>
-            <p>{aboutData?.vision || 'We envision a future built on innovation and trust.'}</p>
-          </div>
-        </div>
-      </section> */}
 
-      {/* Company History */}
-      {/* <section className="py-16 bg-white">
-        <div className="max-w-4xl mx-auto px-6 text-center">
-          <h2 className="text-3xl font-bold mb-6">Our History</h2>
-          <div
-            className="prose max-w-none text-gray-700"
-            dangerouslySetInnerHTML={{
-              __html: sanitizedHistory || '<p>Our story began with a passion for innovation.</p>',
-            }}
-          />
-        </div>
-      </section> */}
-
-      {/* Team Section */}
+      {/* Team Section with Mobile Slider */}
       {aboutData?.team?.length ? (
         <section className="py-6 bg-gray-50">
           <div className="max-w-7xl mx-auto px-6">
-            <h2 className="text-3xl font-bold text-center mb-8">Our Team</h2>
-            <div className="flex flex-wrap justify-center gap-8">
+            <h2 className="text-4xl md:text-5xl font-extrabold text-center mb-8">Our Team</h2>
+            
+            {/* Desktop View - Grid */}
+            <div className="hidden md:flex flex-wrap justify-center gap-8">
               {aboutData.team.map((member, idx) => (
                 <div key={idx} className="bg-gradient-to-r from-[rgba(53,154,255,0.12)] via-[rgba(53,154,255,0.06)] to-transparent bg-white p-8 rounded-lg shadow-md text-center w-full max-w-sm flex-shrink-0">
                   <div className="mx-auto mb-4 w-32 h-32 rounded-full overflow-hidden">
@@ -295,6 +314,76 @@ const AboutPage: React.FC = () => {
                 </div>
               ))}
             </div>
+
+            {/* Mobile View - Slider */}
+            <div className="md:hidden relative">
+              <div 
+                className="overflow-hidden"
+                onTouchStart={handleTouchStart}
+                onTouchMove={handleTouchMove}
+                onTouchEnd={handleTouchEnd}
+              >
+                <div 
+                  className="flex transition-transform duration-300 ease-out"
+                  style={{ transform: `translateX(-${currentSlide * 100}%)` }}
+                >
+                  {aboutData.team.map((member, idx) => (
+                    <div key={idx} className="w-full flex-shrink-0 px-4">
+                      <div className="bg-gradient-to-r from-[rgba(53,154,255,0.12)] via-[rgba(53,154,255,0.06)] to-transparent bg-white p-6 rounded-lg shadow-md text-center">
+                        <div className="mx-auto mb-4 w-28 h-28 rounded-full overflow-hidden">
+                          <Image
+                            src={member.image || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=300'}
+                            alt={member.name}
+                            width={112}
+                            height={112}
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                        <h3 className="text-xl font-bold">{member.name}</h3>
+                        <p className="text-indigo-600 text-base font-medium mb-3">{member.position}</p>
+                        <p className="text-gray-600 text-sm leading-relaxed">{member.bio}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Navigation Arrows */}
+              <button
+                onClick={prevSlide}
+                className="absolute left-0 top-1/2 -translate-y-1/2 bg-white/90 p-2 rounded-full shadow-lg z-10 hover:bg-white transition-colors"
+                aria-label="Previous slide"
+              >
+                <svg className="w-6 h-6 text-gray-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                </svg>
+              </button>
+              <button
+                onClick={nextSlide}
+                className="absolute right-0 top-1/2 -translate-y-1/2 bg-white/90 p-2 rounded-full shadow-lg z-10 hover:bg-white transition-colors"
+                aria-label="Next slide"
+              >
+                <svg className="w-6 h-6 text-gray-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </button>
+
+              {/* Dots Indicator */}
+              <div className="flex justify-center mt-6 gap-2">
+                {aboutData.team.map((_, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => goToSlide(idx)}
+                    className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                      idx === currentSlide 
+                        ? 'bg-indigo-600 w-8' 
+                        : 'bg-gray-300 hover:bg-gray-400'
+                    }`}
+                    aria-label={`Go to slide ${idx + 1}`}
+                  />
+                ))}
+              </div>
+            </div>
           </div>
         </section>
       ) : null}
@@ -307,13 +396,12 @@ const AboutPage: React.FC = () => {
             <div className="grid md:grid-cols-2 gap-6">
               {aboutData.values.map((v, idx) => (
                 <div key={idx} className="bg-gray-50 rounded-xl p-8 border border-gray-100 flex flex-col items-center">
-                  {/* Logo (if you have a logo/image for each value, otherwise remove this block) */}
                   {v.image && (
                     <img
                       src={v.image}
                       alt={v.title}
                       className="mb-4 w-20 h-20 object-contain"
-                      style={{ maxWidth: '80px', maxHeight: '80px' }} // Increase logo size here
+                      style={{ maxWidth: '80px', maxHeight: '80px' }}
                     />
                   )}
                   <h3 className="text-xl font-semibold text-gray-900">
@@ -329,97 +417,76 @@ const AboutPage: React.FC = () => {
         </section>
       ) : null}
 
+      <TestimonialCarousel />
 
-        <TestimonialCarousel />
-      <section className="relative py-20 overflow-hidden">
+      <section className="relative md:py-20 overflow-hidden">
         {/* Background pattern */}
         <div
           className="absolute inset-0 opacity-20 pointer-events-none"
           style={{
             backgroundImage:
               "url(https://cdn.prod.website-files.com/6718c309cc349b579872ddbb/6736f52aa2dea93969a896f8_line_cta.svg)",
-            // backgroundSize: "100px 100px",
           }}
         />
         {/* Center content */}
-        <div className="relative flex items-center justify-center py-16 ">
+        <div className="relative flex items-center justify-center py-16">
           <div className="bg-gradient-to-br from-blue-50 to-indigo-100 bg-white rounded-2xl shadow-lg hover:shadow-xl border border-gray-200 transition-all duration-300 hover:-translate-y-1 text-center px-10 py-12 max-w-xl w-full mx-4">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4">
-              Let’s Connect!
+              Let's Connect!
             </h2>
             <p className="text-gray-600 text-base md:text-lg mb-8">
               Connect with our accounting professionals & get started today!
             </p>
-
             <a href="/Contactus" className="inline-block px-6 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-all shadow-md">
               Contact Us
             </a>
           </div>
         </div>
       </section>
-          <section className="py-16 px-4 md:px-10 bg-gray-50 ">
-  <div className="max-w-6xl mx-auto text-center ">
-    <h2 className="text-3xl md:text-4xl font-semibold text-[#4b4b8a] mb-14">
-      We Are Adroit With Multiple Accounting Tools!
-    </h2>
 
-  {/* Grid container: 3 cols on mobile, 3 on small, 4 on md, 5 on lg; reduced gap */}
-  <div className="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6 items-center justify-center">
-      {/* Skeleton Loader */}
-      {loadingCompanies &&
-        Array.from({ length: skeletonCount }).map((_, i) => (
-          <div
-            key={`skeleton-${i}`}
-            className="h-16 w-full rounded-md bg-gray-100 animate-pulse border border-gray-200"
-          />
-        ))}
+      <section className="py-16 px-4 md:px-10 bg-gray-50">
+        <div className="max-w-6xl mx-auto text-center">
+          <h2 className="text-3xl md:text-4xl font-semibold text-[#4b4b8a] mb-14">
+            We Are Adroit With Multiple Accounting Tools!
+          </h2>
 
-      {/* Actual Logo Display */}
-      {!loadingCompanies &&
-        companies.map((c, index) => (
-                   <div
-                        key={c._id}
-                        className="aspect-square w-full border border-gray-200 rounded-md bg-white p-1 overflow-hidden flex items-center justify-center
-                        transition-all duration-300 ease-in-out
-                        hover:border-[var(--primary-color)] hover:shadow-lg hover:shadow-[rgba(53,154,255,0.15)] hover:-translate-y-1 hover:scale-105
-                        cursor-pointer group"
-                      >
-                    {c.image ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img
-                        src={c.image}
-                        alt={c.name}
-                        loading="lazy"
-                            className="max-h-[92%] max-w-[95%] object-contain transition-transform duration-300 ease-in-out group-hover:scale-110"
-                        onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
-                      />
-                    ) : null}
-                    {/* Fallback to name if image missing or failed */}
-                    {!c.image && (
-                      <span className="text-[11px] font-semibold text-gray-600 truncate px-2 text-center transition-colors duration-300 group-hover:text-[var(--primary-color)]">
-                        {c.name}
-                      </span>
-                    )}
-                  </div>
+          <div className="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6 items-center justify-center">
+            {loadingCompanies &&
+              Array.from({ length: skeletonCount }).map((_, i) => (
+                <div
+                  key={`skeleton-${i}`}
+                  className="h-16 w-full rounded-md bg-gray-100 animate-pulse border border-gray-200"
+                />
+              ))}
 
-        ))}
-    </div>
-  </div>
-</section>
-   {/* <div className="grid grid-cols-4 gap-2">
-                {loadingCompanies && (
-                      Array.from({ length: 8 }).map((_, i) => (
-                        <div key={`skeleton-${i}`} className="aspect-square w-full rounded-md bg-gray-100 animate-pulse border border-gray-200" />
-                  ))
-                )}
-                {!loadingCompanies && companies.length === 0 && (
-                  <div className="col-span-4 text-xs text-gray-500">No trusted companies yet.</div>
-                )}
-                {!loadingCompanies && companies.map((c) => (
-             
-                ))}
-              </div> */}
-
+            {!loadingCompanies &&
+              companies.map((c) => (
+                <div
+                  key={c._id}
+                  className="aspect-square w-full border border-gray-200 rounded-md bg-white p-1 overflow-hidden flex items-center justify-center
+                  transition-all duration-300 ease-in-out
+                  hover:border-[var(--primary-color)] hover:shadow-lg hover:shadow-[rgba(53,154,255,0.15)] hover:-translate-y-1 hover:scale-105
+                  cursor-pointer group"
+                >
+                  {c.image ? (
+                    <img
+                      src={c.image}
+                      alt={c.name}
+                      loading="lazy"
+                      className="max-h-[92%] max-w-[95%] object-contain transition-transform duration-300 ease-in-out group-hover:scale-110"
+                      onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
+                    />
+                  ) : null}
+                  {!c.image && (
+                    <span className="text-[11px] font-semibold text-gray-600 truncate px-2 text-center transition-colors duration-300 group-hover:text-[var(--primary-color)]">
+                      {c.name}
+                    </span>
+                  )}
+                </div>
+              ))}
+          </div>
+        </div>
+      </section>
     </div>
   );
 };

@@ -130,14 +130,14 @@ const WhyChooseUsGrid: React.FC = () => {
             icon: <IconAccountants />,
             title: "45+ Dedicated Accountants",
             description: "Our team consists of 45+ dedicated accountants, committed to delivering reliable support & expertise tailored to your needs.",
-            img: "https://res.cloudinary.com/dsu49fx2b/image/upload/v1762435132/download_13_ngl0d1.svg",
-            bgColorClass: 'bg-gray-50/50 border-gray-200/50',
+            bgColorClass: 'bg-blue-50/50 border-blue-200/50',
+            img: "https://res.cloudinary.com/dsu49fx2b/image/upload/v1762585788/svgviewer-output_d5fft2.svg",
         },
         {
             icon: <IconToolLogos />,
             title: "Proficient In Accounting Tools",
             description: "Our accounting maestros are adept at multiple accounting tools. Trust us to get accounting done in the most proficient way.",
-            img: "https://res.cloudinary.com/dsu49fx2b/image/upload/v1762433558/download_4_eb7bjq.svg",
+            img: "https://res.cloudinary.com/dsu49fx2b/image/upload/v1762583909/colorkit_1_cbpo2y.svg",
             bgColorClass: 'bg-gradient-to-r from-[rgba(53,154,255,0.12)] via-[rgba(53,154,255,0.06)] to-transparent border-green-200/50',
         },
         {
@@ -195,7 +195,7 @@ const WhyChooseUsGrid: React.FC = () => {
                    <div className="process_wrapper relative">
 
   {/* 🔹 Top Row: Steps 1, 2, 3 */}
-  <div className="grid grid-cols-1 md:grid-cols-3 gap-x-8 lg:gap-x-12 relative mb-16 md:mb-8 lg:mb-0 flex md:myCardSceneColumn">
+  <div className="grid grid-cols-1 md:grid-cols-3 gap-x-8 lg:gap-x-12 relative  md:mb-8 lg:mb-0 flex md:myCardSceneColumn">
 
     {/* 1️⃣ Preliminary discussion */}
     <div className="bg-white rounded-xl shadow-lg p-8 flex flex-col items-center text-center justify-center relative transition-all hover:shadow-xl min-h-[350px]">
@@ -275,7 +275,7 @@ const WhyChooseUsGrid: React.FC = () => {
     <div className="hidden md:block"></div>
 
     {/* 4️⃣ Service commencement */}
-    <div className="bg-white rounded-xl shadow-lg p-8 flex flex-col items-center text-center justify-center relative transition-all hover:shadow-xl min-h-[350px] mt-10">
+    <div className="bg-white rounded-xl shadow-lg p-8 flex flex-col items-center text-center justify-center relative transition-all hover:shadow-xl min-h-[350px] mt-10 ">
       <div className="flex items-center justify-center w-full flex-1 mb-6">
         <img
           src="https://res.cloudinary.com/dsu49fx2b/image/upload/v1762434925/download_12_soxysp.svg"
