@@ -1,6 +1,7 @@
 'use client';
 
 import React, { Suspense, useEffect, useState, useRef } from 'react';
+import { successToast, errorToast } from '@/lib/notify';
 import ReCAPTCHA from 'react-google-recaptcha';
 import { Formik, Form, Field, ErrorMessage, useFormikContext, FormikHelpers } from 'formik';
 import * as yup from 'yup';
@@ -175,14 +176,16 @@ const ContactForm: React.FC = () => {
         throw new Error(data.error || 'Failed to submit form');
       }
 
-      alert('✅ Thank you! Your message has been sent successfully. We\'ll get back to you soon.');
+      // show a centralized success toast
+      successToast('Message sent', "<strong>Thank you!</strong><br/>We'll get back to you soon.");
       resetForm();
       if ((process.env.NEXT_PUBLIC_RECAPTCHA_VERSION || 'v3') === 'v2') {
         recaptchaRef.current?.reset();
       }
     } catch (error) {
       console.error('Form submission error:', error);
-      alert('❌ Oops! Something went wrong. Please try again or contact us directly at shalin@sbaccounting.us');
+      // centralized error toast
+      errorToast('❌ Submission failed', 'Oops! Something went wrong.<br/><a href="mailto:shalin@sbaccounting.us">Contact us</a>');
     } finally {
       setSubmitting(false);
     }
