@@ -42,9 +42,15 @@ export default function Header() {
       try {
         const response = await axios.get('/api/service/categories');
         if (response.status === 200 && response.data) {
-          const cats = Array.isArray(response.data) ? response.data : [];
+          let cats = Array.isArray(response.data) ? response.data : [];
+          // Ensure categories are shown oldest-first (createdAt ascending)
+          cats = cats.slice().sort((a, b) => {
+            const ta = a?.createdAt ? new Date(a.createdAt).getTime() : 0;
+            const tb = b?.createdAt ? new Date(b.createdAt).getTime() : 0;
+            return ta - tb;
+          });
           setCategories(cats);
-          // Set first category as active by default
+          // Set first category (oldest) as active by default
           if (cats.length > 0) {
             setActiveTab(cats[0]._id);
           }

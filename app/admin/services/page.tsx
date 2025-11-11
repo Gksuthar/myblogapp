@@ -79,7 +79,16 @@ export default function AdminServices() {
       setCatError('');
       const res = await axios.get('/api/service/categories');
       console.log("res" , res);
-      setCategories(res.data || []);
+      let cats = res.data || [];
+      // Keep categories oldest-first so admin lists mirror site behavior
+      if (Array.isArray(cats)) {
+        cats = cats.slice().sort((a, b) => {
+          const ta = a?.createdAt ? new Date(a.createdAt).getTime() : 0;
+          const tb = b?.createdAt ? new Date(b.createdAt).getTime() : 0;
+          return ta - tb;
+        });
+      }
+      setCategories(cats);
     } catch (err: any) {
       setCatError(err.response?.data?.error || 'Failed to load categories');
     } finally {
