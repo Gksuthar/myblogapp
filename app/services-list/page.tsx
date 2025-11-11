@@ -61,6 +61,14 @@ export default function ServicesListPage() {
       if (response.status === 200) {
         const result = response.data;
         const data = Array.isArray(result?.data) ? result.data : (Array.isArray(result) ? result : []);
+        // Ensure services are shown oldest-first (createdAt ascending)
+        if (Array.isArray(data)) {
+          data.sort((a: { createdAt?: string }, b: { createdAt?: string }) => {
+            const ta = a?.createdAt ? new Date(a.createdAt).getTime() : 0;
+            const tb = b?.createdAt ? new Date(b.createdAt).getTime() : 0;
+            return ta - tb;
+          });
+        }
         setItems(data);
       } else {
         setError('Failed to load services');
