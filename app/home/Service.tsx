@@ -47,10 +47,18 @@ const Service: React.FC<Props> = ({ fadeIn }) => {
                 const res = await axios.get('/api/service');
                 if (res.status === 200) {
                     const result = res.data;
-                    const data: ServiceCardItem[] = Array.isArray(result?.data)
-                        ? result.data
-                        : (Array.isArray(result) ? result : []);
-                    setServiceCards(data.slice(0, 6));
+                                        const data: ServiceCardItem[] = Array.isArray(result?.data)
+                                                ? result.data
+                                                : (Array.isArray(result) ? result : []);
+                                        // Ensure services are oldest-first (createdAt ascending) so newer items appear later
+                                        if (Array.isArray(data)) {
+                                            data.sort((a: { createdAt?: string }, b: { createdAt?: string }) => {
+                                                const ta = a?.createdAt ? new Date(a.createdAt).getTime() : 0;
+                                                const tb = b?.createdAt ? new Date(b.createdAt).getTime() : 0;
+                                                return ta - tb;
+                                            });
+                                        }
+                                        setServiceCards(data.slice(0, 6));
                 } else {
                     setServiceCards([]);
                 }

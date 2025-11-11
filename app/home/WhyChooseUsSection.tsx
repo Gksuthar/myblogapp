@@ -40,11 +40,14 @@ const WhyChooseUsSection: React.FC = () => {
         const response = await axios.get("/api/service");
         if (response.status === 200) {
           const result = response?.data;
-          const data = Array.isArray(result?.data)
-            ? result.data
-            : Array.isArray(result)
-            ? result
-            : [];
+          const data = Array.isArray(result?.data) ? result.data : Array.isArray(result) ? result : [];
+          if (Array.isArray(data)) {
+            data.sort((a: { createdAt?: string }, b: { createdAt?: string }) => {
+              const ta = a?.createdAt ? new Date(a.createdAt).getTime() : 0;
+              const tb = b?.createdAt ? new Date(b.createdAt).getTime() : 0;
+              return ta - tb;
+            });
+          }
           setServices(data.slice(0, 4));
         } else {
           setServices([]);

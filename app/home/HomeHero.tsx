@@ -48,7 +48,7 @@ function HomeHero() {
                     </div>
 
                     {/* Raj Sharma Label */}
-                    <div className="absolute -bottom-12 left-8 bg-white rounded-2xl p-3 shadow-lg flex items-center gap-3">
+                    {/* <div className="absolute -bottom-12 left-8 bg-white rounded-2xl p-3 shadow-lg flex items-center gap-3">
                         <Image
                             src="https://cdn.prod.website-files.com/6718c309cc349b579872ddbb/6734b1ea315c6e40db84bfbe_Rectangle%204599.png"
                             alt="Raj Sharma"
@@ -60,10 +60,10 @@ function HomeHero() {
                             <p className="font-semibold text-gray-800 text-sm">Raj Sharma</p>
                             <p className="text-gray-500 text-xs">Senior Accountant</p>
                         </div>
-                    </div>
+                    </div> */}
 
                     {/* Top-left (Pinky Mehta) */}
-                    <div className="absolute -top-25 left-16 bg-white rounded-2xl p-3 shadow-lg flex items-center gap-3">
+                    {/* <div className="absolute -top-25 left-16 bg-white rounded-2xl p-3 shadow-lg flex items-center gap-3">
                         <Image
                             src="https://cdn.prod.website-files.com/6718c309cc349b579872ddbb/6734b1d56763687c6bfcc49d_Rectangle%204599.webp"
                             alt="Pinky Mehta"
@@ -75,7 +75,7 @@ function HomeHero() {
                             <p className="font-semibold text-gray-800 text-sm">Pinky Mehta</p>
                             <p className="text-gray-500 text-xs">Fractional CFO</p>
                         </div>
-                    </div>
+                    </div> */}
                 </div>
 
                 {/* Right Main Person - hidden on mobile */}
@@ -92,7 +92,7 @@ function HomeHero() {
                     </div>
 
                     {/* Kajol Shah Label */}
-                    <div className="absolute -bottom-12 right-8 bg-white rounded-2xl p-3 shadow-lg flex items-center gap-3">
+                    {/* <div className="absolute -bottom-12 right-8 bg-white rounded-2xl p-3 shadow-lg flex items-center gap-3">
                         <Image
                             src="https://cdn.prod.website-files.com/6718c309cc349b579872ddbb/6734b1d96f7b89e3708a8fc4_Rectangle%204599-1.png"
                             alt="Kajol Shah"
@@ -104,10 +104,10 @@ function HomeHero() {
                             <p className="font-semibold text-gray-800 text-sm">Kajol Shah</p>
                             <p className="text-gray-500 text-xs">Bookkeeper</p>
                         </div>
-                    </div>
+                    </div> */}
 
                     {/* Shiv Panchal Label */}
-                    <div className="absolute -top-16 right-20 bg-white rounded-2xl p-3 shadow-lg flex items-center gap-3">
+                    {/* <div className="absolute -top-16 right-20 bg-white rounded-2xl p-3 shadow-lg flex items-center gap-3">
                         <Image
                             src="https://cdn.prod.website-files.com/6718c309cc349b579872ddbb/6734b1d9251109d62e7b32e9_Rectangle%204599-2.png"
                             alt="Shiv Panchal"
@@ -119,7 +119,7 @@ function HomeHero() {
                             <p className="font-semibold text-gray-800 text-sm">Shiv Panchal</p>
                             <p className="text-gray-500 text-xs">Auditee</p>
                         </div>
-                    </div>
+                    </div> */}
                 </div>
             </div>
         </section>
