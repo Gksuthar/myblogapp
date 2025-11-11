@@ -28,7 +28,7 @@ const JoinTeamSection: React.FC = () => {
         {/* Single Image Section with brand hover tint */}
         <div className="relative w-full max-w-5xl mx-auto aspect-[16/9] overflow-hidden rounded-xl group shadow-sm">
           <Image
-            src="https://res.cloudinary.com/dsu49fx2b/image/upload/v1762861498/Screenshot_from_2025-11-11_17-12-27_ktujtn.png"
+            src="https://res.cloudinary.com/dsu49fx2b/image/upload/v1762862582/Gemini_Generated_Image_aaynfgaaynfgaayn_gdkb5e.png"
             alt="Sbaccounting Office"
             fill
             className="object-cover grayscale group-hover:grayscale-0 group-hover:scale-105 transition duration-700 ease-in-out"
