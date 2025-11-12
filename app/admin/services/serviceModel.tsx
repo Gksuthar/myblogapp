@@ -246,7 +246,7 @@ export default function ServiceModal({
                         <img
                           src={values.heroSection.image}
                           alt="Hero Preview"
-                          className="mt-2 h-20 w-32 object-cover rounded"
+                          className="services-image"
                         />
                       )}
                       <button onClick={()=>{setFieldValue("heroSection.image" ,null)}} >remove image </button>

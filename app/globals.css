@@ -186,6 +186,7 @@
     margin: 0 20px !important; /* Force spacing between logos */
     display: inline-block; /* Ensure logos are treated as inline elements */
 }
+
 /* Add this CSS to your globals.css file */
 
 /* INDUSTRIES SEAMLESS SLIDER */
@@ -228,4 +229,19 @@
 }
 .animate-pulse {
   animation: pulse 2s ease-in-out infinite;
+}
+
+/* Added styles to limit image size in services section */
+.services-image {
+  max-width: 300px;
+  max-height: 300px;
+  object-fit: cover;
+}
+
+/* Ensure responsiveness */
+@media (max-width: 768px) {
+  .services-image {
+    max-width: 200px;
+    max-height: 200px;
+  }
 }
