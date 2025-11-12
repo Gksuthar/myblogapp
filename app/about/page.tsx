@@ -193,7 +193,7 @@ const AboutPage: React.FC = () => {
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-gradient-to-tr from-blue-200 to-purple-100 opacity-30 blur-3xl z-0 animate-pulse-slow"></div>
 
             {/* Left Side Floating Elements */}
-            <div className="absolute top-1/4 left-0 transform -translate-x-1/4 -translate-y-1/2 z-20">
+            <div className="absolute top-1/4 left-0 transform -translate-x-1/4 -translate-y-1/2 z-20 ">
               {/* Pinal Mehta Card */}
               {/* <div className="bg-white rounded-lg shadow-xl p-3 flex items-center justify-center min-w-[64px] min-h-[64px]" style={{ transform: 'rotate(-5deg)' }}>
                 <Image
@@ -204,12 +204,12 @@ const AboutPage: React.FC = () => {
                   className="rounded-full object-cover"
                 />
               </div> */}
-          <div className="bg-gradient-to-br from-white to-indigo-50 rounded-2xl shadow-xl p-6 w-[220px] hover:scale-105 hover:shadow-2xl transition-all duration-300 relative overflow-hidden group">
+          <div className="bg-gradient-to-br  from-white to-indigo-50   rounded-2xl shadow-xl p-6 w-[220px] hover:scale-105 hover:shadow-2xl transition-all duration-300 relative overflow-hidden group">
   {/* Animated background glow */}
   <div className="absolute inset-0 bg-gradient-to-tr from-indigo-200/20 via-blue-100/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-xl"></div>
 
   {/* Lock icon area */}
-  <div className="relative flex flex-col items-center">
+  <div className="relative flex flex-col items-center !md:ml-[10px]">
     <div className="w-16 h-16 flex items-center justify-center rounded-full bg-gradient-to-br from-indigo-500 to-blue-400 shadow-md shadow-indigo-200 mb-4">
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -290,17 +290,31 @@ const AboutPage: React.FC = () => {
                 <p className="font-semibold text-gray-800 text-lg">Performance</p>
               </div>
             </div>
+<div className="absolute bottom-[5%] right-0 transform translate-x-1/4 -translate-y-1/2 z-20">
+  {/* Glowing Abstract Card */}
+  <div className="absolute bottom-[-18%] right-[37%] transform rotate-2 z-10">
+    <div className="bg-gradient-to-br from-white to-indigo-50 rounded-2xl shadow-xl p-6 w-[220px] hover:scale-105 hover:shadow-2xl transition-all duration-300 relative overflow-hidden group">
+      {/* Soft glowing background */}
+      <div className="absolute inset-0 bg-gradient-to-tr from-indigo-300/20 via-blue-100/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 blur-xl"></div>
 
-            {/* <div className="absolute bottom-1/4 right-0 transform translate-x-1/4 -translate-y-1/2 z-20">
-              {/* Shiv Panchal Card */}
-            {/* //  <div className="bg-white rounded-lg shadow-xl p-3 flex items-center space-x-3 min-w-[200px]" style={{ transform: 'rotate(-5deg)' }}> */}
-                {/* <Image src="https://via.placeholder.com/40" alt="Shiv Panchal" width={40} height={40} className="rounded-full" /> */}
-                {/* <div> */}
-                  {/* <p className="font-semibold text-gray-800 text-sm">Shiv Panchal</p> */}
-                  {/* <p className="text-gray-500 text-xs">Auditee</p> */}
-                {/* </div> */}
-              {/* </div> */}
-            {/* </div>  */}
+      {/* Animated abstract rings */}
+      <div className="relative flex items-center justify-center h-24">
+        {/* Outer ring */}
+        <div className="absolute w-20 h-20 rounded-full border-4 border-indigo-300 animate-ping-slow"></div>
+
+        {/* Middle ring */}
+        <div className="absolute w-14 h-14 rounded-full border-2 border-blue-400 animate-spin-slow"></div>
+
+        {/* Inner glowing circle */}
+        <div className="absolute w-6 h-6 rounded-full bg-gradient-to-br from-indigo-500 to-blue-400 shadow-lg shadow-indigo-200 animate-pulse"></div>
+      </div>
+
+      {/* Bottom glowing line */}
+      <div className="w-[60%] h-[3px] bg-gradient-to-r from-indigo-500 to-blue-400 mt-6 mx-auto rounded-full animate-pulse"></div>
+    </div>
+  </div>
+</div>
+
 
             <div className="absolute inset-0 z-0 opacity-50">
               <svg className="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">

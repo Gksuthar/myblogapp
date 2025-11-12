@@ -109,11 +109,11 @@ export default function ServiceDetailsPage() {
   const shouldShowHero = hasHeroSection || (hasServiceCardView && hasCardSections);
   const heroTitle = hasHeroSection && service?.heroSection?.title?.trim()
     ? service.heroSection.title
-    : serviceCardView?.title?.trim() ;
+    : serviceCardView?.title?.trim() || "Default Title";
   const heroDescription = hasHeroSection && service?.heroSection?.description?.trim()
     ? service.heroSection.description
-    : serviceCardView?.description?.trim() ;
-  const heroImage = service?.heroSection?.image?.trim()
+    : serviceCardView?.description?.trim() || "Default Description";
+  const heroImage = service?.heroSection?.image?.trim() || "/default-image.jpg";
   return (
     <>
     {/* 🌟 Responsive Container: Centers content, limits max width, and applies responsive horizontal padding (px-4 for small, sm:px-6 for medium, lg:px-8 for large screens) */}
