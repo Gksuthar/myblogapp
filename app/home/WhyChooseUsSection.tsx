@@ -118,7 +118,7 @@ const WhyChooseUsSection: React.FC = () => {
                     className="w-4 h-4 sm:w-5 sm:h-5"
                   />
                 </div>
-                <p className="text-gray-800 text-md sm:text-base font-medium leading-snug">
+                <p className="text-gray-800 text-[18px] sm:text-base font-medium leading-snug">
                   {feature.title}
                 </p>
               </div>

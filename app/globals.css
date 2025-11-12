@@ -11,18 +11,24 @@
   font-family: var(--font-lexend), system-ui, -apple-system, sans-serif;
 }
 
+/* Seamless infinite marquee animation */
 @keyframes marquee {
   0% {
     transform: translateX(0%);
   }
   100% {
-    transform: translateX(-50%);
+    transform: translateX(-33.333%); /* Move by 1/3 since we have 3 copies */
   }
 }
 
 .animate-marquee {
   display: flex;
-  animation: marquee 20s linear infinite;
+  animation: marquee 30s linear infinite;
+  width: max-content;
+}
+
+.animate-marquee:hover {
+  animation-play-state: paused;
 }
 
 /* Blog article prose styling */
@@ -65,6 +71,7 @@
   font-weight: 600;
   color: #111827;
 }
+
 /* CKEditor sizing inside modal */
 .ck-editor__editable_inline {
   min-height: 220px;
@@ -76,21 +83,21 @@
 .ck-body {
   z-index: 70 !important;
 }
+
 .myCardScene {
   display: flex;             
   justify-content: center !important;
   align-items: flex-start !important;
   flex-direction: row;     
   gap: 1rem;    
-              /* Optional: space between elements */
 }
+
 .myCardSceneColumn {
   display: flex;             
   justify-content: center !important;
   align-items: flex-start !important;
   flex-direction: column;     
   gap: 1rem;    
-              /* Optional: space between elements */
 }
 
 /* SweetAlert2 custom toast styling */
@@ -171,5 +178,41 @@
   padding-left: 0.75rem;
 }
 
-.swal2-toast-custom svg { display: block }
+.swal2-toast-custom svg { 
+  display: block;
+}
 
+.infinity-item-logo {
+    margin: 0 20px !important; /* Force spacing between logos */
+    display: inline-block; /* Ensure logos are treated as inline elements */
+}
+/* Add this CSS to your globals.css file */
+
+/* INDUSTRIES SEAMLESS SLIDER */
+.industries-marquee-wrapper {
+  display: flex;
+  overflow-x: hidden; /* Hide horizontal overflow */
+  overflow-y: visible; /* Show vertical for hover effect */
+  user-select: none;
+  padding: 20px 0; /* Extra padding for hover space */
+  width: 100%;
+}
+
+.industries-marquee {
+  display: flex;
+  animation: industries-scroll 60s linear infinite;
+  will-change: transform;
+}
+
+.industries-marquee:hover {
+  animation-play-state: paused;
+}
+
+@keyframes industries-scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}

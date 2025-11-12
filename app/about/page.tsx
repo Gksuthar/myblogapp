@@ -195,13 +195,15 @@ const AboutPage: React.FC = () => {
             {/* Left Side Floating Elements */}
             <div className="absolute top-1/4 left-0 transform -translate-x-1/4 -translate-y-1/2 z-20">
               {/* Pinal Mehta Card */}
-              <div className="bg-white rounded-lg shadow-xl p-3 flex items-center space-x-3 min-w-[200px]" style={{ transform: 'rotate(-5deg)' }}>
-                <Image src="https://via.placeholder.com/40" alt="Pinal Mehta" width={40} height={40} className="rounded-full" />
-                <div>
-                  <p className="font-semibold text-gray-800 text-sm">Pinal Mehta</p>
-                  <p className="text-gray-500 text-xs">Fractional CFO</p>
-                </div>
-              </div>
+              {/* <div className="bg-white rounded-lg shadow-xl p-3 flex items-center justify-center min-w-[64px] min-h-[64px]" style={{ transform: 'rotate(-5deg)' }}>
+                <Image
+                  src="https://res.cloudinary.com/dsu49fx2b/image/upload/v1762434925/download_12_soxysp.svg"
+                  alt="Team Member"
+                  width={48}
+                  height={48}
+                  className="rounded-full object-cover"
+                />
+              </div> */}
             </div>
 
             <div className="absolute top-2/3 left-1/4 transform -translate-x-1/2 z-20">
@@ -251,18 +253,17 @@ const AboutPage: React.FC = () => {
               </div>
             </div>
 
-            <div className="absolute bottom-1/4 right-0 transform translate-x-1/4 -translate-y-1/2 z-20">
+            {/* <div className="absolute bottom-1/4 right-0 transform translate-x-1/4 -translate-y-1/2 z-20">
               {/* Shiv Panchal Card */}
-              <div className="bg-white rounded-lg shadow-xl p-3 flex items-center space-x-3 min-w-[200px]" style={{ transform: 'rotate(-5deg)' }}>
-                <Image src="https://via.placeholder.com/40" alt="Shiv Panchal" width={40} height={40} className="rounded-full" />
-                <div>
-                  <p className="font-semibold text-gray-800 text-sm">Shiv Panchal</p>
-                  <p className="text-gray-500 text-xs">Auditee</p>
-                </div>
-              </div>
-            </div>
+            {/* //  <div className="bg-white rounded-lg shadow-xl p-3 flex items-center space-x-3 min-w-[200px]" style={{ transform: 'rotate(-5deg)' }}> */}
+                {/* <Image src="https://via.placeholder.com/40" alt="Shiv Panchal" width={40} height={40} className="rounded-full" /> */}
+                {/* <div> */}
+                  {/* <p className="font-semibold text-gray-800 text-sm">Shiv Panchal</p> */}
+                  {/* <p className="text-gray-500 text-xs">Auditee</p> */}
+                {/* </div> */}
+              {/* </div> */}
+            {/* </div>  */}
 
-            {/* Dotted Lines (Simplified visual representation) */}
             <div className="absolute inset-0 z-0 opacity-50">
               <svg className="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
                 {/* Left Path */}
