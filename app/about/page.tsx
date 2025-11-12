@@ -204,7 +204,45 @@ const AboutPage: React.FC = () => {
                   className="rounded-full object-cover"
                 />
               </div> */}
+          <div className="bg-gradient-to-br from-white to-indigo-50 rounded-2xl shadow-xl p-6 w-[220px] hover:scale-105 hover:shadow-2xl transition-all duration-300 relative overflow-hidden group">
+  {/* Animated background glow */}
+  <div className="absolute inset-0 bg-gradient-to-tr from-indigo-200/20 via-blue-100/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-xl"></div>
+
+  {/* Lock icon area */}
+  <div className="relative flex flex-col items-center">
+    <div className="w-16 h-16 flex items-center justify-center rounded-full bg-gradient-to-br from-indigo-500 to-blue-400 shadow-md shadow-indigo-200 mb-4">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        strokeWidth="1.8"
+        stroke="white"
+        className="w-8 h-8"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          d="M16.5 10.5V7.5a4.5 4.5 0 10-9 0v3M6.75 10.5h10.5A1.75 1.75 0 0119 12.25v7A1.75 1.75 0 0117.25 21h-10.5A1.75 1.75 0 015 19.25v-7A1.75 1.75 0 016.75 10.5z"
+        />
+      </svg>
+    </div>
+
+    {/* Text */}
+    <h3 className="text-gray-900 font-bold text-lg mb-1 tracking-wide">
+      Security
+    </h3>
+    <p className="text-sm text-gray-500 text-center leading-snug">
+      End-to-end encryption and data protection across all systems.
+    </p>
+
+    {/* Animated underline */}
+    <div className="w-[50%] h-[3px] bg-gradient-to-r from-indigo-500 to-blue-400 mt-3 rounded-full animate-pulse"></div>
+  </div>
+</div>
+
             </div>
+
+            
 
             <div className="absolute top-2/3 left-1/4 transform -translate-x-1/2 z-20">
               {/* Chart Card */}

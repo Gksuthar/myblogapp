@@ -109,7 +109,7 @@ const Footer: React.FC = () => {
           </div>
 
           {/* Company Links - Column 2 (Centered) */}
-          <div className="flex flex-col justify-start md:px-4 ml-8">
+          <div className="flex flex-col justify-start md:px-4 md:ml-8">
             <h4 className="font-bold text-base mb-4">Company</h4>
             <div className="flex items-start gap-8">
               <ul className="space-y-2 flex-none">
@@ -207,7 +207,7 @@ const Footer: React.FC = () => {
           </div>
 
           {/* USA Office - Column 2 (Centered) */}
-          <div className="flex flex-col justify-start md:px-4 ml-8">
+          <div className="flex flex-col justify-start md:px-4 md:ml-8">
             <h4 className="font-bold text-base mb-4">
               <img src='https://cdn.prod.website-files.com/6718c309cc349b579872ddbb/673c2e6eab323a15bc059a76_flag-us-svgrepo-com.svg' alt="USA Flag" className="inline-block w-4 h-4 mr-2" />
               {officeUSA.title}

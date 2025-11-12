@@ -3,12 +3,11 @@ import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { FaArrowRight } from "react-icons/fa";
 import CustomButton from "../ui/customButtom/Button";
 
 interface Props {
-  title: any;
-  disc: any;
+  title: string; // Updated type from 'any' to 'string'
+  disc: string; // Updated type from 'any' to 'string'
   image?: string;
   showCtas?: boolean; // optional, default true
 }
@@ -31,9 +30,17 @@ const HeroSection: React.FC<Props> = ({ title, disc, image, showCtas = true }) =
           ✨ Learn. Build. Share.
         </span>
 
-        <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900 leading-tight mb-4">
-          {title}
-        </h1>
+        <div className="flex items-center gap-4">
+          <Image
+            src="https://sbaccounting.us/_next/image?url=https%3A%2…2Fv1762306740%2Flogo_big1-1_dyd6xs.png&w=640&q=75"
+            alt="Title Logo"
+            width={50}
+            height={50}
+          />
+          <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900 leading-tight mb-4">
+            {title}
+          </h1>
+        </div>
 
         <p className="text-gray-600 max-w-lg mx-auto md:mx-0 mb-6 leading-relaxed">
           {disc}
