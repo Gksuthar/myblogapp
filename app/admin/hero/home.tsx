@@ -22,10 +22,9 @@ export default function HomeHero() {
   const [hero, setHero] = useState<Hero | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
 
-  // Fetch existing hero
   const fetchHero = async () => {
     try {
-      const res = await fetch('/api/hero'); // adjust API route
+      const res = await fetch('/api/hero');
       const data = await res.json();
       if (!data.error) {
         setHero(data);
@@ -40,30 +39,33 @@ export default function HomeHero() {
     fetchHero();
   }, []);
 
-  // Convert file to Base64
-  const fileToBase64 = (file: File): Promise<string> => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = () => resolve(reader.result as string);
-      reader.onerror = (error) => reject(error);
-    });
+  const handleImageChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    setFieldValue: (field: string, value: unknown) => void
+  ) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setFieldValue('image', file);
+
+    const reader = new FileReader();
+    reader.onloadend = () => setImagePreview(reader.result as string);
+    reader.readAsDataURL(file);
   };
 
   const handleSubmit = async (values: any) => {
-    const payload = {
-      title: values.title,
-      disc: values.disc,
-      image: imagePreview || values.image || '',
-      buttonText: values.buttonText || '',
-    };
+    const formData = new FormData();
+    formData.append('title', values.title);
+    formData.append('disc', values.disc);
+    formData.append('buttonText', values.buttonText || '');
+    if (values.image) formData.append('image', values.image);
+    if (hero?._id) formData.append('id', hero._id);
 
     try {
       const res = await fetch('/api/hero', {
         method: hero ? 'PATCH' : 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(hero ? { id: hero._id, ...payload } : payload),
+        body: formData,
       });
+
       const result = await res.json();
       if (res.ok) {
         alert(hero ? 'Hero updated successfully' : 'Hero added successfully');
@@ -133,18 +135,15 @@ export default function HomeHero() {
               <input
                 type="file"
                 accept="image/*"
-                onChange={async (event) => {
-                  const file = event.currentTarget.files?.[0];
-                  if (file) {
-                    const base64 = await fileToBase64(file);
-                    setFieldValue('image', base64);
-                    setImagePreview(base64);
-                  }
-                }}
+                onChange={(e) => handleImageChange(e, setFieldValue)}
                 className="w-full border border-gray-300 p-2 rounded-md"
               />
               {imagePreview && (
-                <img src={imagePreview} alt="Preview" className="mt-2 w-32 h-32 object-cover rounded-md" />
+                <img
+                  src={imagePreview}
+                  alt="Preview"
+                  className="mt-2 w-32 h-32 object-cover rounded-md"
+                />
               )}
             </div>
 
@@ -157,36 +156,6 @@ export default function HomeHero() {
           </Form>
         )}
       </Formik>
-
-      {hero && (
-        <div className="mt-6">
-          <h2 className="text-xl font-semibold mb-4">Existing Hero</h2>
-          <table className="w-full border border-gray-300 rounded-md">
-            <thead className="bg-gray-100">
-              <tr>
-                <th className="border px-4 py-2">Title</th>
-                <th className="border px-4 py-2">Description</th>
-                <th className="border px-4 py-2">Button Text</th>
-                <th className="border px-4 py-2">Image</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr key={hero._id} className="hover:bg-gray-50">
-                <td className="border px-4 py-2">{hero.title}</td>
-                <td className="border px-4 py-2">{hero.disc}</td>
-                <td className="border px-4 py-2">{hero.buttonText}</td>
-                <td className="border px-4 py-2">
-                  {hero.image ? (
-                    <img src={hero.image} alt={hero.title} className="w-20 h-20 object-cover rounded-md" />
-                  ) : (
-                    'No Image'
-                  )}
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      )}
     </div>
   );
 }

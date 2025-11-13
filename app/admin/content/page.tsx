@@ -48,25 +48,19 @@ export default function AdminContentPage() {
 
   // ✅ Handle submit (POST or PATCH)
   const handleSubmit = async (values: ContentType) => {
-    setSubmitting(true);
-    try {
-
-      if (content?._id) {
-        await axios.patch('/api/content', { ...values, id: content._id }, {});
-        alert('Content updated successfully');
-      } else {
-        await axios.post('/api/content', values);
-        alert('Content added successfully');
-      }
-      fetchContent();
-    } catch (err) {
-      console.error('Submit Error:', err);
-      alert('Failed to save content');
-    } finally {
-      setSubmitting(false);
+    const formData = new FormData();
+    formData.append("title", values.title);
+    formData.append("disc", values.disc);
+    if (values.image) {
+      formData.append("image", values.image);
+    }
+    if (content?._id) {
+      formData.append("id", content._id);
+      await axios.put("/api/content", formData);
+    } else {
+      await axios.post("/api/content", formData);
     }
   };
-
   // ✅ Handle delete
   const handleDelete = async () => {
     if (!content?._id) return alert('No content to delete');
@@ -95,6 +89,7 @@ export default function AdminContentPage() {
     };
     reader.readAsDataURL(file);
   };
+
 
   if (loading) return <ComponentLoader height="h-64" message="Loading content..." />;
 
