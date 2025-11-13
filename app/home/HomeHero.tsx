@@ -1,7 +1,38 @@
 
+"use client";
+
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
+
 function HomeHero() {
+    const [title, setTitle] = useState<string>('Dedicated Offshore Teams For CPAs And Accounting Firms');
+    const [disc, setDisc] = useState<string>("Join other CPA firms, empowering their firm with Sbaccounting's job-ready\n                    outsourcing accounting team.");
+    const [buttonText, setButtonText] = useState<string>('Learn More');
+
+    useEffect(() => {
+        let mounted = true;
+        (async () => {
+            try {
+                const res = await fetch('/api/hero');
+                if (!res.ok) return;
+                const data = await res.json();
+                if (!mounted) return;
+                // Debug log to help troubleshoot missing description
+                console.debug('Fetched hero data:', data);
+                if (data?.title) setTitle(data.title);
+                // Accept several possible property names for the description
+                const desc = data?.disc ?? data?.description ?? data?.desc ?? data?.text ?? '';
+                if (desc) setDisc(desc);
+                if (data?.buttonText) setButtonText(data.buttonText || 'Learn More');
+            } catch (err) {
+                // keep defaults
+                console.warn('Failed to load hero data', err);
+            }
+        })();
+        return () => { mounted = false; };
+    }, []);
+
     return (
         <section className="relative overflow-hidden bg-gray-50 py-24 ">
             {/* Background Gradient */}
@@ -17,7 +48,7 @@ function HomeHero() {
                     transition={{ duration: 0.6 }}
                     className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-6 leading-tight"
                 >
-                    Dedicated Offshore Teams For CPAs And Accounting Firms
+                    {title}
                 </motion.h1>
 
                 {/* Description */}
@@ -25,10 +56,9 @@ function HomeHero() {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.2, duration: 0.6 }}
-                    className="text-base sm:text-lg text-gray-600 max-w-2xl mb-8"
+                    className="text-base sm:text-lg text-gray-600 max-w-2xl mb-8 whitespace-pre-line"
                 >
-                    Join other CPA firms, empowering their firm with Sbaccounting's job-ready
-                    outsourcing accounting team.
+                    {disc}
                 </motion.p>
             </div>
 
