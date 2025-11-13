@@ -102,8 +102,6 @@ export default function AdminContactsBootstrap() {
                 <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Last Name</th>
                 <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Email</th>
                 <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Phone</th>
-                <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Company</th>
-                <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Company Website</th>
                 <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Message</th>
                 <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
                 <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Created At</th>
@@ -117,12 +115,7 @@ export default function AdminContactsBootstrap() {
                   <td className="px-4 py-3 text-sm">{c.lastName}</td>
                   <td className="px-4 py-3 text-sm"><a className="text-blue-600 hover:underline" href={`mailto:${c.email}`}>{c.email}</a></td>
                   <td className="px-4 py-3 text-sm">{c.phone}</td>
-                  <td className="px-4 py-3 text-sm">{c.companyName || '-'}</td>
-                  <td className="px-4 py-3 text-sm">
-                    {c.companyWebsite ? (
-                      <a className="text-blue-600 hover:underline" href={c.companyWebsite.startsWith('http') ? c.companyWebsite : `https://${c.companyWebsite}`} target="_blank" rel="noreferrer">{c.companyWebsite}</a>
-                    ) : ('-')}
-                  </td>
+                
                   <td className="px-4 py-3 text-sm max-w-xs truncate" title={c.message}>{c.message}</td>
                   <td className="px-4 py-3 text-sm">
                     <select className="border rounded px-2 py-1 text-sm" value={c.status} onChange={(e)=>updateStatus(c._id, e.target.value as ContactItem['status'])}>

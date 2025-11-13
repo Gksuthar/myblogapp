@@ -86,7 +86,7 @@ const Page = () => {
         {heroData ? (
           <HeroSection
             title={heroData.title || 'Blogs'}
-            disc={heroData.description || ''}
+            disc={heroData.disc || 'Hello'}
             image={heroData.image || '/vercel.svg'}
             showCtas={false}
           />
