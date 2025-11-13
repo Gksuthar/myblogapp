@@ -187,8 +187,8 @@ const AboutPage: React.FC = () => {
             </p>
           </div>
 
-          {/* Floating Cards and Images - Positioned Absolutely to mimic the image */}
-          <div className="relative w-full lg:w-2/5 h-[500px] lg:h-[600px] flex items-center justify-center -mt-16 lg:mt-0">
+          {/* Floating Cards and Images - hidden on mobile/tablet, show only on large+ */}
+          <div className="hidden lg:flex relative lg:w-2/5 lg:h-[600px] lg:items-center lg:justify-center">
             {/* Main background gradient circle/blob - to simulate the subtle background effect */}
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-gradient-to-tr from-blue-200 to-purple-100 opacity-30 blur-3xl z-0 animate-pulse-slow"></div>
 
@@ -209,7 +209,7 @@ const AboutPage: React.FC = () => {
   <div className="absolute inset-0 bg-gradient-to-tr from-indigo-200/20 via-blue-100/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-xl"></div>
 
   {/* Lock icon area */}
-  <div className="relative flex flex-col items-center !md:ml-[10px]">
+  <div className="relative flex flex-col items-center md:ml-[10px]">
     <div className="w-16 h-16 flex items-center justify-center rounded-full bg-gradient-to-br from-indigo-500 to-blue-400 shadow-md shadow-indigo-200 mb-4">
       <svg
         xmlns="http://www.w3.org/2000/svg"
