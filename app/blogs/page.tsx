@@ -23,7 +23,7 @@ interface Blog {
 
 interface HeroData {
   title?: string;
-  description?: string;
+  disc?: string;
   image?: string;
 }
 
