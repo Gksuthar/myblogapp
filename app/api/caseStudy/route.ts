@@ -14,6 +14,31 @@ const createSlug = (title: string) => {
     .replace(/-+/g, '-');
 };
 
+// *** NEW HELPER for saving File objects ***
+const saveFile = async (file: File, folder = 'uploads') => {
+  try {
+    const bytes = await file.arrayBuffer();
+    const buffer = Buffer.from(bytes);
+
+    // Sanitize and create filename
+    const ext = file.type.split('/')[1] || 'png';
+    const filename = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
+
+    const uploadsDir = path.join(process.cwd(), 'public', folder);
+    await fs.mkdir(uploadsDir, { recursive: true });
+
+    const filePath = path.join(uploadsDir, filename);
+    await fs.writeFile(filePath, buffer);
+
+    return `/${folder}/${filename}`; // web-accessible path
+  } catch (err) {
+    console.error('File save error:', err);
+    return ''; // Return empty string on failure
+  }
+};
+
+
+// ✅ GET - (No changes needed)
 export async function GET(req: Request) {
   try {
     await connectDB();
@@ -42,12 +67,12 @@ export async function GET(req: Request) {
     if (title) {
       // Try to find by exact title or by generated slug from title
       const generatedSlug = createSlug(title);
-      
+
       // First try to find by slug or title
       let caseStudy = await caseStudyschema.findOne({
         $or: [{ title }, { slug: generatedSlug }, { slug: title }]
       }).lean();
-      
+
       // If not found, try to find any case study and check if the title matches when slugified
       if (!caseStudy) {
         const allCaseStudies = await caseStudyschema.find().lean();
@@ -59,7 +84,7 @@ export async function GET(req: Request) {
           caseStudy = foundStudy;
         }
       }
-      
+
       if (!caseStudy) {
         return NextResponse.json({ error: "case study not found" }, { status: 404 });
       }
@@ -83,56 +108,56 @@ export async function GET(req: Request) {
   }
 }
 
-// ✅ POST - Create new case study
+// ✅ POST - Create new case study (Updated for FormData)
 export async function POST(req: Request) {
   await connectDB();
 
   try {
-    const body = await req.json();
-    const { title, content, headerTitle, headerDescription, cards } = body;
+    // 1. Read FormData
+    const formData = await req.formData();
 
-    if (!title || !content || !headerTitle || !headerDescription || !Array.isArray(cards)) {
+    // 2. Get text fields
+    const title = formData.get("title") as string;
+    const content = formData.get("content") as string;
+    const headerTitle = formData.get("headerTitle") as string;
+    const headerDescription = formData.get("headerDescription") as string;
+    const cardsDataString = formData.get("cardsData") as string;
+
+    if (!title || !content || !headerTitle || !headerDescription || !cardsDataString) {
       return NextResponse.json({ error: "Missing or invalid fields" }, { status: 400 });
     }
 
-    // Validate cards
-    for (const card of cards) {
-      if (!card.cardTitle || !card.cardDescription || !card.cardImage) {
-        return NextResponse.json({ error: "Each card must have all fields" }, { status: 400 });
+    // 3. Parse cards metadata
+    const cardsInfo = JSON.parse(cardsDataString);
+    const processedCards = [];
+
+    // 4. Process each card
+    for (let i = 0; i < cardsInfo.length; i++) {
+      const cardInfo = cardsInfo[i];
+      const file = formData.get(`cardImage_${i}`) as File | null;
+
+      let imagePath = "";
+
+      if (file) {
+        // Save the new file
+        imagePath = await saveFile(file, 'uploads');
+      } else if (cardInfo.cardImage) {
+        // Use existing path (less likely in POST, but good practice)
+        imagePath = cardInfo.cardImage;
       }
+
+      if (!cardInfo.cardTitle || !cardInfo.cardDescription || !imagePath) {
+        return NextResponse.json({ error: `Card ${i} is missing title, description, or image` }, { status: 400 });
+      }
+
+      processedCards.push({
+        cardTitle: cardInfo.cardTitle,
+        cardDescription: cardInfo.cardDescription,
+        cardImage: imagePath,
+      });
     }
 
-    // If any card images are base64 data URLs, save them to public/uploads and replace with the file path
-    const saveDataUrlToFile = async (dataUrl: string, folder = 'uploads') => {
-      const matches = dataUrl.match(/^data:(.+);base64,(.+)$/);
-      if (!matches) throw new Error('Invalid data URL');
-      const mime = matches[1];
-      const base64Data = matches[2];
-      const ext = (mime.split('/')[1] || 'png').split('+')[0];
-      const uploadsDir = path.join(process.cwd(), 'public', folder);
-      await fs.mkdir(uploadsDir, { recursive: true });
-      const filename = `${Date.now()}-${Math.random().toString(36).slice(2,8)}.${ext}`;
-      const filePath = path.join(uploadsDir, filename);
-      const buffer = Buffer.from(base64Data, 'base64');
-      await fs.writeFile(filePath, buffer);
-      return `/${folder}/${filename}`; // web-accessible path
-    };
-
-    // Process card images
-    if (Array.isArray(cards)) {
-      for (const card of cards) {
-        if (typeof card.cardImage === 'string' && card.cardImage.startsWith('data:')) {
-          try {
-            const savedPath = await saveDataUrlToFile(card.cardImage, 'uploads');
-            card.cardImage = savedPath;
-          } catch (err) {
-            console.error('Failed to save card image to uploads:', err);
-          }
-        }
-      }
-    }
-
-    // Generate unique slug
+    // 5. Generate unique slug
     const baseSlug = createSlug(title);
     let counter = 1;
     let uniqueSlug = baseSlug;
@@ -141,13 +166,14 @@ export async function POST(req: Request) {
       counter++;
     }
 
+    // 6. Save to DB
     const newCaseStudy = new caseStudyschema({
       title,
       slug: uniqueSlug,
       content,
       headerTitle,
       headerDescription,
-      cards,
+      cards: processedCards,
     });
 
     await newCaseStudy.save();
@@ -158,7 +184,7 @@ export async function POST(req: Request) {
   }
 }
 
-// ✅ PATCH - Update case study
+// ✅ PATCH - Update case study (Updated for FormData)
 export async function PATCH(req: Request) {
   await connectDB();
 
@@ -171,8 +197,17 @@ export async function PATCH(req: Request) {
       cards?: Array<{ cardTitle: string; cardDescription: string; cardImage: string }>;
       slug?: string;
     };
-  const body = await req.json();
-  const { id, title, content, headerTitle, headerDescription, cards } = body;
+
+    // 1. Read FormData
+    const formData = await req.formData();
+
+    // 2. Get fields
+    const id = formData.get("id") as string;
+    const title = formData.get("title") as string;
+    const content = formData.get("content") as string;
+    const headerTitle = formData.get("headerTitle") as string;
+    const headerDescription = formData.get("headerDescription") as string;
+    const cardsDataString = formData.get("cardsData") as string;
 
     if (!id) {
       return NextResponse.json({ error: "ID is required" }, { status: 400 });
@@ -183,37 +218,46 @@ export async function PATCH(req: Request) {
       return NextResponse.json({ error: "Case study not found" }, { status: 404 });
     }
 
-    // If any incoming card images are base64 data URLs, save them to public/uploads and replace with file paths
-    const saveDataUrlToFile = async (dataUrl: string, folder = 'uploads') => {
-      const matches = dataUrl.match(/^data:(.+);base64,(.+)$/);
-      if (!matches) throw new Error('Invalid data URL');
-      const mime = matches[1];
-      const base64Data = matches[2];
-      const ext = (mime.split('/')[1] || 'png').split('+')[0];
-      const uploadsDir = path.join(process.cwd(), 'public', folder);
-      await fs.mkdir(uploadsDir, { recursive: true });
-      const filename = `${Date.now()}-${Math.random().toString(36).slice(2,8)}.${ext}`;
-      const filePath = path.join(uploadsDir, filename);
-      const buffer = Buffer.from(base64Data, 'base64');
-      await fs.writeFile(filePath, buffer);
-      return `/${folder}/${filename}`; // web-accessible path
-    };
+    // 3. Process Cards
+    const cardsInfo = JSON.parse(cardsDataString);
+    const processedCards = [];
 
-    if (Array.isArray(cards)) {
-      for (const card of cards) {
-        if (typeof card.cardImage === 'string' && card.cardImage.startsWith('data:')) {
-          try {
-            const savedPath = await saveDataUrlToFile(card.cardImage, 'uploads');
-            card.cardImage = savedPath;
-          } catch (err) {
-            console.error('Failed to save card image to uploads (PATCH):', err);
-          }
-        }
+    for (let i = 0; i < cardsInfo.length; i++) {
+      const cardInfo = cardsInfo[i];
+      const file = formData.get(`cardImage_${i}`) as File | null;
+
+      let imagePath = "";
+
+      if (file) {
+        // Save the new file
+        imagePath = await saveFile(file, 'uploads');
+        // TODO: Delete old image (cardInfo.cardImage) from filesystem if it was a file path
+      } else {
+        // No new file, use existing path
+        imagePath = cardInfo.cardImage;
       }
+
+      if (!cardInfo.cardTitle || !cardInfo.cardDescription || !imagePath) {
+        return NextResponse.json({ error: `Card ${i} is missing title, description, or image` }, { status: 400 });
+      }
+
+      processedCards.push({
+        cardTitle: cardInfo.cardTitle,
+        cardDescription: cardInfo.cardDescription,
+        cardImage: imagePath,
+      });
     }
 
+    // 4. Prepare update data
+    const updateData: CaseStudyUpdate = {
+      title,
+      content,
+      headerTitle,
+      headerDescription,
+      cards: processedCards
+    };
+
     // If title changed, regenerate slug
-    const updateData: CaseStudyUpdate = { title, content, headerTitle, headerDescription, cards };
     if (title !== existing.title) {
       const baseSlug = createSlug(title);
       let counter = 1;
@@ -225,6 +269,7 @@ export async function PATCH(req: Request) {
       updateData.slug = uniqueSlug;
     }
 
+    // 5. Update in DB
     const updatedCase = await caseStudyschema.findByIdAndUpdate(
       id,
       updateData,
@@ -244,7 +289,7 @@ export async function PATCH(req: Request) {
   }
 }
 
-// ✅ DELETE - Delete a case study
+// ✅ DELETE - (No changes needed)
 export async function DELETE(req: Request) {
   await connectDB();
 
@@ -259,6 +304,8 @@ export async function DELETE(req: Request) {
     if (!deleted) {
       return NextResponse.json({ error: "Case study not found" }, { status: 404 });
     }
+
+    // TODO: Iterate over deleted.cards and delete each cardImage from the filesystem
 
     return NextResponse.json({ message: "Case study deleted successfully", deleted }, { status: 200 });
   } catch (error) {

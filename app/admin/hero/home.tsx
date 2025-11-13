@@ -8,19 +8,21 @@ interface Hero {
   _id: string;
   title: string;
   disc: string;
-  image: string;
+  image: string; // This is a URL path like /uploads/image.jpg
   buttonText: string;
 }
 
+// Validation schema (image is no longer needed here)
 const validationSchema = Yup.object({
   title: Yup.string().required('Title is required'),
   disc: Yup.string().required('Description is required'),
-  image: Yup.mixed().nullable(),
+  buttonText: Yup.string().optional(),
 });
 
 export default function HomeHero() {
   const [hero, setHero] = useState<Hero | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [imageFile, setImageFile] = useState<File | null>(null); // State for the actual file
 
   const fetchHero = async () => {
     try {
@@ -28,7 +30,7 @@ export default function HomeHero() {
       const data = await res.json();
       if (!data.error) {
         setHero(data);
-        setImagePreview(data.image || null);
+        setImagePreview(data.image || null); // Set preview to existing image path
       }
     } catch (err) {
       console.error(err);
@@ -39,17 +41,16 @@ export default function HomeHero() {
     fetchHero();
   }, []);
 
-  const handleImageChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    setFieldValue: (field: string, value: unknown) => void
-  ) => {
+  // Updated image handler:
+  // - No longer uses setFieldValue
+  // - Sets the imageFile state
+  // - Creates an object URL for preview
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    setFieldValue('image', file);
-
-    const reader = new FileReader();
-    reader.onloadend = () => setImagePreview(reader.result as string);
-    reader.readAsDataURL(file);
+    
+    setImageFile(file); // 1. Store the file object
+    setImagePreview(URL.createObjectURL(file)); // 2. Create a temporary URL for preview
   };
 
   const handleSubmit = async (values: any) => {
@@ -57,9 +58,17 @@ export default function HomeHero() {
     formData.append('title', values.title);
     formData.append('disc', values.disc);
     formData.append('buttonText', values.buttonText || '');
-    if (values.image) formData.append('image', values.image);
-    if (hero?._id) formData.append('id', hero._id);
+    
+    if (hero?._id) {
+      formData.append('id', hero._id);
+    }
 
+    // *** CRITICAL CHANGE ***
+    // Only append the 'image' field if a *new file* has been selected
+    if (imageFile) {
+      formData.append('image', imageFile);
+    }
+    
     try {
       const res = await fetch('/api/hero', {
         method: hero ? 'PATCH' : 'POST',
@@ -69,7 +78,8 @@ export default function HomeHero() {
       const result = await res.json();
       if (res.ok) {
         alert(hero ? 'Hero updated successfully' : 'Hero added successfully');
-        fetchHero();
+        setImageFile(null); // Clear the selected file
+        fetchHero(); // Refetch data to show the saved image
       } else {
         alert(result.error || 'Error');
       }
@@ -90,13 +100,13 @@ export default function HomeHero() {
         initialValues={{
           title: hero?.title || '',
           disc: hero?.disc || '',
-          image: hero?.image || '',
           buttonText: hero?.buttonText || '',
+          // 'image' is no longer part of Formik's state
         }}
         validationSchema={validationSchema}
         onSubmit={handleSubmit}
       >
-        {({ setFieldValue }) => (
+        {() => ( // setFieldValue is no longer needed here
           <Form className="space-y-4">
             <div>
               <label className="block font-medium mb-1">Title</label>
@@ -135,7 +145,7 @@ export default function HomeHero() {
               <input
                 type="file"
                 accept="image/*"
-                onChange={(e) => handleImageChange(e, setFieldValue)}
+                onChange={handleImageChange} // Updated handler
                 className="w-full border border-gray-300 p-2 rounded-md"
               />
               {imagePreview && (

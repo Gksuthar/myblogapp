@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Formik, Form, FieldArray, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import axios from 'axios';
@@ -11,7 +11,7 @@ import TextEditor from '@/components/TextEditor/TextEditor';
 interface Card {
   cardTitle: string;
   cardDescription: string;
-  cardImage: string; // base64 string
+  cardImage: string | File; // Can be a string (path) or a File (new upload)
 }
 
 interface CaseStudyFormValues {
@@ -20,7 +20,6 @@ interface CaseStudyFormValues {
   headerTitle: string;
   headerDescription: string;
   cards: Card[];
-  
 }
 
 interface CaseStudyModalProps {
@@ -34,7 +33,7 @@ interface CaseStudyModalProps {
 const CardSchema = Yup.object().shape({
   cardTitle: Yup.string().required('Card title is required'),
   cardDescription: Yup.string().required('Card description is required'),
-  cardImage: Yup.string().required('Card image is required'),
+  cardImage: Yup.mixed().required('Card image is required'), // Use 'mixed' for File or string
 });
 
 const CaseStudySchema = Yup.object().shape({
@@ -53,6 +52,8 @@ export default function CaseStudyModal({
 }: CaseStudyModalProps) {
   const [submitSuccess, setSubmitSuccess] = useState(false);
   const [submitError, setSubmitError] = useState('');
+  // State to hold temporary preview URLs
+  const [imagePreviews, setImagePreviews] = useState<Record<number, string>>({});
 
   if (!isOpen) return null;
 
@@ -64,7 +65,7 @@ export default function CaseStudyModal({
     return cards.map((card) => ({
       cardTitle: card.cardTitle || '',
       cardDescription: card.cardDescription || '',
-      cardImage: card.cardImage || '',
+      cardImage: card.cardImage || '', // This will be a string path from DB
     }));
   };
 
@@ -75,14 +76,34 @@ export default function CaseStudyModal({
     headerDescription: editdata?.headerDescription ?? '',
     cards: normalizeCards(editdata?.cards),
   };
-
-  // ✅ Convert image file to Base64 string
+  
+  // ✅ Handle image file selection
   const handleImageUpload = (file: File, index: number, setFieldValue: any) => {
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setFieldValue(`cards[${index}].cardImage`, reader.result);
-    };
-    reader.readAsDataURL(file);
+    // 1. Store the File object in Formik state
+    setFieldValue(`cards[${index}].cardImage`, file);
+    
+    // 2. Create a temporary preview URL
+    const previewUrl = URL.createObjectURL(file);
+    
+    // 3. Store the preview URL in state
+    setImagePreviews(prev => {
+        // Revoke old preview URL if it exists, to prevent memory leaks
+        if (prev[index]) {
+            URL.revokeObjectURL(prev[index]);
+        }
+        return { ...prev, [index]: previewUrl };
+    });
+  };
+
+  // Helper to clean up all preview URLs
+  const cleanupPreviews = () => {
+    Object.values(imagePreviews).forEach(URL.revokeObjectURL);
+    setImagePreviews({});
+  };
+  
+  const handleClose = () => {
+    cleanupPreviews();
+    onClose();
   };
 
   return (
@@ -107,7 +128,7 @@ export default function CaseStudyModal({
                 {editdata ? '✏️ Edit Case Study' : '🧩 Create New Case Study'}
               </h2>
               <button
-                onClick={onClose}
+                onClick={handleClose}
                 className="text-gray-500 hover:text-gray-700 text-2xl font-bold"
                 aria-label="Close modal"
               >
@@ -116,7 +137,7 @@ export default function CaseStudyModal({
             </div>
 
             <Formik
-              key={editdata?._id || 'new'} // ✅ ensures re-render on different editdata
+              key={editdata?._id || 'new'}
               enableReinitialize
               initialValues={initialValues}
               validationSchema={CaseStudySchema}
@@ -125,20 +146,60 @@ export default function CaseStudyModal({
                   setSubmitError('');
                   setSubmitSuccess(false);
 
-                  const payload = { ...values };
-                  const url = '/api/caseStudy';
+                  // *** 1. CREATE FORMDATA ***
+                  const formData = new FormData();
+                  
+                  // 2. Append text fields
+                  formData.append('title', values.title);
+                  formData.append('content', values.content);
+                  formData.append('headerTitle', values.headerTitle);
+                  formData.append('headerDescription', values.headerDescription);
+                  if (editdata?._id) {
+                    formData.append('id', editdata._id);
+                  }
 
+                  // 3. Process cards array
+                  const cardsData = []; // To hold text data and existing image paths
+                  
+                  for (let i = 0; i < values.cards.length; i++) {
+                    const card = values.cards[i];
+                    
+                    if (card.cardImage instanceof File) {
+                      // It's a new file: append it to FormData
+                      formData.append(`cardImage_${i}`, card.cardImage);
+                      // Add placeholder info to cardsData
+                      cardsData.push({
+                        cardTitle: card.cardTitle,
+                        cardDescription: card.cardDescription,
+                        imagePlaceholder: `file_${i}`, // Backend will look for this file
+                      });
+                    } else {
+                      // It's an existing image (string path): add to cardsData
+                      cardsData.push({
+                        cardTitle: card.cardTitle,
+                        cardDescription: card.cardDescription,
+                        cardImage: card.cardImage, // Pass the existing path
+                      });
+                    }
+                  }
+
+                  // 4. Append the cards metadata as a JSON string
+                  formData.append('cardsData', JSON.stringify(cardsData));
+
+                  // 5. Send as FormData
+                  const url = '/api/caseStudy';
                   const response = editdata?._id
-                    ? await axios.patch(url, { id: editdata._id, ...payload })
-                    : await axios.post(url, payload);
+                    ? await axios.patch(url, formData)
+                    : await axios.post(url, formData);
 
                   if (response.status === 200 || response.status === 201) {
                     setSubmitSuccess(true);
                     if (onSuccess) onSuccess();
+                    cleanupPreviews(); // Clean up URLs on success
 
                     setTimeout(() => {
                       setSubmitSuccess(false);
-                      onClose();
+                      onClose(); // Use original onClose prop
                       resetForm();
                     }, 1200);
                   }
@@ -220,94 +281,100 @@ export default function CaseStudyModal({
                           🗂 Cards
                         </h3>
 
-                        {values.cards.map((card, index) => (
-                          <div
-                            key={index}
-                            className="border border-gray-200 rounded-xl p-4 shadow-sm relative"
-                          >
-                            <div className="absolute top-3 right-3">
-                              {values.cards.length > 1 && (
-                                <button
-                                  type="button"
-                                  onClick={() => remove(index)}
-                                  className="text-red-500 hover:text-red-700 text-sm"
-                                >
-                                  ✕ Remove
-                                </button>
-                              )}
-                            </div>
+                        {values.cards.map((card, index) => {
+                          // Check if there's a preview for this index,
+                          // otherwise check if cardImage is a string (existing path)
+                          const imageSrc = imagePreviews[index] || (typeof card.cardImage === 'string' ? card.cardImage : '');
+                          
+                          return (
+                            <div
+                              key={index}
+                              className="border border-gray-200 rounded-xl p-4 shadow-sm relative"
+                            >
+                              <div className="absolute top-3 right-3">
+                                {values.cards.length > 1 && (
+                                  <button
+                                    type="button"
+                                    onClick={() => remove(index)}
+                                    className="text-red-500 hover:text-red-700 text-sm"
+                                  >
+                                    ✕ Remove
+                                  </button>
+                                )}
+                              </div>
 
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                              <div>
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                  <label className="block text-gray-700 font-semibold mb-1">
+                                    Card Title
+                                  </label>
+                                  <Textfield
+                                    name={`cards[${index}].cardTitle`}
+                                    placeholder="Card title..."
+                                    value={card.cardTitle}
+                                    onChange={handleChange}
+                                    className="w-full rounded-lg border border-gray-300 p-3"
+                                  />
+                                  <ErrorMessage
+                                    name={`cards[${index}].cardTitle`}
+                                    component="p"
+                                    className="text-red-500 text-sm mt-1"
+                                  />
+                                </div>
+
+                                <div>
+                                  <label className="block text-gray-700 font-semibold mb-1">
+                                    Card Image
+                                  </label>
+                                  <input
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={(e) => {
+                                      const file = e.target.files?.[0];
+                                      if (file)
+                                        handleImageUpload(
+                                          file,
+                                          index,
+                                          setFieldValue
+                                        );
+                                    }}
+                                    className="w-full rounded-lg border border-gray-300 p-2"
+                                  />
+                                  {imageSrc && (
+                                    <img
+                                      src={imageSrc}
+                                      alt="Card Preview"
+                                      className="mt-2 w-24 h-24 object-cover rounded-md border"
+                                    />
+                                  )}
+                                  <ErrorMessage
+                                    name={`cards[${index}].cardImage`}
+                                    component="p"
+                                    className="text-red-500 text-sm mt-1"
+                                  />
+                                </div>
+                              </div>
+
+                              <div className="mt-3">
                                 <label className="block text-gray-700 font-semibold mb-1">
-                                  Card Title
+                                  Card Description
                                 </label>
                                 <Textfield
-                                  name={`cards[${index}].cardTitle`}
-                                  placeholder="Card title..."
-                                  value={card.cardTitle}
+                                  name={`cards[${index}].cardDescription`}
+                                  placeholder="Short description..."
+                                  value={card.cardDescription}
                                   onChange={handleChange}
                                   className="w-full rounded-lg border border-gray-300 p-3"
                                 />
                                 <ErrorMessage
-                                  name={`cards[${index}].cardTitle`}
-                                  component="p"
-                                  className="text-red-500 text-sm mt-1"
-                                />
-                              </div>
-
-                              <div>
-                                <label className="block text-gray-700 font-semibold mb-1">
-                                  Card Image
-                                </label>
-                                <input
-                                  type="file"
-                                  accept="image/*"
-                                  onChange={(e) => {
-                                    const file = e.target.files?.[0];
-                                    if (file)
-                                      handleImageUpload(
-                                        file,
-                                        index,
-                                        setFieldValue
-                                      );
-                                  }}
-                                  className="w-full rounded-lg border border-gray-300 p-2"
-                                />
-                                {card.cardImage && (
-                                  <img
-                                    src={card.cardImage}
-                                    alt="Card Preview"
-                                    className="mt-2 w-24 h-24 object-cover rounded-md border"
-                                  />
-                                )}
-                                <ErrorMessage
-                                  name={`cards[${index}].cardImage`}
+                                  name={`cards[${index}].cardDescription`}
                                   component="p"
                                   className="text-red-500 text-sm mt-1"
                                 />
                               </div>
                             </div>
-
-                            <div className="mt-3">
-                              <label className="block text-gray-700 font-semibold mb-1">
-                                Card Description
-                              </label>
-                              <Textfield
-                                name={`cards[${index}].cardDescription`}
-                                placeholder="Short description..."
-                                value={card.cardDescription}
-                                onChange={handleChange}
-                                className="w-full rounded-lg border border-gray-300 p-3"
-                              />
-                              <ErrorMessage
-                                name={`cards[${index}].cardDescription`}
-                                component="p"
-                                className="text-red-500 text-sm mt-1"
-                              />
-                            </div>
-                          </div>
-                        ))}
+                          )
+                        })}
 
                         <button
                           type="button"
@@ -351,7 +418,7 @@ export default function CaseStudyModal({
                   <div className="flex justify-end gap-3 pt-2 border-t border-gray-100 mt-4">
                     <button
                       type="button"
-                      onClick={onClose}
+                      onClick={handleClose}
                       className="px-5 py-2 text-sm font-medium text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200"
                     >
                       Cancel

@@ -1,14 +1,14 @@
 import { connectDB } from "@/lib/mongodb";
 import { Hero } from "../model/hero";
 import { NextResponse } from "next/server";
-import fs from "fs";
+import { writeFile, mkdir } from "fs/promises"; // <-- Import async methods
 import path from "path";
 
 const uploadDir = path.join(process.cwd(), "public/uploads");
 
 export async function GET() {
-  await connectDB();
   try {
+    await connectDB();
     const hero = await Hero.findOne().sort({ createdAt: -1 });
     if (!hero) return NextResponse.json({ error: "No hero found" }, { status: 404 });
     return NextResponse.json(hero);
@@ -19,8 +19,8 @@ export async function GET() {
 }
 
 export async function POST(req: Request) {
-  await connectDB();
   try {
+    await connectDB();
     const formData = await req.formData();
     const title = formData.get("title") as string;
     const disc = formData.get("disc") as string;
@@ -35,9 +35,11 @@ export async function POST(req: Request) {
     if (file) {
       const bytes = await file.arrayBuffer();
       const buffer = Buffer.from(bytes);
-      const filename = `${Date.now()}-${file.name}`;
-      if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
-      fs.writeFileSync(path.join(uploadDir, filename), buffer);
+      const filename = `${Date.now()}-${file.name.replace(/\s/g, "_")}`;
+      
+      await mkdir(uploadDir, { recursive: true }); // <-- Use async mkdir
+      await writeFile(path.join(uploadDir, filename), buffer); // <-- Use async writeFile
+      
       imagePath = `/uploads/${filename}`;
     }
 
@@ -52,28 +54,33 @@ export async function POST(req: Request) {
 }
 
 export async function PATCH(req: Request) {
-  await connectDB();
   try {
+    await connectDB();
     const formData = await req.formData();
     const id = formData.get("id") as string;
     const title = formData.get("title") as string;
     const disc = formData.get("disc") as string;
     const buttonText = formData.get("buttonText") as string;
-    const file = formData.get("image") as File | null;
+    const file = formData.get("image") as File | null; // This will be null if no new file is sent
 
     const hero = await Hero.findById(id);
     if (!hero) return NextResponse.json({ error: "Hero not found" }, { status: 404 });
 
     if (title) hero.title = title;
     if (disc) hero.disc = disc;
-    if (buttonText) hero.buttonText = buttonText;
+    if (buttonText) hero.buttonText = buttonText; // Handles "" (empty string) correctly
 
+    // This block only runs if a new file was *actually* uploaded
     if (file) {
       const bytes = await file.arrayBuffer();
       const buffer = Buffer.from(bytes);
-      const filename = `${Date.now()}-${file.name}`;
-      if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
-      fs.writeFileSync(path.join(uploadDir, filename), buffer);
+      const filename = `${Date.now()}-${file.name.replace(/\s/g, "_")}`;
+      
+      await mkdir(uploadDir, { recursive: true }); // <-- Use async mkdir
+      await writeFile(path.join(uploadDir, filename), buffer); // <-- Use async writeFile
+      
+      // TODO: Optionally delete old image file (hero.image) from filesystem
+      
       hero.image = `/uploads/${filename}`;
     }
 
