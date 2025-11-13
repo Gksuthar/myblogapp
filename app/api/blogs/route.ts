@@ -1,14 +1,16 @@
 import { connectDB } from "@/lib/mongodb";
 import Blog from "../model/blog";
 import { NextResponse } from "next/server";
+import { writeFile, mkdir } from "fs/promises";
+import path from "path";
 
+// 📌 GET ALL OR SINGLE BLOG
 export async function GET(req: Request) {
   try {
     await connectDB();
     const { searchParams } = new URL(req.url);
-    const slug = searchParams.get('slug');
+    const slug = searchParams.get("slug");
 
-    // If ?slug=... is passed → return one blog
     if (slug) {
       const blog = await Blog.findOne({ slug }).lean();
       if (!blog) {
@@ -17,7 +19,6 @@ export async function GET(req: Request) {
       return NextResponse.json(blog);
     }
 
-    // Otherwise → return all blogs (empty array with 200 if none)
     const blogs = await Blog.find().sort({ createdAt: -1 }).lean();
     return NextResponse.json(blogs ?? []);
   } catch (error) {
@@ -29,57 +30,99 @@ export async function GET(req: Request) {
   }
 }
 
-
-// POST new blog
+// 📌 CREATE BLOG (with image upload)
 export async function POST(req: Request) {
   await connectDB();
+
   try {
-    const body = await req.json();
-    const { title, content, excerpt, author, image, tags, slug, published } = body;
+    const formData: any = await req.formData();
+
+    // 🧾 Get fields
+    const title = formData.get("title");
+    const content = formData.get("content");
+    const excerpt = formData.get("excerpt");
+    const author = formData.get("author");
+    const tags = JSON.parse(formData.get("tags") || "[]");
+    const slug = formData.get("slug");
+    const published = formData.get("published") === "true";
+    const imageFile = formData.get("image");
 
     if (!title || !content || !excerpt || !author || !slug) {
-      return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
+      return NextResponse.json(
+        { error: "Missing required fields" },
+        { status: 400 }
+      );
     }
 
+    // 🧩 Check for duplicate slug
     const existingBlog = await Blog.findOne({ slug });
     if (existingBlog) {
-      return NextResponse.json({ error: "Blog with this slug already exists" }, { status: 409 });
+      return NextResponse.json(
+        { error: "Blog with this slug already exists" },
+        { status: 409 }
+      );
     }
 
+    // 🖼️ Save image if present
+    let imagePath = "";
+    if (imageFile && imageFile.name) {
+      const bytes = await imageFile.arrayBuffer();
+      const buffer = Buffer.from(bytes);
+
+      // Ensure uploads folder exists
+      const uploadDir = path.join(process.cwd(), "public", "uploads");
+      await mkdir(uploadDir, { recursive: true });
+
+      const fileName = `${Date.now()}-${imageFile.name}`;
+      const uploadPath = path.join(uploadDir, fileName);
+
+      await writeFile(uploadPath, buffer);
+      imagePath = `/uploads/${fileName}`; // public path
+    }
+
+    // 🗃️ Create blog
     const blog = new Blog({
       title,
       content,
       excerpt,
       author,
-      image: image || "",
-      tags: tags || [],
+      image: imagePath,
+      tags,
       slug,
-      published: published !== undefined ? published : true,
+      published,
     });
 
     await blog.save();
     return NextResponse.json(blog, { status: 201 });
   } catch (error) {
-    console.error(error);
-    return NextResponse.json({ error: "Failed to create blog" }, { status: 500 });
+    console.error("❌ Blog upload error:", error);
+    return NextResponse.json(
+      { error: "Failed to create blog" },
+      { status: 500 }
+    );
   }
 }
 
+// 📌 UPDATE BLOG
 export async function PUT(req: Request) {
   await connectDB();
 
   try {
     const body = await req.json();
-    const { id, title, content, excerpt, author, image, tags, slug, published } = body;
+    const { id, title, content, excerpt, author, image, tags, slug, published } =
+      body;
 
     if (!id) {
-      return NextResponse.json({ error: "Blog ID is required to update" }, { status: 400 });
+      return NextResponse.json(
+        { error: "Blog ID is required to update" },
+        { status: 400 }
+      );
     }
 
     const updatedBlog = await Blog.findByIdAndUpdate(
       id,
       { title, content, excerpt, author, image, tags, slug, published },
-      { new: true } // returns updated document
+      { new: true }
     );
 
     if (!updatedBlog) {
@@ -89,35 +132,36 @@ export async function PUT(req: Request) {
     return NextResponse.json(updatedBlog, { status: 200 });
   } catch (error) {
     console.error(error);
-    return NextResponse.json({ error: "Failed to update blog" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to update blog" },
+      { status: 500 }
+    );
   }
 }
 
-
-// DELETE blog by slug
+// 📌 DELETE BLOG
 export async function DELETE(req: Request) {
   await connectDB();
+
   try {
-    // Accept id from either JSON body or query string for flexibility
     let id: string | undefined;
+
     try {
       const body = await req.json();
       id = body?.id;
     } catch {
-      // ignore JSON parse errors, may be sent via querystring only
-    }
-    if (!id) {
       const { searchParams } = new URL(req.url);
-      id = searchParams.get('id') || undefined;
+      id = searchParams.get("id") || undefined;
     }
 
     if (!id) {
-      return NextResponse.json({ error: "ID is required to delete blog" }, { status: 400 });
+      return NextResponse.json(
+        { error: "ID is required to delete blog" },
+        { status: 400 }
+      );
     }
 
-    // Delete by Mongo _id
     const deletedBlog = await Blog.findByIdAndDelete(id);
-
     if (!deletedBlog) {
       return NextResponse.json({ error: "Blog not found" }, { status: 404 });
     }
@@ -125,6 +169,9 @@ export async function DELETE(req: Request) {
     return NextResponse.json({ message: "Blog deleted successfully" });
   } catch (error) {
     console.error(error);
-    return NextResponse.json({ error: "Failed to delete blog" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to delete blog" },
+      { status: 500 }
+    );
   }
 }

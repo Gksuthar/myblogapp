@@ -1,62 +1,101 @@
-import type { NextApiRequest, NextApiResponse } from "next";
-import { connectDB } from "@/lib/mongodb";
 import { NextResponse } from "next/server";
+import { connectDB } from "@/lib/mongodb";
 import { Tructed } from "../model/trusted";
+import { writeFile } from "fs/promises";
+import path from "path";
+import fs from "fs";
 
-// GET - fetch latest trusted company
+// --- GET ---
 export async function GET() {
   await connectDB();
-
   try {
     const trustedCompanies = await Tructed.find().sort({ createdAt: -1 });
     return NextResponse.json(trustedCompanies);
   } catch (error) {
     console.error(error);
-    return NextResponse.json({ error: "Failed to fetch trusted company data" }, { status: 500 });
+    return NextResponse.json({ error: "Failed to fetch trusted companies" }, { status: 500 });
   }
 }
 
-
-// POST - add new trusted company
+// --- POST (with image upload) ---
 export async function POST(req: Request) {
   await connectDB();
 
   try {
-    const body = await req.json();
-    const { name, image } = body;
+    const formData = await req.formData();
+    const name = formData.get("name") as string;
+    const imageFile = formData.get("image") as File | null;
 
     if (!name) {
-      return NextResponse.json({ error: "Name is required" }, { status: 400 });
+      return NextResponse.json({ error: "Company name is required" }, { status: 400 });
     }
 
-    const newTrusted = new Tructed({ name, image: image });
+    let imagePath = "";
+
+    if (imageFile) {
+      // Convert file to buffer
+      const bytes = await imageFile.arrayBuffer();
+      const buffer = Buffer.from(bytes);
+
+      // Ensure /public/uploads exists
+      const uploadDir = path.join(process.cwd(), "public/uploads");
+      if (!fs.existsSync(uploadDir)) {
+        fs.mkdirSync(uploadDir, { recursive: true });
+      }
+
+      // Generate unique filename
+      const fileName = `${Date.now()}-${imageFile.name}`;
+      const uploadPath = path.join(uploadDir, fileName);
+
+      // Save file to /public/uploads
+      await writeFile(uploadPath, buffer);
+
+      imagePath = `/uploads/${fileName}`; // relative path accessible on frontend
+    }
+
+    const newTrusted = new Tructed({ name, image: imagePath });
     await newTrusted.save();
 
     return NextResponse.json(newTrusted, { status: 201 });
   } catch (error) {
-    console.error(error);
+    console.error("❌ Upload Error:", error);
     return NextResponse.json({ error: "Failed to add trusted company" }, { status: 500 });
   }
 }
 
-// PATCH - update trusted company
+// --- PATCH ---
 export async function PATCH(req: Request) {
   await connectDB();
 
   try {
-    const body = await req.json();
-    const { id, name, image } = body;
+    const formData = await req.formData();
+    const id = formData.get("id") as string;
+    const name = formData.get("name") as string;
+    const imageFile = formData.get("image") as File | null;
 
     if (!id) {
       return NextResponse.json({ error: "ID is required" }, { status: 400 });
     }
 
     const trustedCompany = await Tructed.findById(id);
-    if (!trustedCompany) 
-      return NextResponse.json({ error: "Trusted company not found" }, { status: 404 });
+    if (!trustedCompany) {
+      return NextResponse.json({ error: "Company not found" }, { status: 404 });
+    }
 
     if (name) trustedCompany.name = name;
-    if (image) trustedCompany.image = image;
+
+    if (imageFile) {
+      const bytes = await imageFile.arrayBuffer();
+      const buffer = Buffer.from(bytes);
+      const uploadDir = path.join(process.cwd(), "public/uploads");
+      if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
+
+      const fileName = `${Date.now()}-${imageFile.name}`;
+      const uploadPath = path.join(uploadDir, fileName);
+      await writeFile(uploadPath, buffer);
+
+      trustedCompany.image = `/uploads/${fileName}`;
+    }
 
     await trustedCompany.save();
     return NextResponse.json(trustedCompany, { status: 200 });
@@ -66,20 +105,19 @@ export async function PATCH(req: Request) {
   }
 }
 
-// Optional: DELETE - remove trusted company
+// --- DELETE ---
 export async function DELETE(req: Request) {
   await connectDB();
 
   try {
     const body = await req.json();
     const { id } = body;
-
     if (!id) return NextResponse.json({ error: "ID is required" }, { status: 400 });
 
     const deleted = await Tructed.findByIdAndDelete(id);
-    if (!deleted) return NextResponse.json({ error: "Trusted company not found" }, { status: 404 });
+    if (!deleted) return NextResponse.json({ error: "Company not found" }, { status: 404 });
 
-    return NextResponse.json({ message: "Trusted company deleted successfully" }, { status: 200 });
+    return NextResponse.json({ message: "Company deleted successfully" }, { status: 200 });
   } catch (error) {
     console.error(error);
     return NextResponse.json({ error: "Failed to delete trusted company" }, { status: 500 });

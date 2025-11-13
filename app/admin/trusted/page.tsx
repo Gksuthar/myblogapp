@@ -111,40 +111,36 @@ export default function TrustedCompanies() {
 
   const handleSubmit = async (values: FormValues, { resetForm }: FormikHelpers<FormValues>) => {
     try {
-      const isFile = values.image instanceof File;
-      // FIX: Assert 'values.image' as 'File' in the 'true' branch to satisfy the toBase64 function's type requirement.
-      const base64Image = isFile ? await toBase64(values.image as File) : values.image as string || '';
+      const formData = new FormData();
+      formData.append("name", values.name);
+      if (values.image instanceof File) {
+        formData.append("image", values.image);
+      }
+      if (editingCompany) {
+        formData.append("id", editingCompany._id);
+      }
 
-      const payload = {
-        name: values.name,
-        image: base64Image,
-      };
+      const method = editingCompany ? "PATCH" : "POST";
 
-      const url = '/api/tructedCompany';
-      // Use PATCH for updates to only modify provided fields
-      const method = editingCompany ? 'PATCH' : 'POST';
-      const body = editingCompany ? JSON.stringify({ id: editingCompany._id, ...payload }) : JSON.stringify(payload);
-
-      const res = await fetch(url, {
+      const res = await fetch("/api/tructedCompany", {
         method,
-        headers: { 'Content-Type': 'application/json' },
-        body,
+        body: formData,
       });
 
       const result = await res.json();
-      if (!res.ok) throw new Error(result.error || 'Unknown error');
+      if (!res.ok) throw new Error(result.error || "Unknown error");
 
-      showToast(editingCompany ? 'Company updated successfully!' : 'Company added successfully!');
-
+      showToast(editingCompany ? "Company updated successfully!" : "Company added successfully!");
       resetForm();
       setImagePreview(null);
       setEditingCompany(null);
       fetchCompanies();
     } catch (err: any) {
       console.error(err);
-      showToast('Failed to add/update company: ' + err.message, 'error');
+      showToast("Failed to add/update company: " + err.message, "error");
     }
   };
+
 
   const handleEdit = (company: TrustedCompany) => {
     setEditingCompany(company);

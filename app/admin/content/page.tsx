@@ -50,8 +50,9 @@ export default function AdminContentPage() {
   const handleSubmit = async (values: ContentType) => {
     setSubmitting(true);
     try {
+
       if (content?._id) {
-        await axios.patch('/api/content', { ...values, id: content._id });
+        await axios.patch('/api/content', { ...values, id: content._id }, {});
         alert('Content updated successfully');
       } else {
         await axios.post('/api/content', values);
@@ -80,12 +81,19 @@ export default function AdminContentPage() {
     }
   };
 
-  // ✅ Convert image file to Base64
-  const convertToBase64 = (file: File, callback: (result: string) => void) => {
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>, setFieldValue: (field: string, value: unknown) => void) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // store the actual file
+    setFieldValue('image', file);
+
+    // store preview (optional)
     const reader = new FileReader();
+    reader.onloadend = () => {
+      setFieldValue('imagePreview', reader.result);
+    };
     reader.readAsDataURL(file);
-    reader.onload = () => callback(reader.result as string);
-    reader.onerror = (error) => console.error('Base64 conversion error:', error);
   };
 
   if (loading) return <ComponentLoader height="h-64" message="Loading content..." />;
@@ -135,14 +143,7 @@ export default function AdminContentPage() {
               <input
                 type="file"
                 accept="image/*"
-                onChange={(e) => {
-                  const file = e.target.files?.[0];
-                  if (file) {
-                    convertToBase64(file, (base64) => {
-                      setFieldValue('image', base64);
-                    });
-                  }
-                }}
+                onChange={(e) => handleImageChange(e, setFieldValue)}
                 className="w-full border border-gray-300 rounded-lg p-2"
               />
 

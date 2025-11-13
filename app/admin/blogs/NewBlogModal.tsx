@@ -73,44 +73,47 @@ export default function NewBlogModal({ open, onClose, onCreated, editData }: New
   const generateSlug = (title: string) =>
     title.toLowerCase().replace(/[^\w\s]/gi, '').replace(/\s+/g, '-');
 
-  const handleImageChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    setFieldValue: (field: string, value: unknown) => void
-  ) => {
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>,setFieldValue: (field: string, value: unknown) => void) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
+    // store the actual file
+    setFieldValue('image', file);
+
+    // store preview (optional)
     const reader = new FileReader();
     reader.onloadend = () => {
-      setFieldValue('image', reader.result);
+      setFieldValue('imagePreview', reader.result);
     };
     reader.readAsDataURL(file);
   };
-
-  // Handle Create or Update
-  type BlogFormValues = {
-    title: string;
-    slug: string;
-    excerpt: string;
-    content: string;
-    author: string;
-    image?: string;
-    tags?: string;
-    published: boolean;
-  };
-
-  const handleSubmit = async (values: BlogFormValues) => {
+  const handleSubmit = async (values: any) => {
     setLoading(true);
     setError('');
 
     try {
-      const tagsArray = values.tags ? values.tags.split(',').map((t: string) => t.trim()) : [];
-      const payload = { ...values, tags: tagsArray };
+      const formData = new FormData();
+
+      formData.append('title', values.title);
+      formData.append('slug', values.slug);
+      formData.append('excerpt', values.excerpt);
+      formData.append('content', values.content);
+      formData.append('author', values.author);
+      formData.append('published', values.published);
+      formData.append('tags', JSON.stringify(values.tags?.split(',').map((t: string) => t.trim()) || []));
+      if (values.image instanceof File) {
+        formData.append("image", values.image);
+      }
 
       if (editData?._id) {
-        await axios.put('/api/blogs', { id: editData._id, ...payload });
+        formData.append('id', editData._id);
+        await axios.put('/api/blogs', formData, {
+          headers: { 'Content-Type': 'multipart/form-data' },
+        });
       } else {
-        await axios.post('/api/blogs', payload);
+        await axios.post('/api/blogs', formData, {
+          headers: { 'Content-Type': 'multipart/form-data' },
+        });
       }
 
       onCreated?.();
@@ -124,6 +127,7 @@ export default function NewBlogModal({ open, onClose, onCreated, editData }: New
       setLoading(false);
     }
   };
+
 
   // Delete blog
   const handleDelete = async () => {
@@ -298,7 +302,7 @@ export default function NewBlogModal({ open, onClose, onCreated, editData }: New
                         />
                         {values.image && (
                           <div className="mt-2">
-                            <Image src={values.image} alt="preview" width={192} height={128} className="rounded object-cover" />
+                            <img src={values.image} alt="preview" width={192} height={128} className="rounded object-cover" />
                           </div>
                         )}
                       </div>

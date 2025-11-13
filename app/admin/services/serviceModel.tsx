@@ -176,25 +176,48 @@ export default function ServiceModal({
                 content: editingService?.content || '',
               }}
 
-              onSubmit={async (values, { setSubmitting, resetForm }) => {
+              onSubmit={async (values: any, { setSubmitting, resetForm }) => {
                 try {
-                  if (isEditing && editingService?._id) {
-                    await axios.put('/api/service', { id: editingService._id, ...values });
-                  } else {
-                    await axios.post('/api/service', values);
+                  const formData = new FormData();
+                  formData.append("categoryId", values.categoryId);
+                  formData.append("heroTitle", values.heroSection.title);
+                  formData.append("heroDescription", values.heroSection.description);
+
+                  // If image is a File, append it
+                  if (values.heroSection.image instanceof File) {
+                    formData.append("heroImage", values.heroSection.image);
                   }
+
+                  formData.append("serviceCardView", JSON.stringify(values.serviceCardView));
+                  formData.append("cardSections", JSON.stringify(values.cardSections));
+                  formData.append("content", values.content);
+
+                  if (isEditing && editingService?._id) {
+                    formData.append("id", editingService._id);
+                  }
+
+                  const method = isEditing ? "PATCH" : "POST";
+                  const res = await fetch("/api/service", {
+                    method,
+                    body: formData,
+                  });
+
+                  const result = await res.json();
+                  if (!res.ok) throw new Error(result.error || "Failed to save");
+
                   onSuccess();
                   resetForm();
                   onClose();
                   router.refresh();
-                } catch (error: unknown) {
-                  console.error('Service save error:', error);
-                  const err = error as { response?: { data?: { error?: string } } };
-                  alert(err?.response?.data?.error || 'Failed to save service');
+                } catch (error: any) {
+                  console.error("Service save error:", error);
+                  alert(error.message || "Failed to save service");
                 } finally {
                   setSubmitting(false);
                 }
               }}
+
+
             >
               {({ values, setFieldValue, isSubmitting }) => (
                 <Form className="space-y-6">
@@ -226,11 +249,7 @@ export default function ServiceModal({
                         onChange={(e) => {
                           const file = e.target.files?.[0];
                           if (file) {
-                            const reader = new FileReader();
-                            reader.onload = () => {
-                              setFieldValue('heroSection.image', reader.result);
-                            };
-                            reader.readAsDataURL(file);
+                            setFieldValue('heroSection.image', file); // store file, not base64
                           }
                         }}
                         className="hidden"
@@ -249,7 +268,7 @@ export default function ServiceModal({
                           className="services-image"
                         />
                       )}
-                      <button onClick={()=>{setFieldValue("heroSection.image" ,null)}} >remove image </button>
+                      <button onClick={() => { setFieldValue("heroSection.image", null) }} >remove image </button>
                     </div>
 
                     <Textfield

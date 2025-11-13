@@ -19,7 +19,7 @@ export async function GET() {
       { status: 500 }
     );
   }
-}
+} 
 
 // ✅ POST - Create new case study
 export async function POST(req: Request) {
