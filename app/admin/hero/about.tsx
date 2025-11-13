@@ -93,65 +93,72 @@ export default function AboutHero() {
         onSubmit={handleSubmit}
       >
         {({ setFieldValue }) => (
-          <Form className="space-y-1 mb-8">
-            <div className='flex justify-center'>
-              <label className="block font-medium mb-1">Title</label>
+          <Form className="space-y-6 mb-8">
+            <div className="mb-4">
+              <label className="block font-medium mb-2">Title</label>
               <Field
                 type="text"
                 name="title"
                 placeholder="Enter title"
-                className="w-full border border-gray-300 p-2 rounded-md"
+                className="w-full border border-gray-300 p-3 rounded-md"
               />
               <ErrorMessage name="title" component="div" className="text-red-500 text-sm mt-1" />
             </div>
 
-            <div className='flex justify-center'>
-              <label className="block font-medium mb-1">Description</label>
+            <div className="mb-4">
+              <label className="block font-medium mb-2">Description</label>
               <Field
                 as="textarea"
                 name="disc"
                 placeholder="Enter description"
-                className="w-full border border-gray-300 p-2 rounded-md"
+                rows={4}
+                className="w-full border border-gray-300 p-3 rounded-md resize-none"
               />
               <ErrorMessage name="disc" component="div" className="text-red-500 text-sm mt-1" />
             </div>
 
-            <div className='flex justify-center'>
-              <label className="block font-medium mb-1">Button Text</label>
+            <div className="mb-4">
+              <label className="block font-medium mb-2">Button Text</label>
               <Field
                 type="text"
                 name="buttonText"
                 placeholder="Enter button text"
-                className="w-full border border-gray-300 p-2 rounded-md"
+                className="w-full border border-gray-300 p-3 rounded-md"
               />
             </div>
 
-            <div className='flex justify-center'>
-              <label className="block font-medium mb-1">Image</label>
-              <input
-                type="file"
-                accept="image/*"
-                onChange={async (event) => {
-                  const file = event.currentTarget.files?.[0];
-                  if (file) {
-                    const base64 = await fileToBase64(file);
-                    setFieldValue('image', base64);
-                    setImagePreview(base64);
-                  }
-                }}
-                className="w-full border border-gray-300 p-2 rounded-md"
-              />
-              {imagePreview && (
-                <img src={imagePreview} alt="Preview" className="mt-2 w-32 h-32 object-cover rounded-md" />
-              )}
+            <div className="mb-4">
+              <label className="block font-medium mb-2">Image</label>
+              <div className="flex items-center gap-4">
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={async (event) => {
+                    const file = event.currentTarget.files?.[0];
+                    if (file) {
+                      const base64 = await fileToBase64(file);
+                      setFieldValue('image', base64);
+                      setImagePreview(base64);
+                    }
+                  }}
+                  className="border border-gray-300 p-2 rounded-md"
+                />
+                {imagePreview ? (
+                  <img src={imagePreview} alt="Preview" className="w-28 h-28 object-cover rounded-md shadow-sm" />
+                ) : (
+                  <div className="w-28 h-28 bg-gray-100 rounded-md flex items-center justify-center text-gray-400">Preview</div>
+                )}
+              </div>
             </div>
 
-            <button
-              type="submit"
-              className="w-full bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700 transition"
-            >
-              {hero ? 'Update' : 'Submit'}
-            </button>
+            <div>
+              <button
+                type="submit"
+                className="w-full max-w-xs mx-auto block bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700 transition"
+              >
+                {hero ? 'Update' : 'Submit'}
+              </button>
+            </div>
           </Form>
         )}
       </Formik>

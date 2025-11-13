@@ -126,8 +126,9 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
       >
         <div className="flex flex-col items-center p-6 pt-8">
           {/* Logo at top */}
-          <Link href="/admin">
-            <Image src="https://res.cloudinary.com/dsu49fx2b/image/upload/v1762306740/logo_big1-1_dyd6xs.png" alt="Logo" width={160} height={48} className="mb-8 object-contain" />
+          <Link href="/admin" className="flex flex-col items-center">
+            <Image src="https://res.cloudinary.com/dsu49fx2b/image/upload/v1762306740/logo_big1-1_dyd6xs.png" alt="Logo" width={160} height={48} className="mb-2 object-contain" />
+            <span className="text-sm font-bold">Sbaccounting</span>
           </Link>
           <nav className="w-full">
             <ul className="space-y-2">

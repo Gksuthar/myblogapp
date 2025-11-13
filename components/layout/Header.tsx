@@ -124,9 +124,9 @@ export default function Header() {
   return (
     <header className="sticky top-0 w-full z-50 bg-white/90 backdrop-blur supports-[backdrop-filter]:bg-white/75 border-b border-gray-100">
       <div className="max-w-7xl mx-auto flex justify-between items-center px-4 sm:px-6 lg:px-8 py-4 relative">
-        {/* Logo */}
-        <div className="flex items-center space-x-2">
-          <Link href="/">
+        {/* Logo and Site Name */}
+        <div className="flex items-center space-x-3">
+          <Link href="/" className="flex items-center gap-3">
             <Image
               src="https://res.cloudinary.com/dsu49fx2b/image/upload/v1762306740/logo_big1-1_dyd6xs.png"
               alt="Company logo"
@@ -135,6 +135,8 @@ export default function Header() {
               className="h-10 md:h-12 w-auto object-contain"
               priority
             />
+            {/* Site name - visible on small and larger screens */}
+            {/* <span className="hidden sm:inline-block text-lg md:text-xl font-extrabold text-gray-800">Sbaccounting</span> */}
           </Link>
         </div>
 
