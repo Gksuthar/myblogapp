@@ -22,11 +22,11 @@ export const metadata: Metadata = {
   title: "Sbaccounting",
   description: "Sbaccounting - Accounting and Outsourcing Services",
   icons: {
-    icon: '../../public/uploads/logo_big1-1_dyd6xs.png',
-    shortcut: '../../public/uploads/logo_big1-1_dyd6xs.png',
-    apple: '../../public/uploads/logo_big1-1_dyd6xs.png',
+    icon: 'https://res.cloudinary.com/dsu49fx2b/image/upload/v1762306740/logo_big1-1_dyd6xs.png',
+    shortcut: 'https://res.cloudinary.com/dsu49fx2b/image/upload/v1762306740/logo_big1-1_dyd6xs.png',
+    apple: 'https://res.cloudinary.com/dsu49fx2b/image/upload/v1762306740/logo_big1-1_dyd6xs.png',
   },
-  manifest: "../../public/uploads/logo_big1-1_dyd6xs.png",
+  manifest: 'https://res.cloudinary.com/dsu49fx2b/image/upload/v1762306740/logo_big1-1_dyd6xs.png',
 };
 
 // === Root Layout ===
