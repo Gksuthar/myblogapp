@@ -1,6 +1,8 @@
 import { connectDB } from "@/lib/mongodb";
 import { NextResponse } from "next/server";
 import { caseStudyschema } from "@/app/api/model/casestudy";
+import path from 'path';
+import { promises as fs } from 'fs';
 
 // Utility function to create a slug
 const createSlug = (title: string) => {
@@ -100,6 +102,36 @@ export async function POST(req: Request) {
       }
     }
 
+    // If any card images are base64 data URLs, save them to public/uploads and replace with the file path
+    const saveDataUrlToFile = async (dataUrl: string, folder = 'uploads') => {
+      const matches = dataUrl.match(/^data:(.+);base64,(.+)$/);
+      if (!matches) throw new Error('Invalid data URL');
+      const mime = matches[1];
+      const base64Data = matches[2];
+      const ext = (mime.split('/')[1] || 'png').split('+')[0];
+      const uploadsDir = path.join(process.cwd(), 'public', folder);
+      await fs.mkdir(uploadsDir, { recursive: true });
+      const filename = `${Date.now()}-${Math.random().toString(36).slice(2,8)}.${ext}`;
+      const filePath = path.join(uploadsDir, filename);
+      const buffer = Buffer.from(base64Data, 'base64');
+      await fs.writeFile(filePath, buffer);
+      return `/${folder}/${filename}`; // web-accessible path
+    };
+
+    // Process card images
+    if (Array.isArray(cards)) {
+      for (const card of cards) {
+        if (typeof card.cardImage === 'string' && card.cardImage.startsWith('data:')) {
+          try {
+            const savedPath = await saveDataUrlToFile(card.cardImage, 'uploads');
+            card.cardImage = savedPath;
+          } catch (err) {
+            console.error('Failed to save card image to uploads:', err);
+          }
+        }
+      }
+    }
+
     // Generate unique slug
     const baseSlug = createSlug(title);
     let counter = 1;
@@ -139,8 +171,8 @@ export async function PATCH(req: Request) {
       cards?: Array<{ cardTitle: string; cardDescription: string; cardImage: string }>;
       slug?: string;
     };
-    const body = await req.json();
-    const { id, title, content, headerTitle, headerDescription, cards } = body;
+  const body = await req.json();
+  const { id, title, content, headerTitle, headerDescription, cards } = body;
 
     if (!id) {
       return NextResponse.json({ error: "ID is required" }, { status: 400 });
@@ -149,6 +181,35 @@ export async function PATCH(req: Request) {
     const existing = await caseStudyschema.findById(id);
     if (!existing) {
       return NextResponse.json({ error: "Case study not found" }, { status: 404 });
+    }
+
+    // If any incoming card images are base64 data URLs, save them to public/uploads and replace with file paths
+    const saveDataUrlToFile = async (dataUrl: string, folder = 'uploads') => {
+      const matches = dataUrl.match(/^data:(.+);base64,(.+)$/);
+      if (!matches) throw new Error('Invalid data URL');
+      const mime = matches[1];
+      const base64Data = matches[2];
+      const ext = (mime.split('/')[1] || 'png').split('+')[0];
+      const uploadsDir = path.join(process.cwd(), 'public', folder);
+      await fs.mkdir(uploadsDir, { recursive: true });
+      const filename = `${Date.now()}-${Math.random().toString(36).slice(2,8)}.${ext}`;
+      const filePath = path.join(uploadsDir, filename);
+      const buffer = Buffer.from(base64Data, 'base64');
+      await fs.writeFile(filePath, buffer);
+      return `/${folder}/${filename}`; // web-accessible path
+    };
+
+    if (Array.isArray(cards)) {
+      for (const card of cards) {
+        if (typeof card.cardImage === 'string' && card.cardImage.startsWith('data:')) {
+          try {
+            const savedPath = await saveDataUrlToFile(card.cardImage, 'uploads');
+            card.cardImage = savedPath;
+          } catch (err) {
+            console.error('Failed to save card image to uploads (PATCH):', err);
+          }
+        }
+      }
     }
 
     // If title changed, regenerate slug
