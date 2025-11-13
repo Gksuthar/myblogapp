@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 // 1. Import the Lexend font
-import { Lexend } from "next/font/google"; 
+import { Lexend } from "next/font/google";
 import "./globals.css";
 import { Suspense, lazy } from "react";
 import ComponentLoader from "@/components/ComponentLoader";
@@ -22,11 +22,11 @@ export const metadata: Metadata = {
   title: "Sbaccounting",
   description: "Sbaccounting - Accounting and Outsourcing Services",
   icons: {
-    icon: 'https://res.cloudinary.com/dsu49fx2b/image/upload/v1762306740/logo_big1-1_dyd6xs.png',
-    shortcut: 'https://res.cloudinary.com/dsu49fx2b/image/upload/v1762306740/logo_big1-1_dyd6xs.png',
-    apple: 'https://res.cloudinary.com/dsu49fx2b/image/upload/v1762306740/logo_big1-1_dyd6xs.png',
+    icon: '../../public/uploads/logo_big1-1_dyd6xs.png',
+    shortcut: '../../public/uploads/logo_big1-1_dyd6xs.png',
+    apple: '../../public/uploads/logo_big1-1_dyd6xs.png',
   },
-  manifest: "https://res.cloudinary.com/dsu49fx2b/image/upload/v1762306740/logo_big1-1_dyd6xs.png",
+  manifest: "../../public/uploads/logo_big1-1_dyd6xs.png",
 };
 
 // === Root Layout ===
@@ -39,7 +39,7 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body
         // 3. Apply the font's CSS variable class to the body
-        className={`${lexend.variable} antialiased font-lexend`} 
+        className={`${lexend.variable} antialiased font-lexend`}
         suppressHydrationWarning
       >
         <NextTopLoader
