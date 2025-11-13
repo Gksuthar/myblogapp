@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 
 // --- Type and Data Definitions (Included here for a complete file) ---
 
@@ -38,20 +39,37 @@ interface TestimonialCarouselProps {
 
 // Use React.FC<Props> for function component typing
 const TestimonialCarousel: React.FC<TestimonialCarouselProps> = ({ data = defaultTestimonials }) => {
-    
     // Explicitly typing the state for currentIndex as a number
     const [currentIndex, setCurrentIndex] = useState<number>(0);
+    const [testimonials, setTestimonials] = useState<typeof defaultTestimonials>(data);
+
+    // Load dynamic testimonials from API on mount
+    useEffect(() => {
+        let mounted = true;
+        (async () => {
+            try {
+                const res = await axios.get('/api/testimonial');
+                if (mounted && Array.isArray(res.data) && res.data.length > 0) {
+                    setTestimonials(res.data);
+                }
+            } catch (err) {
+                // fallback to default data (already set)
+                console.warn('Failed to fetch testimonials, using defaults', err);
+            }
+        })();
+        return () => { mounted = false; };
+    }, []);
 
     // TypeScript ensures currentTestimonial is of type Testimonial (or undefined if the array is empty)
-    const currentTestimonial = data[currentIndex];
+    const currentTestimonial = testimonials[currentIndex];
 
     // Functions remain the same, relying on the type-safe data
     const nextSlide = () => {
-        setCurrentIndex((prevIndex) => (prevIndex + 1) % data.length);
+        setCurrentIndex((prevIndex) => (prevIndex + 1) % testimonials.length);
     };
 
     const prevSlide = () => {
-        setCurrentIndex((prevIndex) => (prevIndex - 1 + data.length) % data.length);
+        setCurrentIndex((prevIndex) => (prevIndex - 1 + testimonials.length) % testimonials.length);
     };
     
     // Type checking the event for the onError handler
