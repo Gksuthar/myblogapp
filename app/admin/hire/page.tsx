@@ -85,11 +85,26 @@ function HirePage() {
             try {
               setResponseMsg("Processing...");
 
+              const formData = new FormData();
+              formData.append("title", values.title);
+              formData.append("disc", values.disc);
+              formData.append("author", values.author);
+
+              // If new image uploaded, append it
+              if (values.image && typeof values.image !== "string") {
+                formData.append("image", values.image);
+              }
+
               if (editHero) {
-                await axios.patch("/api/hire", { id: editHero._id, ...values });
+                formData.append("id", editHero._id);
+                await axios.patch("/api/hire", formData, {
+                  headers: { "Content-Type": "multipart/form-data" },
+                });
                 setResponseMsg("✅ Hero updated successfully!");
               } else {
-                await axios.post("/api/hire", values);
+                await axios.post("/api/hire", formData, {
+                  headers: { "Content-Type": "multipart/form-data" },
+                });
                 setResponseMsg("✅ Hero created successfully!");
               }
 
@@ -143,12 +158,11 @@ function HirePage() {
                 <input
                   type="file"
                   accept="image/*"
-                  onChange={async (e) => {
+                  onChange={(e) => {
                     const file = e.target.files?.[0];
                     if (file) {
-                      const base64 = await convertToBase64(file);
-                      setFieldValue("image", base64);
-                      setPreview(base64);
+                      setFieldValue("image", file);
+                      setPreview(URL.createObjectURL(file));
                     }
                   }}
                   className="w-full border rounded-lg p-2"
@@ -180,9 +194,8 @@ function HirePage() {
 
               {responseMsg && (
                 <p
-                  className={`text-center mt-2 ${
-                    responseMsg.startsWith("✅") ? "text-green-600" : "text-red-600"
-                  }`}
+                  className={`text-center mt-2 ${responseMsg.startsWith("✅") ? "text-green-600" : "text-red-600"
+                    }`}
                 >
                   {responseMsg}
                 </p>

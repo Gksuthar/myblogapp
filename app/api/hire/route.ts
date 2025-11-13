@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/mongodb";
 import hireschema from "../model/hire";
+import { writeFile, mkdir } from "fs/promises";
+import path from "path";
 
 // 🟢 GET – Fetch all heroes
 export async function GET() {
@@ -14,26 +16,42 @@ export async function GET() {
   }
 }
 
-// 🟡 POST – Create new hero
+// 🟡 POST – Create new hero with image upload
 export async function POST(req: Request) {
   await connectDB();
   try {
-    const body = await req.json();
-    const { title, disc, author, image, published } = body;
+    const formData = await req.formData();
+
+    const title = formData.get("title") as string;
+    const disc = formData.get("disc") as string;
+    const author = formData.get("author") as string;
+    const imageFile = formData.get("image") as File | null;
 
     if (!title || !disc || !author) {
-      return NextResponse.json(
-        { error: "Title, description, and author are required." },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "All fields are required" }, { status: 400 });
+    }
+
+    let imagePath = "";
+
+    if (imageFile && imageFile.name) {
+      const bytes = await imageFile.arrayBuffer();
+      const buffer = Buffer.from(bytes);
+
+      const uploadDir = path.join(process.cwd(), "public/uploads");
+      await mkdir(uploadDir, { recursive: true });
+
+      const fileName = `${Date.now()}-${imageFile.name}`;
+      const filePath = path.join(uploadDir, fileName);
+
+      await writeFile(filePath, buffer);
+      imagePath = `/uploads/${fileName}`;
     }
 
     const hero = await hireschema.create({
       title,
       disc,
       author,
-      image: image || "",
-      published: published ?? true,
+      image: imagePath,
     });
 
     return NextResponse.json(hero, { status: 201 });
@@ -43,14 +61,19 @@ export async function POST(req: Request) {
   }
 }
 
-// 🟠 PATCH – Update hero by ID
+// 🟠 PATCH – Update hero (with optional image upload)
 export async function PATCH(req: Request) {
   await connectDB();
   try {
-    const body = await req.json();
-    const { id, title, disc, author, image, published } = body;
+    const formData = await req.formData();
 
-    if (!id) return NextResponse.json({ error: "Hero ID is required" }, { status: 400 });
+    const id = formData.get("id") as string;
+    const title = formData.get("title") as string;
+    const disc = formData.get("disc") as string;
+    const author = formData.get("author") as string;
+    const imageFile = formData.get("image") as File | null;
+
+    if (!id) return NextResponse.json({ error: "Hero ID required" }, { status: 400 });
 
     const hero = await hireschema.findById(id);
     if (!hero) return NextResponse.json({ error: "Hero not found" }, { status: 404 });
@@ -58,8 +81,20 @@ export async function PATCH(req: Request) {
     if (title) hero.title = title;
     if (disc) hero.disc = disc;
     if (author) hero.author = author;
-    if (image) hero.image = image;
-    if (typeof published === "boolean") hero.published = published;
+
+    if (imageFile && imageFile.name) {
+      const bytes = await imageFile.arrayBuffer();
+      const buffer = Buffer.from(bytes);
+
+      const uploadDir = path.join(process.cwd(), "public/uploads");
+      await mkdir(uploadDir, { recursive: true });
+
+      const fileName = `${Date.now()}-${imageFile.name}`;
+      const filePath = path.join(uploadDir, fileName);
+      await writeFile(filePath, buffer);
+
+      hero.image = `/uploads/${fileName}`;
+    }
 
     await hero.save();
     return NextResponse.json(hero, { status: 200 });
@@ -69,7 +104,7 @@ export async function PATCH(req: Request) {
   }
 }
 
-// 🔴 DELETE – Remove hero by ID
+// 🔴 DELETE – Remove hero
 export async function DELETE(req: Request) {
   await connectDB();
   try {
