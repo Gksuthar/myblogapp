@@ -12,7 +12,7 @@ const CKEditor = dynamic(
 interface WpCKEditorProps {
   initialContent?: string;
   onContentChange?: (content: string) => void;
-  label: string;
+  label?: string;
   required?: boolean;
 }
 
