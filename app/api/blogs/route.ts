@@ -104,38 +104,65 @@ export async function POST(req: Request) {
 }
 
 // 📌 UPDATE BLOG
+// 📌 UPDATE BLOG (with optional image upload)
 export async function PUT(req: Request) {
   await connectDB();
 
   try {
-    const body = await req.json();
-    const { id, title, content, excerpt, author, image, tags, slug, published } =
-      body;
+    const formData: any = await req.formData();
+
+    const id = formData.get("id");
+    const title = formData.get("title");
+    const content = formData.get("content");
+    const excerpt = formData.get("excerpt");
+    const author = formData.get("author");
+    const tags = JSON.parse(formData.get("tags") || "[]");
+    const slug = formData.get("slug");
+    const published = formData.get("published") === "true";
+    const imageFile = formData.get("image");
 
     if (!id) {
-      return NextResponse.json(
-        { error: "Blog ID is required to update" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Blog ID is required" }, { status: 400 });
     }
 
-    const updatedBlog = await Blog.findByIdAndUpdate(
-      id,
-      { title, content, excerpt, author, image, tags, slug, published },
-      { new: true }
-    );
-
-    if (!updatedBlog) {
+    // Get existing blog
+    const existing = await Blog.findById(id);
+    if (!existing) {
       return NextResponse.json({ error: "Blog not found" }, { status: 404 });
     }
 
-    return NextResponse.json(updatedBlog, { status: 200 });
+    // 🖼️ Handle new image upload (optional)
+    let imagePath = existing.image;
+    if (imageFile && imageFile.name) {
+      const bytes = await imageFile.arrayBuffer();
+      const buffer = Buffer.from(bytes);
+
+      const uploadDir = path.join(process.cwd(), "public", "uploads");
+      await mkdir(uploadDir, { recursive: true });
+
+      const fileName = `${Date.now()}-${imageFile.name}`;
+      const uploadPath = path.join(uploadDir, fileName);
+
+      await writeFile(uploadPath, buffer);
+      imagePath = `/uploads/${fileName}`;
+    }
+
+    // 🗃️ Update blog
+    existing.title = title;
+    existing.content = content;
+    existing.excerpt = excerpt;
+    existing.author = author;
+    existing.image = imagePath;
+    existing.tags = tags;
+    existing.slug = slug;
+    existing.published = published;
+
+    await existing.save();
+
+    return NextResponse.json({ success: true, blog: existing }, { status: 200 });
   } catch (error) {
-    console.error(error);
-    return NextResponse.json(
-      { error: "Failed to update blog" },
-      { status: 500 }
-    );
+    console.error("PUT Error:", error);
+    return NextResponse.json({ error: "Failed to update blog" }, { status: 500 });
   }
 }
 
