@@ -26,7 +26,6 @@ export const metadata: Metadata = {
     shortcut: 'https://res.cloudinary.com/dsu49fx2b/image/upload/v1762306740/logo_big1-1_dyd6xs.png',
     apple: 'https://res.cloudinary.com/dsu49fx2b/image/upload/v1762306740/logo_big1-1_dyd6xs.png',
   },
-  manifest: 'https://res.cloudinary.com/dsu49fx2b/image/upload/v1762306740/logo_big1-1_dyd6xs.png',
 };
 
 // === Root Layout ===
