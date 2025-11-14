@@ -72,7 +72,7 @@ const Service: React.FC<Props> = ({ fadeIn }) => {
     }, []);
     return (
         <motion.div {...fadeIn(0.2)} className="flex flex-col py-16 bg-gradient-to-b px-4 md:px-16">
-            <div className="max-w-4xl mx-auto text-center mb-12">
+            {/* <div className="max-w-4xl mx-auto text-center mb-12">
                 <motion.h1
                     {...fadeIn(0.1, 30)}
                     className="text-3xl md:text-5xl font-extrabold text-gray-800 mb-4"
@@ -86,7 +86,7 @@ const Service: React.FC<Props> = ({ fadeIn }) => {
                     From bookkeeping to auditing, our dynamism lies in the competitive edge we offer.
                     Outsource to us, and let our offshore team outshine it.
                 </motion.p>
-            </div>
+            </div> */}
 
 
             <motion.div
