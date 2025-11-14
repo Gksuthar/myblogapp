@@ -24,12 +24,12 @@ const JoinTeamSection: React.FC = () => {
     <>
       <section className="py-12 px-5 sm:px-8 lg:px-12 bg-white text-gray-800">
         <div className="max-w-7xl mx-auto">
-          {/* Title & Description (No change) */}
-          <div className="text-center md:text-left mb-8">
+          {/* Title & Description - CENTERED */}
+          <div className="text-center mb-12">
             <h2 className="text-3xl sm:text-4xl font-semibold text-[var(--primary-color)] tracking-tight">
               Be Part Of Something Great
             </h2>
-            <p className="mt-3 text-gray-600 leading-relaxed max-w-3xl mx-auto md:mx-0 text-base sm:text-lg">
+            <p className="mt-3 text-gray-600 leading-relaxed max-w-3xl mx-auto text-base sm:text-lg">
               At SB Accounting, our infrastructure speaks the same language as our
               services: refined, reliable, and built for excellence. Surrounded by
               natural elements and smart design, our team finds the clarity and
@@ -43,15 +43,25 @@ const JoinTeamSection: React.FC = () => {
             </button>
           </div>
 
-          {/* Improved Video Gallery */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-6xl mx-auto">
+          {/* Video Gallery - ALL 4 IN ONE ROW */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 max-w-7xl mx-auto">
             {videoUrls.map((src, idx) => (
               <div
                 key={idx}
-                // Use a button or div with onClick for the modal
                 onClick={() => openModal(src)}
-                className="relative aspect-video overflow-hidden rounded-lg shadow-xl hover:shadow-2xl transition-all duration-300 group cursor-pointer"
-                style={{ animationDelay: `${idx * 0.15}s`, animationFillMode: "both" }}
+                onMouseEnter={(e) => {
+                  const video = e.currentTarget.querySelector('video');
+                  if (video) video.play();
+                }}
+                onMouseLeave={(e) => {
+                  const video = e.currentTarget.querySelector('video');
+                  if (video) {
+                    video.pause();
+                    video.currentTime = 0;
+                  }
+                }}
+                className="relative aspect-video overflow-hidden rounded-lg shadow-xl hover:shadow-2xl transition-all duration-300 group cursor-pointer animate-fadeInUp"
+                style={{ animationDelay: `${idx * 0.15}s` }}
               >
                 {/* Thumbnail Video (muted, no controls) */}
                 <video
@@ -59,19 +69,21 @@ const JoinTeamSection: React.FC = () => {
                   loop
                   muted
                   playsInline
-                  className="object-cover w-full h-full rounded-lg transform transition-transform duration-500 ease-in-out"
+                  className="object-cover w-full h-full rounded-lg transform transition-transform duration-500 ease-in-out group-hover:scale-105"
                 />
 
-                {/* --- UI Improvement: Play Icon Overlay --- */}
+                {/* Blue Border Animation on Hover */}
+                <div className="absolute inset-0 rounded-lg border-4 border-transparent group-hover:border-[var(--primary-color)] transition-all duration-300"></div>
+
+                {/* Play Icon Overlay */}
                 <div className="absolute inset-0 bg-black/30 group-hover:bg-black/50 transition-colors duration-300 flex items-center justify-center">
-                  <div className="w-16 h-16 bg-[var(--primary-color)] rounded-full flex items-center justify-center shadow-lg transform group-hover:scale-110 transition-transform">
-                    {/* Play Icon SVG */}
+                  <div className="w-12 h-12 bg-[var(--primary-color)] rounded-full flex items-center justify-center shadow-lg transform group-hover:scale-110 transition-transform">
                     <svg
-                      className="w-8 h-8 text-white"
+                      className="w-6 h-6 text-white"
                       fill="currentColor"
                       viewBox="0 0 20 20"
                       xmlns="http://www.w3.org/2000/svg"
-                      style={{ marginLeft: '4px' }} // Center the triangle
+                      style={{ marginLeft: '3px' }}
                     >
                       <path
                         fillRule="evenodd"
