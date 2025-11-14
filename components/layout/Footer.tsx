@@ -255,7 +255,7 @@ const Footer: React.FC = () => {
             </span>
           </p>
           <div className="flex space-x-4">
-            <Link href="https://www.linkedin.com/company/sbaccounting/" className="hover:text-[var(--primary-color)] transition">
+            <Link href="https://www.linkedin.com/company/SB Accounting/" className="hover:text-[var(--primary-color)] transition">
               <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.366-4.041-3.238-4.041 0v5.604h-3v-11h3v1.765c1.396-2.586 7.041-2.793 7.041 2.072v7.163z"/></svg>
             </Link>
 

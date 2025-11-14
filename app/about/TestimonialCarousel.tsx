@@ -14,19 +14,19 @@ const defaultTestimonials: Testimonial[] = [
     {
         name: "Hamish McDonald",
         title: "Health Management Systems",
-        quote: "Sbaccounting have provided outstanding service. Quick, attentive and crucially they listen carefully to requirements and what we need to accomplish before taking action. They were also very fast to learn the relevant tax code in a brand new country for them. Highly recommended.",
+        quote: "SB Accounting have provided outstanding service. Quick, attentive and crucially they listen carefully to requirements and what we need to accomplish before taking action. They were also very fast to learn the relevant tax code in a brand new country for them. Highly recommended.",
         image: "https://cdn.prod.website-files.com/6718c309cc349b579872ddbb/674572587cdfc99244c1cc12_Image.png", 
     },
     {
         name: "Sarah Chen",
         title: "Tech Startup Founder",
-        quote: "We switched to Sbaccounting for our bookkeeping and payroll, and the efficiency gain has been incredible. Their team is knowledgeable, professional, and always accessible. A truly reliable outsourcing partner!",
+        quote: "We switched to SB Accounting for our bookkeeping and payroll, and the efficiency gain has been incredible. Their team is knowledgeable, professional, and always accessible. A truly reliable outsourcing partner!",
         image: "https://cdn.prod.website-files.com/6718c309cc349b579872ddbb/674572b8a2e9667f53cba48b_Image.png", 
     },
     {
         name: "David Lee",
         title: "E-commerce CEO",
-        quote: "Navigating international tax compliance was daunting until we partnered with Sbaccounting. Their expertise in multiple accounting tools ensured a smooth transition and flawless financial reporting across all our platforms.",
+        quote: "Navigating international tax compliance was daunting until we partnered with SB Accounting. Their expertise in multiple accounting tools ensured a smooth transition and flawless financial reporting across all our platforms.",
         image: "https://cdn.prod.website-files.com/6718c309cc349b579872ddbb/674ed9f6d7f1cff9cc28d127_keith.png", 
     },
 ];

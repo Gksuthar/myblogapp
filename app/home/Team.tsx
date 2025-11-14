@@ -121,7 +121,7 @@ const tabsData = roles?.map((role) => ({
 
         <p className="text-gray-600 text-base sm:text-lg md:text-xl leading-relaxed max-w-xl mx-auto md:mx-0">
           {content?.description ||
-            `sbaccounting is a trusted outsource accounting and bookkeeping company that helps businesses
+            `SB Accounting is a trusted outsource accounting and bookkeeping company that helps businesses
             gain financial clarity and operational efficiency. With a sharp focus on accuracy,
             compliance, and timeliness, we provide tailored solutions to CPAs, accounting firms,
             and startups. From recording daily transactions to managing end-to-end payroll,

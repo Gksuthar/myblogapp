@@ -7,7 +7,7 @@ import { motion } from "framer-motion";
 
 function HomeHero() {
     const [title, setTitle] = useState<string>('Dedicated Offshore Teams For CPAs And Accounting Firms');
-    const [disc, setDisc] = useState<string>("Join other CPA firms, empowering their firm with Sbaccounting's job-ready\n                    outsourcing accounting team.");
+    const [disc, setDisc] = useState<string>("Join other CPA firms, empowering their firm with SB Accounting's job-ready\n                    outsourcing accounting team.");
     const [buttonText, setButtonText] = useState<string>('Learn More');
 
     useEffect(() => {

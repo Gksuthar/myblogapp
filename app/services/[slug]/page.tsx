@@ -227,7 +227,7 @@ export default function ServiceDetailsPage() {
 
           {/* Subheading: max-w-2xl ensures text remains readable even on very large screens */}
           <p className="text-lg text-[rgba(255,255,255,0.9)] max-w-2xl mx-auto">
-            Join hundreds of businesses who trust Sbaccounting with their accounting needs.
+            Join hundreds of businesses who trust SB Accounting with their accounting needs.
           </p>
 
           {/* 🌟 Responsive Buttons: Stacks buttons vertically (flex-col) on small screens, and lays them side-by-side (sm:flex-row) on medium screens and up */}

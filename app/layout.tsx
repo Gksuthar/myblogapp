@@ -19,8 +19,8 @@ const ConditionalFooter = lazy(() => import("@/components/layout/ConditionalFoot
 
 // === Metadata ===
 export const metadata: Metadata = {
-  title: "Sbaccounting",
-  description: "Sbaccounting - Accounting and Outsourcing Services",
+  title: "SB Accounting",
+  description: "SB Accounting - Accounting and Outsourcing Services",
   icons: {
     icon: 'https://res.cloudinary.com/dsu49fx2b/image/upload/v1762306740/logo_big1-1_dyd6xs.png',
     shortcut: 'https://res.cloudinary.com/dsu49fx2b/image/upload/v1762306740/logo_big1-1_dyd6xs.png',

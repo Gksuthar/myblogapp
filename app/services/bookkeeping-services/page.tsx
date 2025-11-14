@@ -95,15 +95,15 @@ export default function BookkeepingServices() {
 
   const heroTitle = serviceData?.heroSection?.title || 'Bookkeeping Services';
   const heroDescription = serviceData?.heroSection?.description || 
-    "Sbaccounting provides comprehensive bookkeeping services designed to give your business financial clarity and efficiency.";
+    "SB Accounting provides comprehensive bookkeeping services designed to give your business financial clarity and efficiency.";
   
   const servicesTitle = servicesSection?.sectionTitle || "Tailored Bookkeeping Services";
   const servicesDescription = servicesSection?.sectionDescription || 
-    "Sbaccounting provides customized bookkeeping services tailored to meet the unique needs of your business.";
+    "SB Accounting provides customized bookkeeping services tailored to meet the unique needs of your business.";
   
-  const benefitsTitle = benefitsSection?.sectionTitle || "Benefits Of Outsourcing Bookkeeping To Sbaccounting";
+  const benefitsTitle = benefitsSection?.sectionTitle || "Benefits Of Outsourcing Bookkeeping To SB Accounting";
   const benefitsDescription = benefitsSection?.sectionDescription || 
-    "Experience the advantages of partnering with Sbaccounting for your bookkeeping needs.";
+    "Experience the advantages of partnering with SB Accounting for your bookkeeping needs.";
 
   return (
     <Suspense fallback={<ComponentLoader height="h-screen" message="Loading bookkeeping services..." />}>
@@ -279,7 +279,7 @@ export default function BookkeepingServices() {
                 Ready to Streamline Your Bookkeeping?
               </h2>
               <p className="text-xl text-[rgba(255,255,255,0.9)]">
-                Join hundreds of businesses who trust Sbaccounting with their bookkeeping needs.
+                Join hundreds of businesses who trust SB Accounting with their bookkeeping needs.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <motion.button

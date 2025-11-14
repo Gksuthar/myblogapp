@@ -136,7 +136,7 @@ export default function Header() {
               priority
             />
             {/* Site name - visible on small and larger screens */}
-            {/* <span className="hidden sm:inline-block text-lg md:text-xl font-extrabold text-gray-800">Sbaccounting</span> */}
+            {/* <span className="hidden sm:inline-block text-lg md:text-xl font-extrabold text-gray-800">SB Accounting</span> */}
           </Link>
         </div>
 
@@ -183,7 +183,7 @@ export default function Header() {
                 )}
               </div>
 
-              {/* Mega Menu - Sbaccounting Style */}
+              {/* Mega Menu - SB Accounting Style */}
               {item.isDropdown && servicesOpen && (
                 <div
                   onMouseEnter={() => {

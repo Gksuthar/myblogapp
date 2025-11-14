@@ -108,7 +108,7 @@ const WhyChooseUsGrid: React.FC = () => {
         {
             icon: <IconClockCheck />,
             title: "Faster Turn Around Time",
-            description: "Delivering timely results with accuracy. Sbaccounting ensures prompt accounting services that meets deadlines & exceeds expectations.",
+            description: "Delivering timely results with accuracy. SB Accounting ensures prompt accounting services that meets deadlines & exceeds expectations.",
             img: "https://res.cloudinary.com/dsu49fx2b/image/upload/v1762432820/download_mlevwu.svg",
             bgColorClass: 'bg-gradient-to-r from-[rgba(53,154,255,0.12)] via-[rgba(53,154,255,0.06)] to-transparent border-green-200/50',
         },
@@ -156,10 +156,10 @@ const WhyChooseUsGrid: React.FC = () => {
   {/* Header Block */}
   <div className="text-center mb-16">
     <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 mb-4">
-      Why Choose Sbaccounting?
+      Why Choose SB Accounting?
     </h2>
     <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-      Experience the Sbaccounting difference. Choose the perfect combo of expertise combined with adhering to the U.S. standards.
+      Experience the SB Accounting difference. Choose the perfect combo of expertise combined with adhering to the U.S. standards.
     </p>
   </div>
 

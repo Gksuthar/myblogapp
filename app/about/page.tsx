@@ -181,9 +181,9 @@ const AboutPage: React.FC = () => {
               Work With The Top Accounting Talent; Fast, Skilled, And Specialized
             </h1>
             <p className="text-base sm:text-lg md:text-xl text-gray-700 mb-8 max-w-2xl mx-auto lg:mx-0">
-              Partner with Sbaccounting to elevate your practice. From precision in data to streamlined processes, we
+              Partner with SB Accounting to elevate your practice. From precision in data to streamlined processes, we
               handle the heavy lifting, allowing you to focus on what matters most—your clients. Discover the
-              Sbaccounting difference today
+              SB Accounting difference today
             </p>
           </div>
 
@@ -497,7 +497,7 @@ const AboutPage: React.FC = () => {
         </div>
       </section>
 
-      <section className="py-16 px-4 md:px-10 bg-gray-50">
+      <section className="min-h-screen bg-gray-100 py-16">
         <div className="max-w-6xl mx-auto text-center">
           <h2 className="text-3xl md:text-4xl font-semibold text-[#4b4b8a] mb-14">
             We Are Adroit With Multiple Accounting Tools!

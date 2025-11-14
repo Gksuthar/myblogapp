@@ -13,7 +13,7 @@ const JoinTeamSection: React.FC = () => {
           </h2>
 
           <p className="mt-3 text-gray-600 leading-relaxed max-w-3xl mx-auto md:mx-0 text-base sm:text-lg">
-            At Sbaccounting, our infrastructure speaks the same language as our
+            At SB Accounting, our infrastructure speaks the same language as our
             services: refined, reliable, and built for excellence. Surrounded by
             natural elements and smart design, our team finds the clarity and
             calm needed to deliver exceptional results, every day.
@@ -53,7 +53,7 @@ const JoinTeamSection: React.FC = () => {
             return (
               <div
                 key={idx}
-                className="relative aspect-square overflow-hidden rounded-md group cursor-pointer animate-fadeInUp shadow-sm hover:shadow-lg transition-shadow"
+                className="relative aspect-square overflow-hidden rounded-lg group cursor-pointer animate-fadeInUp shadow-2xl hover:shadow-2xl transition-shadow transform-gpu"
                 style={{
                   animationDelay: `${idx * 0.08}s`,
                   animationFillMode: "both"
@@ -66,6 +66,8 @@ const JoinTeamSection: React.FC = () => {
                   className="object-cover grayscale group-hover:grayscale-0 group-hover:scale-110 transition-all duration-500 ease-out"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-[var(--primary-color)]/80 via-[var(--primary-color)]/20 to-transparent opacity-60 group-hover:opacity-0 transition-opacity duration-500" />
+                {/* soft bottom accent shadow to mimic big card depth */}
+                <div className="pointer-events-none absolute -bottom-6 left-1/2 -translate-x-1/2 w-3/4 h-6 rounded-full bg-black/6 blur-xl opacity-60" />
               </div>
             );
           })}

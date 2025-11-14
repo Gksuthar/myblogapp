@@ -185,7 +185,7 @@ const ContactForm: React.FC = () => {
     } catch (error) {
       console.error('Form submission error:', error);
       // centralized error toast
-      errorToast('❌ Submission failed', 'Oops! Something went wrong.<br/><a href="mailto:shalin@sbaccounting.us">Contact us</a>');
+      errorToast('❌ Submission failed', 'Oops! Something went wrong.<br/><a href="mailto:shalin@SB Accounting.us">Contact us</a>');
     } finally {
       setSubmitting(false);
     }
@@ -215,7 +215,7 @@ You can always visit us at our HQ, we have a friendly staff and a mean cup of co
                   <span className="text-gray-900 !text-gray-800">
                     <MdEmail className="h-5 w-5 text-gray-900 !text-gray-800" />
                   </span>
-                  <a href="mailto:shalin@sbaccounting.us" className="text-gray-900 md:text-[20px]   font-medium text-[var(--primary-color)] hover:underline">shalin@sbaccounting.us</a>
+                  <a href="mailto:shalin@SB Accounting.us" className="text-gray-900 md:text-[20px]   font-medium text-[var(--primary-color)] hover:underline">shalin@SB Accounting.us</a>
                 </div>
                 <div className="flex items-center space-x-2 text-gray-700">
                   <span className="font-medium">📞</span>
