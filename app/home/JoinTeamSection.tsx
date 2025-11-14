@@ -82,10 +82,6 @@ const JoinTeamSection: React.FC = () => {
                   </div>
                 </div>
                 
-                {/* Project Title Overlay */}
-                <div className="absolute bottom-0 left-0 p-4 bg-gradient-to-t from-black/60 to-transparent w-full">
-                  <p className="text-white text-lg font-medium">Project Showcase {idx + 1}</p>
-                </div>
               </div>
             ))}
           </div>
