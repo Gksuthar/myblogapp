@@ -22,9 +22,9 @@ export const metadata: Metadata = {
   title: "SB Accounting",
   description: "SB Accounting - Accounting and Outsourcing Services",
   icons: {
-    icon: 'https://res.cloudinary.com/dsu49fx2b/image/upload/v1762306740/logo_big1-1_dyd6xs.png',
-    shortcut: 'https://res.cloudinary.com/dsu49fx2b/image/upload/v1762306740/logo_big1-1_dyd6xs.png',
-    apple: 'https://res.cloudinary.com/dsu49fx2b/image/upload/v1762306740/logo_big1-1_dyd6xs.png',
+    icon: '/favicon.ico',
+    shortcut: '/favicon.ico',
+    apple: '/favicon.ico',
   },
   verification: {
     google: "8_kSthNcE1HNjmB8v0lscfge92Rxo2II9oocrg3Nbd8",
