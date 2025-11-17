@@ -22,9 +22,7 @@ export const metadata: Metadata = {
   description: "SB Accounting - Accounting and Outsourcing Services",
   icons: {
     icon: [
-      { url: "/favicon.ico", sizes: "32x32", type: "image/x-icon" },
-      { url: "/icon.png", sizes: "192x192", type: "image/png" },
-      { url: "/favicon.png", sizes: "94x94", type: "image/png" },
+      { url: "/favicon-96x96.png" },
     ],
     apple: [
       { url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" }
