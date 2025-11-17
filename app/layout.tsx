@@ -56,6 +56,28 @@ export default function RootLayout({
           speed={200}
           shadow="0 0 10px #6366f1,0 0 5px #6366f1"
         />
+        {/*
+          JSON-LD Organization schema helps search engines (Google) pick up the site logo
+          and organization information for rich results / knowledge panels. This won't
+          force an instant change in Google search results (indexing delay), but it's
+          a recommended step. Replace the URL values below if your production domain
+          or logo URL differ.
+        */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "Organization",
+              name: "SB Accounting",
+              url: "https://sbaccounting.us",
+              logo: "/favicon.png",
+              sameAs: [
+                "https://www.sbaccounting.us/favicon.png",
+              ],  
+            })
+          }}
+        />
         <Suspense
           fallback={<ComponentLoader height="h-16" message="Loading header..." />}
         >
