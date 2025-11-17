@@ -20,15 +20,26 @@ const ConditionalFooter = lazy(() => import("@/components/layout/ConditionalFoot
 export const metadata: Metadata = {
   title: "SB Accounting",
   description: "SB Accounting - Accounting and Outsourcing Services",
+
+  // 1. ADDED YOUR VERIFICATION
+  verification: {
+    google: "OilkVtmaBnVXLpDJzZ7wcJD5lSl7OJl6i8pjRGhkEwM",
+  },
+
+  // 2. KEPT YOUR ORIGINAL, DETAILED ICONS
   icons: {
     icon: [
-      { url: "/favicon-96x96.png" },
+      { url: "/favicon.ico", sizes: "32x32", type: "image/x-icon" },
+      { url: "/icon.png", sizes: "192x192", type: "image/png" },
+      { url: "/favicon.png", sizes: "94x94", type: "image/png" },
     ],
     apple: [
       { url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" }
     ],
     shortcut: "/favicon.ico",
   },
+
+  // 3. KEPT YOUR ORIGINAL OPEN GRAPH (FOR FACEBOOK, LINKEDIN)
   openGraph: {
     title: "SB Accounting",
     description: "SB Accounting - Accounting and Outsourcing Services",
@@ -36,7 +47,7 @@ export const metadata: Metadata = {
     siteName: "SB Accounting",
     images: [
       {
-        url: "https://www.sbaccounting.us/icon.png",
+        url: "https://www.sbaccounting.us/icon.png", // This uses the 'icon.png' you had
         width: 192,
         height: 192,
         alt: "SB Accounting Logo",
@@ -44,11 +55,13 @@ export const metadata: Metadata = {
     ],
     type: "website",
   },
+
+  // 4. KEPT YOUR ORIGINAL TWITTER
   twitter: {
     card: "summary_large_image",
     title: "SB Accounting",
     description: "SB Accounting - Accounting and Outsourcing Services",
-    images: ["https://www.sbaccounting.us/icon.png"],
+    images: ["https://www.sbaccounting.us/icon.png"], // This also uses 'icon.png'
   },
 };
 
