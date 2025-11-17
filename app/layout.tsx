@@ -22,14 +22,19 @@ export const metadata: Metadata = {
   title: "SB Accounting",
   description: "SB Accounting - Accounting and Outsourcing Services",
   icons: {
-    icon: '/favicon.ico',
-    shortcut: '/favicon.ico',
-    apple: '/favicon.ico',
+    icon: [
+      { url: "/favicon.png", sizes: "94x94", type: "image/png" }
+    ],
+    apple: [
+      { url: "/favicon.png", sizes: "94x94", type: "image/png" }
+    ],
+    shortcut: "/favicon.png",
   },
   verification: {
     google: "8_kSthNcE1HNjmB8v0lscfge92Rxo2II9oocrg3Nbd8",
   },
 };
+
 
 // === Root Layout ===
 export default function RootLayout({
