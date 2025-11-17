@@ -22,24 +22,36 @@ export const metadata: Metadata = {
   description: "SB Accounting - Accounting and Outsourcing Services",
   icons: {
     icon: [
+      { url: "/favicon.ico", sizes: "32x32", type: "image/x-icon" },
+      { url: "/icon.png", sizes: "192x192", type: "image/png" },
+      { url: "/favicon.png", sizes: "94x94", type: "image/png" },
+    ],
+    apple: [
+      { url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" }
+    ],
+    shortcut: "/favicon.ico",
+  },
+  openGraph: {
+    title: "SB Accounting",
+    description: "SB Accounting - Accounting and Outsourcing Services",
+    url: "https://www.sbaccounting.us",
+    siteName: "SB Accounting",
+    images: [
       {
-        url: "/favicon.png",
-        sizes: "32x32",
-        type: "image/png",
-      },
-      {
-        url: "/icon.png",
-        sizes: "192x192",
-        type: "image/png",
+        url: "https://www.sbaccounting.us/icon.png",
+        width: 192,
+        height: 192,
+        alt: "SB Accounting Logo",
       },
     ],
-    apple: {
-      url: "/icon.png",
-      sizes: "192x192",
-      type: "image/png",
-    },
-    shortcut: "/favicon.ico",
-  }
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "SB Accounting",
+    description: "SB Accounting - Accounting and Outsourcing Services",
+    images: ["https://www.sbaccounting.us/icon.png"],
+  },
 };
 
 
@@ -78,11 +90,13 @@ export default function RootLayout({
               "@context": "https://schema.org",
               "@type": "Organization",
               name: "SB Accounting",
-              url: "https://sbaccounting.us",
-              logo: "/favicon.png",
+              url: "https://www.sbaccounting.us",
+              // Use absolute URL to the site icon (Google requires absolute URLs here)
+              logo: "https://www.sbaccounting.us/icon.png",
               sameAs: [
-                "https://www.sbaccounting.us/favicon.png",
-              ],  
+                "https://www.facebook.com/SBGlobalAccounting/",
+                "https://www.linkedin.com/company/SB Accounting/"
+              ],
             })
           }}
         />

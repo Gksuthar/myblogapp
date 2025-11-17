@@ -128,7 +128,7 @@ export default function Header() {
         <div className="flex items-center space-x-3">
           <Link href="/" className="flex items-center gap-3">
             <Image
-              src="/favicon.png"
+              src="/icon.png"
               alt="Company logo"
               width={225}
               height={60}
