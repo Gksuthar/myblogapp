@@ -75,6 +75,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <link rel="icon" href="/favicon.ico" />
+      </head>
       <body
         // 3. Apply the font's CSS variable class to the body
         className={`${lexend.variable} antialiased font-lexend`}
