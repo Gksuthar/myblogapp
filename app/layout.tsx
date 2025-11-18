@@ -29,9 +29,9 @@ export const metadata: Metadata = {
   // 2. KEPT YOUR ORIGINAL, DETAILED ICONS
   icons: {
     icon: [
-      { url: "/favicon.ico", sizes: "32x32", type: "image/x-icon" },
-      { url: "/icon.png", sizes: "192x192", type: "image/png" },
-      { url: "/favicon.png", sizes: "94x94", type: "image/png" },
+      { url: "/favicon.ico", sizes: "32x32"},
+      { url: "/favicon.ico", sizes: "32x32" },
+      { url: "/favicon.ico", sizes: "32x32" },
     ],
     apple: [
       { url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" }
