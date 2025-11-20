@@ -1,6 +1,6 @@
-import { redirect } from "next/navigation";
+import Home from "./home/page";
 
-// Server-side redirect from '/' to '/home' to ensure a stable landing route on Vercel
+// Render the Home page at the root '/' so the site serves the homepage directly.
 export default function Page() {
-  redirect("/home");
+  return <Home />;
 }
