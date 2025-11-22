@@ -1,45 +1,49 @@
 import type { Metadata } from "next";
-// 1. Import the Lexend font
 import { Lexend } from "next/font/google";
 import "./globals.css";
 import { Suspense, lazy } from "react";
 import ComponentLoader from "@/components/ComponentLoader";
 import NextTopLoader from "nextjs-toploader";
 
-// 2. Define the Lexend font instance
+// Font
 const lexend = Lexend({
   subsets: ["latin"],
   display: "swap",
-  variable: "--font-lexend", // Define a CSS variable for Tailwind configuration
+  variable: "--font-lexend",
 });
 
-// Lazy load layout components
-const ConditionalHeader = lazy(() => import("@/components/layout/ConditionalHeader"));
-const ConditionalFooter = lazy(() => import("@/components/layout/ConditionalFooter"));
+// Lazy imports
+const ConditionalHeader = lazy(() =>
+  import("@/components/layout/ConditionalHeader")
+);
+const ConditionalFooter = lazy(() =>
+  import("@/components/layout/ConditionalFooter")
+);
 
 export const metadata: Metadata = {
   title: "SB Accounting",
   description: "SB Accounting - Accounting and Outsourcing Services",
 
-  // 1. ADDED YOUR VERIFICATION
   verification: {
     google: "OilkVtmaBnVXLpDJzZ7wcJD5lSl7OJl6i8pjRGhkEwM",
   },
 
-  // 2. KEPT YOUR ORIGINAL, DETAILED ICONS
   icons: {
     icon: [
-      { url: "/favicon.ico", sizes: "32x32"},
       { url: "/favicon.ico", sizes: "32x32" },
-      { url: "/favicon.ico", sizes: "32x32" },
+      { url: "/favicon.ico", sizes: "48x48" },
+      { url: "/favicon.ico", sizes: "64x64" },
     ],
     apple: [
-      { url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" }
+      {
+        url: "/apple-touch-icon.png",
+        sizes: "180x180",
+        type: "image/png",
+      },
     ],
     shortcut: "/favicon.ico",
   },
 
-  // 3. KEPT YOUR ORIGINAL OPEN GRAPH (FOR FACEBOOK, LINKEDIN)
   openGraph: {
     title: "SB Accounting",
     description: "SB Accounting - Accounting and Outsourcing Services",
@@ -47,39 +51,35 @@ export const metadata: Metadata = {
     siteName: "SB Accounting",
     images: [
       {
-        url: "https://www.sbaccounting.us/icon.png", // This uses the 'icon.png' you had
-        width: 192,
-        height: 192,
+        url: "https://www.sbaccounting.us/logo.png", // MAIN LOGO FIXED
+        width: 512,
+        height: 512,
         alt: "SB Accounting Logo",
       },
     ],
     type: "website",
   },
 
-  // 4. KEPT YOUR ORIGINAL TWITTER
   twitter: {
     card: "summary_large_image",
     title: "SB Accounting",
     description: "SB Accounting - Accounting and Outsourcing Services",
-    images: ["https://www.sbaccounting.us/icon.png"], // This also uses 'icon.png'
+    images: ["https://www.sbaccounting.us/logo.png"], // FIXED
   },
 };
 
-
-
-// === Root Layout ===
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
         <link rel="icon" href="/favicon.ico" />
       </head>
+
       <body
-        // 3. Apply the font's CSS variable class to the body
         className={`${lexend.variable} antialiased font-lexend`}
         suppressHydrationWarning
       >
@@ -90,13 +90,8 @@ export default function RootLayout({
           speed={200}
           shadow="0 0 10px #6366f1,0 0 5px #6366f1"
         />
-        {/*
-          JSON-LD Organization schema helps search engines (Google) pick up the site logo
-          and organization information for rich results / knowledge panels. This won't
-          force an instant change in Google search results (indexing delay), but it's
-          a recommended step. Replace the URL values below if your production domain
-          or logo URL differ.
-        */}
+
+        {/* === ORGANIZATION LOGO SCHEMA FOR GOOGLE === */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -105,15 +100,18 @@ export default function RootLayout({
               "@type": "Organization",
               name: "SB Accounting",
               url: "https://www.sbaccounting.us",
-              // Use absolute URL to the site icon (Google requires absolute URLs here)
-              logo: "https://www.sbaccounting.us/icon.png",
+
+              // MUST be a clean PNG (Google SERP Logo)
+              logo: "https://www.sbaccounting.us/logo.png",
+
               sameAs: [
                 "https://www.facebook.com/SBGlobalAccounting/",
-                "https://www.linkedin.com/company/SB Accounting/"
+                "https://www.linkedin.com/company/sb-accounting/",
               ],
-            })
+            }),
           }}
         />
+
         <Suspense
           fallback={<ComponentLoader height="h-16" message="Loading header..." />}
         >
