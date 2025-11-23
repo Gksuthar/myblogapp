@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState, type MouseEvent } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { FaBars, FaTimes, FaFileInvoiceDollar, FaChartLine, FaBook, FaCalculator, FaTools } from "react-icons/fa";
 import { MdExpandMore } from "react-icons/md";
 import axios from "axios";
@@ -34,7 +33,7 @@ export default function Header() {
   const toggleServicesMenu = () => setServicesOpen((prev: boolean) => !prev);
   const closeTimer = useRef<NodeJS.Timeout | null>(null);
 
-  
+
 
   // Fetch categories
   useEffect(() => {
@@ -127,13 +126,14 @@ export default function Header() {
         {/* Logo and Site Name */}
         <div className="flex items-center space-x-3">
           <Link href="/" className="flex items-center gap-3">
-            <Image
+            <img
               src="/icon.png"
-              alt="Company logo"
-              width={225}
-              height={60}
+              alt="SB Accounting Logo"
               className="h-10 md:h-12 w-auto object-contain"
-              priority
+              onError={(e) => {
+                console.error('Logo failed to load');
+                e.currentTarget.style.display = 'none';
+              }}
             />
             {/* Site name - visible on small and larger screens */}
             {/* <span className="hidden sm:inline-block text-lg md:text-xl font-extrabold text-gray-800">SB Accounting</span> */}
@@ -210,8 +210,8 @@ export default function Header() {
                             key={category._id}
                             onClick={() => setActiveTab(category._id)}
                             className={`w-full text-left py-3 px-4 rounded-lg text-sm font-medium transition-all duration-200 mb-2 ${activeTab === category._id
-                                ? "bg-[color-mix(in_srgb,var(--primary-color)_16%,white)] text-[var(--primary-color)] shadow-sm"
-                                : "text-gray-700 hover:bg-gray-100"
+                              ? "bg-[color-mix(in_srgb,var(--primary-color)_16%,white)] text-[var(--primary-color)] shadow-sm"
+                              : "text-gray-700 hover:bg-gray-100"
                               }`}
                           >
                             {category.name}

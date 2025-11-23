@@ -30,9 +30,8 @@ export const metadata: Metadata = {
 
   icons: {
     icon: [
+      { url: "/icon.png", sizes: "any" },
       { url: "/favicon.ico", sizes: "32x32" },
-      { url: "/favicon.ico", sizes: "48x48" },
-      { url: "/favicon.ico", sizes: "64x64" },
     ],
     apple: [
       {
@@ -41,7 +40,7 @@ export const metadata: Metadata = {
         type: "image/png",
       },
     ],
-    shortcut: "/favicon.ico",
+    shortcut: "/icon.png",
   },
 
   openGraph: {
@@ -51,9 +50,9 @@ export const metadata: Metadata = {
     siteName: "SB Accounting",
     images: [
       {
-        url: "https://www.sbaccounting.us/logo.png", // MAIN LOGO FIXED
-        width: 512,
-        height: 512,
+        url: "https://www.sbaccounting.us/icon.png",
+        width: 800,
+        height: 800,
         alt: "SB Accounting Logo",
       },
     ],
@@ -64,7 +63,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "SB Accounting",
     description: "SB Accounting - Accounting and Outsourcing Services",
-    images: ["https://www.sbaccounting.us/logo.png"], // FIXED
+    images: ["https://www.sbaccounting.us/icon.png"],
   },
 };
 
@@ -76,7 +75,9 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        <link rel="icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" href="/icon.png" />
+        <link rel="shortcut icon" href="/icon.png" />
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
       </head>
 
       <body
@@ -102,7 +103,7 @@ export default function RootLayout({
               url: "https://www.sbaccounting.us",
 
               // MUST be a clean PNG (Google SERP Logo)
-              logo: "https://www.sbaccounting.us/logo.png",
+              logo: "https://www.sbaccounting.us/icon.png",
 
               sameAs: [
                 "https://www.facebook.com/SBGlobalAccounting/",
