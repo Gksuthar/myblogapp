@@ -1,22 +1,64 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+
+// Keep the static lists at module-level so they are stable across renders
+const VIDEO_URLS = [
+  "/abrahamkobi.mp4",
+  "/agro-endorsement-2.mp4",
+  "/carlie-testimonial.mp4",
+  "/restaurant.mp4",
+];
+
+const VIDEO_TITLES = [
+  "Abraham Kobi - Owner of KB Encore LLC",
+  "Basil Agrocostea - Owner of Agroaccounting",
+  "Carlie Amore - Owner of Amore Dentistry",
+  "Alex - Small Restaurant Owner",
+];
 
 const JoinTeamSection: React.FC = () => {
-  const videoUrls = [
-    "/abrahamkobi.mp4",
-    "/agro-endorsement-2.mp4",
-    "/carlie-testimonial.mp4",
-    "/restaurant.mp4", 
-  ];
 
-  const videoTitles = [
-    "Abraham Kobi - Owner of KB Encore LLC",
-    "Basil Agrocostea - Owner of Agroaccounting",
-    "Carlie Amore - Owner of Amore Dentistry",
-    "Alex - Small Restaurant Owner"
-  ];
+  // We'll detect which video files actually exist on the server to avoid
+  // rendering broken <video> tags for missing assets (the fourth file was
+  // missing in the repo and caused the card to be blank/grey).
+  const [availableVideos, setAvailableVideos] = useState(
+    VIDEO_URLS.map((src, i) => ({ src, title: VIDEO_TITLES[i], available: true }))
+  );
 
   const [selectedVideo, setSelectedVideo] = useState<string | null>(null);
+
+  useEffect(() => {
+    let mounted = true;
+
+    // Check each video URL with a HEAD request (fast) to confirm it exists.
+    // If a video is missing (404), mark it unavailable so we can render
+    // a friendly placeholder instead of a broken player.
+    (async () => {
+      const checks = await Promise.all(
+        VIDEO_URLS.map(async (src, idx) => {
+          try {
+            const res = await fetch(src, { method: "HEAD" });
+            return { src, idx, ok: res.ok };
+          } catch {
+            return { src, idx, ok: false };
+          }
+        })
+      );
+
+      if (!mounted) return;
+
+      setAvailableVideos((prev) =>
+        prev.map((p) => {
+          const check = checks.find((c) => c.src === p.src);
+          return check ? { ...p, available: check.ok } : p;
+        })
+      );
+    })();
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
 
   const openModal = (videoSrc: string) => {
     setSelectedVideo(videoSrc);
@@ -58,36 +100,44 @@ const JoinTeamSection: React.FC = () => {
 
           {/* Video Gallery - 4 videos in row on desktop, responsive on mobile */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 max-w-7xl mx-auto">
-            {videoUrls.map((src, idx) => (
+            {availableVideos.map((item, idx) => (
               <div
                 key={idx}
                 className="animate-fadeInUp"
                 style={{ animationDelay: `${idx * 0.15}s` }}
               >
                 <div
-                  onClick={() => openModal(src)}
+                  onClick={() => item.available && openModal(item.src)}
                   onMouseEnter={(e) => {
-                    const video = e.currentTarget.querySelector('video');
-                    if (video) video.play();
+                    const video = e.currentTarget.querySelector("video");
+                    if (video && item.available) video.play();
                   }}
                   onMouseLeave={(e) => {
-                    const video = e.currentTarget.querySelector('video');
+                    const video = e.currentTarget.querySelector("video");
                     if (video) {
                       video.pause();
                       video.currentTime = 0;
                     }
                   }}
-                  className="relative overflow-hidden rounded-lg shadow-xl hover:shadow-2xl transition-all duration-300 group cursor-pointer"
+                  className={`relative overflow-hidden rounded-lg shadow-xl transition-all duration-300 group ${
+                    item.available ? "hover:shadow-2xl cursor-pointer" : "opacity-70"
+                  }`}
                   style={{ width: "100%", height: "320px" }}
                 >
-                  {/* Thumbnail Video (muted, no controls) */}
-                  <video
-                    src={src}
-                    loop
-                    muted
-                    playsInline
-                    className="object-cover w-full h-full rounded-lg transform transition-transform duration-500 ease-in-out group-hover:scale-105"
-                  />
+                  {/* Thumbnail Video (muted, no controls) or placeholder when missing */}
+                  {item.available ? (
+                    <video
+                      src={item.src}
+                      loop
+                      muted
+                      playsInline
+                      className="object-cover w-full h-full rounded-lg transform transition-transform duration-500 ease-in-out group-hover:scale-105"
+                    />
+                  ) : (
+                    <div className="w-full h-full bg-gray-300 flex items-center justify-center rounded-lg">
+                      <div className="text-sm text-gray-700">Video unavailable</div>
+                    </div>
+                  )}
 
                   {/* Blue Border Animation on Hover */}
                   <div className="absolute inset-0 rounded-lg border-4 border-transparent group-hover:border-[var(--primary-color)] transition-all duration-300"></div>
@@ -114,7 +164,7 @@ const JoinTeamSection: React.FC = () => {
                 
                 {/* Video Title Below */}
                 <p className="mt-4 text-center text-gray-700 font-medium text-sm leading-snug">
-                  {videoTitles[idx]}
+                  {item.title}
                 </p>
               </div>
             ))}
