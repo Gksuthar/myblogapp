@@ -22,35 +22,32 @@ const ConditionalFooter = lazy(() =>
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://www.sbaccounting.us"),
-  title: {
-    default: "SB Accounting - Professional Accounting & Bookkeeping Services",
-    template: "%s | SB Accounting",
-  },
-  description:
-    "SB Accounting provides seamless outsourcing solutions for accounting firms, enabling them to scale operations, reduce workload, and deliver accurate reports.",
+  title: "SB Accounting | Professional Accounting & Outsourcing Services",
+  description: "SB Accounting offers expert accounting, bookkeeping, tax filing, financial reporting, and fractional CFO services to help your business grow.",
   keywords: [
-    "accounting",
-    "bookkeeping",
-    "tax filing",
-    "CFO services",
-    "financial reporting",
-    "outsourced accounting",
-    "accounting services",
-    "professional bookkeeping",
+    "Accounting",
+    "Bookkeeping",
+    "Tax Services",
+    "Outsourcing",
+    "Financial Reporting",
+    "CFO Services",
+    "SB Accounting",
+    "US Accounting",
   ],
-  authors: [{ name: "SB Accounting", url: "https://www.sbaccounting.us" }],
-  creator: "SB Accounting",
-  publisher: "SB Accounting",
-
+  authors: [{ name: "SB Accounting" }],
+  robots: "index, follow",
+  alternates: {
+    canonical: "https://www.sbaccounting.us",
+  },
   verification: {
     google: "OilkVtmaBnVXLpDJzZ7wcJD5lSl7OJl6i8pjRGhkEwM",
   },
 
   icons: {
     icon: [
-      { url: "/favicon.ico", sizes: "32x32", type: "image/x-icon" },
-      { url: "/icon.png", sizes: "192x192", type: "image/png" },
-      { url: "/favicon.png", sizes: "94x94", type: "image/png" },
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/logo-main.png", type: "image/png" },
+      { url: "/favicon.svg", type: "image/svg+xml" },
     ],
     apple: [
       {
@@ -59,52 +56,32 @@ export const metadata: Metadata = {
         type: "image/png",
       },
     ],
-    shortcut: [{ url: "/favicon.ico" }],
+    shortcut: "/favicon.ico",
   },
+  manifest: "/manifest.json",
 
   openGraph: {
-    type: "website",
-    locale: "en_US",
+    title: "SB Accounting | Professional Accounting & Outsourcing Services",
+    description: "SB Accounting offers expert accounting, bookkeeping, tax filing, financial reporting, and fractional CFO services to help your business grow.",
     url: "https://www.sbaccounting.us",
     siteName: "SB Accounting",
-    title: "SB Accounting - Professional Accounting & Bookkeeping Services",
-    description:
-      "Professional outsourced accounting and bookkeeping services for accounting firms",
     images: [
       {
-        url: "https://www.sbaccounting.us/icon.png",
-        width: 1200,
-        height: 1200,
+        url: "https://www.sbaccounting.us/logo-main.png",
+        width: 800,
+        height: 800,
         alt: "SB Accounting Logo",
-        type: "image/png",
       },
     ],
+    type: "website",
+    locale: "en_US",
   },
 
   twitter: {
     card: "summary_large_image",
-    site: "@sbaccounting",
-    creator: "@sbaccounting",
-    title: "SB Accounting - Professional Accounting Services",
-    description:
-      "Professional outsourced accounting and bookkeeping services",
-    images: ["https://www.sbaccounting.us/icon.png"],
-  },
-
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: {
-      index: true,
-      follow: true,
-      "max-video-preview": -1,
-      "max-image-preview": "large",
-      "max-snippet": -1,
-    },
-  },
-
-  alternates: {
-    canonical: "https://www.sbaccounting.us",
+    title: "SB Accounting | Professional Accounting & Outsourcing Services",
+    description: "SB Accounting offers expert accounting, bookkeeping, tax filing, financial reporting, and fractional CFO services to help your business grow.",
+    images: ["https://www.sbaccounting.us/logo-main.png"],
   },
 };
 
@@ -115,14 +92,6 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <head>
-        <link rel="icon" type="image/x-icon" href="/favicon.ico" />
-        <link rel="icon" type="image/png" sizes="192x192" href="/icon.png" />
-        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-        <link rel="manifest" href="/manifest.json" />
-        <meta name="theme-color" content="#4F46E5" />
-      </head>
-
       <body
         className={`${lexend.variable} antialiased font-lexend`}
         suppressHydrationWarning
@@ -143,58 +112,24 @@ export default function RootLayout({
               "@context": "https://schema.org",
               "@type": "Organization",
               name: "SB Accounting",
-              alternateName: "SB Accounting & Consulting",
-              legalName: "SB Accounting",
               url: "https://www.sbaccounting.us",
-              
-              // CRITICAL: Logo for Google Search Knowledge Panel
-              // Requirements: 112x112px minimum, square aspect ratio, PNG/JPG/SVG
+
+              // MUST be a clean PNG (Google SERP Logo)
               logo: {
                 "@type": "ImageObject",
-                url: "https://www.sbaccounting.us/icon.png",
-                width: 512,
-                height: 512,
-                contentUrl: "https://www.sbaccounting.us/icon.png",
+                "url": "https://www.sbaccounting.us/logo-main.png",
+                "width": 512,
+                "height": 512
               },
-              
-              // Additional image for rich results
-              image: "https://www.sbaccounting.us/icon.png",
-              
-              description:
-                "SB Accounting provides seamless outsourcing solutions for accounting firms, enabling them to scale operations, reduce workload, and deliver accurate reports.",
-              
-              // Contact information helps Google understand legitimacy
-              contactPoint: {
-                "@type": "ContactPoint",
-                contactType: "Customer Service",
-                availableLanguage: ["English"],
-              },
-              
-              // Social media profiles (verified accounts boost trust)
+
               sameAs: [
                 "https://www.facebook.com/SBGlobalAccounting/",
                 "https://www.linkedin.com/company/sb-accounting/",
               ],
-            }),
-          }}
-        />
-
-        {/* === WEBSITE SCHEMA === */}
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "WebSite",
-              name: "SB Accounting",
-              url: "https://www.sbaccounting.us",
-              potentialAction: {
-                "@type": "SearchAction",
-                target: {
-                  "@type": "EntryPoint",
-                  urlTemplate: "https://www.sbaccounting.us/search?q={search_term_string}",
-                },
-                "query-input": "required name=search_term_string",
+              contactPoint: {
+                "@type": "ContactPoint",
+                telephone: "+1-555-555-5555", // Replace with actual number if available
+                contactType: "customer service",
               },
             }),
           }}

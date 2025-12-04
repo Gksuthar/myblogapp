@@ -127,7 +127,7 @@ export default function Header() {
         <div className="flex items-center space-x-3">
           <Link href="/" className="flex items-center gap-3">
             <img
-              src="/icon.png"
+              src="/logo-main.png"
               alt="SB Accounting Logo"
               className="h-10 md:h-12 w-auto object-contain"
               onError={(e) => {
