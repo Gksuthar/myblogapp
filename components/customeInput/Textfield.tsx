@@ -29,7 +29,7 @@ interface Props {
   tabIndex?: number;
   step?: number;
   autoFocus?: boolean;
-  onInput?: ChangeEventHandler<HTMLInputElement>;
+  onInput?: React.FormEventHandler<HTMLInputElement>;
   suffix?: React.ReactNode;
   onFocus?: FocusEventHandler<HTMLInputElement>;
   inputGroupLeft?: React.ReactNode;
