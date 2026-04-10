@@ -7,23 +7,10 @@ import { Formik, Form, Field, ErrorMessage, useFormikContext, FormikHelpers } fr
 import * as yup from 'yup';
 import ComponentLoader from '@/components/ComponentLoader';
 import { MdEmail } from 'react-icons/md';
-export const contactSchema = yup.object({
-  name: yup.string().trim().required('Name is required.'),
-  email: yup.string().trim().email('Invalid email address.').required('Email is required.'),
-  phone: yup
-    .string()
-    .trim()
-    .matches(/^[0-9\s-()+\.]{7,15}$/, 'Invalid phone number.')
-    .required('Phone Number is required.'),
-  message: yup
-    .string()
-    .trim()
-    .min(10, 'Message must be at least 10 characters.')
-    .required('Message is required.'),
-}).required();
+import { contactSchema } from './contactSchema';
 
 // Infer the TypeScript type from the Yup schema for strong typing
-export type ContactFormData = yup.InferType<typeof contactSchema>;
+type ContactFormData = yup.InferType<typeof contactSchema>;
 
 // --- Trusted Companies fetched from API ---
 type TrustedCompany = { _id: string; name: string; image: string };
@@ -62,7 +49,7 @@ const CustomField: React.FC<CustomFieldProps> = ({ label, name, type = 'text', p
 };
 
 // Main Contact Form Component using Formik
-const ContactForm: React.FC = () => {
+export default function ContactForm() {
   const [companies, setCompanies] = useState<TrustedCompany[]>([]);
   const [loadingCompanies, setLoadingCompanies] = useState<boolean>(true);
 
@@ -344,6 +331,4 @@ You can always visit us at our HQ, we have a friendly staff and a mean cup of co
       </div>
     </Suspense>
   );
-};
-
-export default ContactForm;
+}
