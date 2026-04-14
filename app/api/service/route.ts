@@ -1,4 +1,5 @@
 import { connectDB } from '@/lib/mongodb';
+import { parseMultipartFormData } from '@/lib/multipart';
 import { NextResponse } from 'next/server';
 import { ServiceModel } from '../model/service';
 import { Types } from 'mongoose';
@@ -46,7 +47,9 @@ export async function GET(req: Request) {
 export async function POST(req: Request) {
   try {
     await connectDB();
-    const formData = await req.formData();
+    const parsed = await parseMultipartFormData(req);
+    if (!parsed.ok) return parsed.response;
+    const formData = parsed.formData;
 
     const categoryId = formData.get('categoryId') as string;
     const heroTitle = formData.get('heroTitle') as string;
@@ -144,7 +147,9 @@ export async function PUT(req: Request) {
 export async function PATCH(req: Request) {
   try {
     await connectDB();
-    const formData = await req.formData();
+    const parsed = await parseMultipartFormData(req);
+    if (!parsed.ok) return parsed.response;
+    const formData = parsed.formData;
 
     const id = formData.get('id') as string;
     if (!id || !Types.ObjectId.isValid(id))

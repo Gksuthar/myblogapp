@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/mongodb";
+import { parseMultipartFormData } from "@/lib/multipart";
 import { Tructed } from "../model/trusted";
 import { writeFile } from "fs/promises";
 import path from "path";
@@ -22,7 +23,9 @@ export async function POST(req: Request) {
   await connectDB();
 
   try {
-    const formData = await req.formData();
+    const parsed = await parseMultipartFormData(req);
+    if (!parsed.ok) return parsed.response;
+    const formData = parsed.formData;
     const name = formData.get("name") as string;
     const imageFile = formData.get("image") as File | null;
 
@@ -68,7 +71,9 @@ export async function PATCH(req: Request) {
   await connectDB();
 
   try {
-    const formData = await req.formData();
+    const parsed = await parseMultipartFormData(req);
+    if (!parsed.ok) return parsed.response;
+    const formData = parsed.formData;
     const id = formData.get("id") as string;
     const name = formData.get("name") as string;
     const imageFile = formData.get("image") as File | null;

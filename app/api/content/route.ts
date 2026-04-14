@@ -1,4 +1,5 @@
 import { connectDB } from "@/lib/mongodb";
+import { parseMultipartFormData } from "@/lib/multipart";
 import { NextResponse } from "next/server";
 import { Content } from "../model/content";
 import path from "path";
@@ -19,7 +20,9 @@ export async function GET() {
 export async function POST(req: Request) {
   await connectDB();
   try {
-    const formData = await req.formData();
+    const parsed = await parseMultipartFormData(req);
+    if (!parsed.ok) return parsed.response;
+    const formData = parsed.formData;
     const title = formData.get("title") as string;
     const disc = formData.get("disc") as string;
     const imageFile = formData.get("image") as File | null;
@@ -51,7 +54,9 @@ export async function POST(req: Request) {
 export async function PUT(req: Request) {
   await connectDB();
   try {
-    const formData = await req.formData();
+    const parsed = await parseMultipartFormData(req);
+    if (!parsed.ok) return parsed.response;
+    const formData = parsed.formData;
     const id = formData.get("id") as string;
     const title = formData.get("title") as string;
     const disc = formData.get("disc") as string;

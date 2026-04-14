@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/mongodb";
+import { parseMultipartFormData } from "@/lib/multipart";
 import { IndustryCard } from "../model/IndustryCard";
 import { Types } from "mongoose";
 import { writeFile } from "fs/promises";
@@ -37,7 +38,9 @@ export async function GET() {
 export async function POST(req: Request) {
   await connectDB();
   try {
-    const formData = await req.formData();
+    const parsed = await parseMultipartFormData(req);
+    if (!parsed.ok) return parsed.response;
+    const formData = parsed.formData;
 
     const title = formData.get("title")?.toString() || "";
     const description = formData.get("description")?.toString() || "";
@@ -82,7 +85,9 @@ export async function POST(req: Request) {
 export async function PUT(req: Request) {
   await connectDB();
   try {
-    const formData = await req.formData();
+    const parsed = await parseMultipartFormData(req);
+    if (!parsed.ok) return parsed.response;
+    const formData = parsed.formData;
 
     const id = formData.get('id')?.toString() || '';
     const title = formData.get('title')?.toString() || '';

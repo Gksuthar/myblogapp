@@ -1,23 +1,48 @@
 import mongoose from "mongoose";
 
-let isConnected = false;
+const MONGODB_URI = process.env.MONGODB_URI;
+
+if (!MONGODB_URI) {
+  throw new Error("Please define MONGODB_URI as an environment variable");
+}
+
+type MongooseCache = {
+  conn: typeof mongoose | null;
+  promise: Promise<typeof mongoose> | null;
+};
+
+const globalForMongoose = globalThis as typeof globalThis & {
+  mongooseCache?: MongooseCache;
+};
+
+const cache = globalForMongoose.mongooseCache ?? {
+  conn: null,
+  promise: null,
+};
+
+globalForMongoose.mongooseCache = cache;
 
 export async function connectDB() {
-  const MONGODB_URI = process.env.MONGODB_URI;
-  if (!MONGODB_URI) {
-    throw new Error("❌ Please define MONGODB_URI as an environment variable");
-  }
-  if (isConnected) {
-    console.log("✅ MongoDB already connected");
-    return;
+  if (cache.conn && mongoose.connection.readyState === 1) {
+    return cache.conn;
   }
 
-  try {
-    const db = await mongoose.connect(MONGODB_URI);
-    isConnected = true;
-    console.log("✅ MongoDB connected successfully");
-    console.log("📦 Database Name:", db.connection.name);
-  } catch (error) {
-    console.error("❌ MongoDB connection error:", error);
+  if (!cache.promise) {
+    cache.promise = mongoose
+      .connect(MONGODB_URI, {
+        serverSelectionTimeoutMS: 10000,
+        socketTimeoutMS: 45000,
+        maxPoolSize: 20,
+        minPoolSize: 2,
+        bufferCommands: false,
+      })
+      .then((mongooseInstance) => mongooseInstance)
+      .catch((error) => {
+        cache.promise = null;
+        throw error;
+      });
   }
+
+  cache.conn = await cache.promise;
+  return cache.conn;
 }

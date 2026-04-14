@@ -1,4 +1,5 @@
 import { connectDB } from "@/lib/mongodb";
+import { parseMultipartFormData } from "@/lib/multipart";
 import { BlogHero } from "../model/hero"; // Make sure this path is correct
 import { NextResponse } from "next/server";
 import path from "path";
@@ -26,7 +27,9 @@ export async function POST(req: Request) {
   await connectDB();
 
   try {
-    const formData = await req.formData();
+    const parsed = await parseMultipartFormData(req);
+    if (!parsed.ok) return parsed.response;
+    const formData = parsed.formData;
     const title = formData.get("title") as string;
     const disc = formData.get("disc") as string;
     const buttonText = (formData.get("buttonText") as string) || "";
@@ -79,7 +82,9 @@ export async function POST(req: Request) {
 export async function PUT(req: Request) {
   await connectDB();
   try {
-    const formData = await req.formData();
+    const parsed = await parseMultipartFormData(req);
+    if (!parsed.ok) return parsed.response;
+    const formData = parsed.formData;
     const id = formData.get("id") as string;
     const title = formData.get("title") as string;
     const disc = formData.get("disc") as string;

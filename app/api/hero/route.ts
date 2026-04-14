@@ -1,4 +1,5 @@
 import { connectDB } from "@/lib/mongodb";
+import { parseMultipartFormData } from "@/lib/multipart";
 import { Hero } from "../model/hero";
 import { NextResponse } from "next/server";
 import { writeFile, mkdir } from "fs/promises"; // <-- Import async methods
@@ -21,7 +22,9 @@ export async function GET() {
 export async function POST(req: Request) {
   try {
     await connectDB();
-    const formData = await req.formData();
+    const parsed = await parseMultipartFormData(req);
+    if (!parsed.ok) return parsed.response;
+    const formData = parsed.formData;
     const title = formData.get("title") as string;
     const disc = formData.get("disc") as string;
     const buttonText = formData.get("buttonText") as string;
@@ -56,7 +59,9 @@ export async function POST(req: Request) {
 export async function PATCH(req: Request) {
   try {
     await connectDB();
-    const formData = await req.formData();
+    const parsed = await parseMultipartFormData(req);
+    if (!parsed.ok) return parsed.response;
+    const formData = parsed.formData;
     const id = formData.get("id") as string;
     const title = formData.get("title") as string;
     const disc = formData.get("disc") as string;

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { connectDB } from '@/lib/mongodb';
+import { parseMultipartFormData } from '@/lib/multipart';
 import About from '@/app/api/model/about'; // ✅ make sure this path matches your folder
 import path from 'path';
 import { promises as fs } from 'fs'; // Use async file system
@@ -57,8 +58,10 @@ export async function GET() {
 async function handlePostOrPut(request: NextRequest) {
   try {
     await connectDB();
-    
-    const formData = await request.formData();
+
+    const parsed = await parseMultipartFormData(request);
+    if (!parsed.ok) return parsed.response;
+    const formData = parsed.formData;
     
     // 1. Get all simple text fields
     const dataToUpdate: any = {

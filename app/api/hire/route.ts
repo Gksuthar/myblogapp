@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/mongodb";
+import { parseMultipartFormData } from "@/lib/multipart";
 import hireschema from "../model/hire";
 import { writeFile, mkdir } from "fs/promises";
 import path from "path";
@@ -20,7 +21,9 @@ export async function GET() {
 export async function POST(req: Request) {
   await connectDB();
   try {
-    const formData = await req.formData();
+    const parsed = await parseMultipartFormData(req);
+    if (!parsed.ok) return parsed.response;
+    const formData = parsed.formData;
 
     const title = formData.get("title") as string;
     const disc = formData.get("disc") as string;
@@ -65,7 +68,9 @@ export async function POST(req: Request) {
 export async function PATCH(req: Request) {
   await connectDB();
   try {
-    const formData = await req.formData();
+    const parsed = await parseMultipartFormData(req);
+    if (!parsed.ok) return parsed.response;
+    const formData = parsed.formData;
 
     const id = formData.get("id") as string;
     const title = formData.get("title") as string;

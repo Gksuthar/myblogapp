@@ -1,4 +1,5 @@
 import { connectDB } from "@/lib/mongodb";
+import { parseMultipartFormData } from "@/lib/multipart";
 import Blog from "../model/blog";
 import { NextResponse } from "next/server";
 import { writeFile, mkdir } from "fs/promises";
@@ -35,7 +36,9 @@ export async function POST(req: Request) {
   await connectDB();
 
   try {
-    const formData: any = await req.formData();
+    const parsed = await parseMultipartFormData(req);
+    if (!parsed.ok) return parsed.response;
+    const formData: any = parsed.formData;
 
     // 🧾 Get fields
     const title = formData.get("title");
@@ -109,7 +112,9 @@ export async function PUT(req: Request) {
   await connectDB();
 
   try {
-    const formData: any = await req.formData();
+    const parsed = await parseMultipartFormData(req);
+    if (!parsed.ok) return parsed.response;
+    const formData: any = parsed.formData;
 
     const id = formData.get("id");
     const title = formData.get("title");

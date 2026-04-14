@@ -1,4 +1,5 @@
 import { connectDB } from "@/lib/mongodb";
+import { parseMultipartFormData } from "@/lib/multipart";
 import { NextResponse } from "next/server";
 import { caseStudyschema } from "@/app/api/model/casestudy";
 import path from 'path';
@@ -114,7 +115,9 @@ export async function POST(req: Request) {
 
   try {
     // 1. Read FormData
-    const formData = await req.formData();
+    const parsed = await parseMultipartFormData(req);
+    if (!parsed.ok) return parsed.response;
+    const formData = parsed.formData;
 
     // 2. Get text fields
     const title = formData.get("title") as string;
@@ -199,7 +202,9 @@ export async function PATCH(req: Request) {
     };
 
     // 1. Read FormData
-    const formData = await req.formData();
+    const parsed = await parseMultipartFormData(req);
+    if (!parsed.ok) return parsed.response;
+    const formData = parsed.formData;
 
     // 2. Get fields
     const id = formData.get("id") as string;

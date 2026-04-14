@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { connectDB } from '@/lib/mongodb';
+import { parseMultipartFormData } from '@/lib/multipart';
 import { TeamCategory } from '../model/teamCategory';
 import fs from 'fs/promises';
 import path from 'path';
@@ -11,66 +12,82 @@ export async function GET() {
 }
 
 export async function POST(req: Request) {
-  await connectDB();
-  const formData = await req.formData();
-  const tabName = formData.get('tabName') as string;
-  const cards = JSON.parse(formData.get('cards') as string);
-  const images = formData.getAll('images') as File[];
+  try {
+    await connectDB();
+    const parsed = await parseMultipartFormData(req);
+    if (!parsed.ok) return parsed.response;
 
-  const uploadDir = path.join(process.cwd(), 'public/uploads');
-  await fs.mkdir(uploadDir, { recursive: true });
+    const formData = parsed.formData;
+    const tabName = formData.get('tabName') as string;
+    const cards = JSON.parse(formData.get('cards') as string);
+    const images = formData.getAll('images') as File[];
 
-  const updatedCards = await Promise.all(
-    cards.map(async (card: any, i: number) => {
-      const imageFile = images[i];
-      let imagePath = card.image;
-      if (imageFile && imageFile.name) {
-        const buffer = Buffer.from(await imageFile.arrayBuffer());
-        const fileName = `${Date.now()}-${imageFile.name}`;
-        await fs.writeFile(path.join(uploadDir, fileName), buffer);
-        imagePath = `/uploads/${fileName}`;
-      }
-      return { ...card, image: imagePath };
-    })
-  );
+    const uploadDir = path.join(process.cwd(), 'public/uploads');
+    await fs.mkdir(uploadDir, { recursive: true });
 
-  const newCategory = new TeamCategory({ tabName, cards: updatedCards });
-  await newCategory.save();
-  return NextResponse.json({ success: true, data: newCategory });
+    const updatedCards = await Promise.all(
+      cards.map(async (card: any, i: number) => {
+        const imageFile = images[i];
+        let imagePath = card.image;
+        if (imageFile && imageFile.name) {
+          const buffer = Buffer.from(await imageFile.arrayBuffer());
+          const fileName = `${Date.now()}-${imageFile.name}`;
+          await fs.writeFile(path.join(uploadDir, fileName), buffer);
+          imagePath = `/uploads/${fileName}`;
+        }
+        return { ...card, image: imagePath };
+      })
+    );
+
+    const newCategory = new TeamCategory({ tabName, cards: updatedCards });
+    await newCategory.save();
+    return NextResponse.json({ success: true, data: newCategory });
+  } catch (error) {
+    console.error('POST team error:', error);
+    return NextResponse.json({ success: false, message: 'Failed to create team category' }, { status: 500 });
+  }
 }
 
 export async function PUT(req: Request) {
-  await connectDB();
-  const formData = await req.formData();
-  const id = formData.get('id') as string;
-  const tabName = formData.get('tabName') as string;
-  const cards = JSON.parse(formData.get('cards') as string);
-  const images = formData.getAll('images') as File[];
+  try {
+    await connectDB();
+    const parsed = await parseMultipartFormData(req);
+    if (!parsed.ok) return parsed.response;
 
-  const uploadDir = path.join(process.cwd(), 'public/uploads');
-  await fs.mkdir(uploadDir, { recursive: true });
+    const formData = parsed.formData;
+    const id = formData.get('id') as string;
+    const tabName = formData.get('tabName') as string;
+    const cards = JSON.parse(formData.get('cards') as string);
+    const images = formData.getAll('images') as File[];
 
-  const updatedCards = await Promise.all(
-    cards.map(async (card: any, i: number) => {
-      const imageFile = images[i];
-      let imagePath = card.image;
-      if (imageFile && imageFile.name) {
-        const buffer = Buffer.from(await imageFile.arrayBuffer());
-        const fileName = `${Date.now()}-${imageFile.name}`;
-        await fs.writeFile(path.join(uploadDir, fileName), buffer);
-        imagePath = `/uploads/${fileName}`;
-      }
-      return { ...card, image: imagePath };
-    })
-  );
+    const uploadDir = path.join(process.cwd(), 'public/uploads');
+    await fs.mkdir(uploadDir, { recursive: true });
 
-  const updatedCategory = await TeamCategory.findByIdAndUpdate(
-    id,
-    { tabName, cards: updatedCards },
-    { new: true }
-  );
+    const updatedCards = await Promise.all(
+      cards.map(async (card: any, i: number) => {
+        const imageFile = images[i];
+        let imagePath = card.image;
+        if (imageFile && imageFile.name) {
+          const buffer = Buffer.from(await imageFile.arrayBuffer());
+          const fileName = `${Date.now()}-${imageFile.name}`;
+          await fs.writeFile(path.join(uploadDir, fileName), buffer);
+          imagePath = `/uploads/${fileName}`;
+        }
+        return { ...card, image: imagePath };
+      })
+    );
 
-  return NextResponse.json({ success: true, data: updatedCategory });
+    const updatedCategory = await TeamCategory.findByIdAndUpdate(
+      id,
+      { tabName, cards: updatedCards },
+      { new: true }
+    );
+
+    return NextResponse.json({ success: true, data: updatedCategory });
+  } catch (error) {
+    console.error('PUT team error:', error);
+    return NextResponse.json({ success: false, message: 'Failed to update team category' }, { status: 500 });
+  }
 }
 
 export async function DELETE(req: Request) {

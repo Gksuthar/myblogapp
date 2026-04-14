@@ -358,6 +358,7 @@ const AboutPage: React.FC = () => {
                       alt={member.name}
                       width={128}
                       height={128}
+                      unoptimized={Boolean(member.image && member.image.startsWith('/uploads/'))}
                       className="w-full h-full object-cover"
                     />
                   </div>
@@ -389,6 +390,7 @@ const AboutPage: React.FC = () => {
                             alt={member.name}
                             width={112}
                             height={112}
+                            unoptimized={Boolean(member.image && member.image.startsWith('/uploads/'))}
                             className="w-full h-full object-cover"
                           />
                         </div>
