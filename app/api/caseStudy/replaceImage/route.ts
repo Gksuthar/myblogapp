@@ -1,8 +1,7 @@
 import { connectDB } from '@/lib/mongodb';
 import { NextResponse } from 'next/server';
 import { caseStudyschema } from '@/app/api/model/casestudy';
-import path from 'path';
-import { promises as fs } from 'fs';
+import { deletePublicUploadIfLocal, isSafePublicUploadPath } from '@/lib/uploads';
 
 export async function POST(req: Request) {
   await connectDB();
@@ -11,8 +10,19 @@ export async function POST(req: Request) {
     const body = await req.json();
     const { id, cardIndex, imageUrl } = body as { id?: string; cardIndex?: number; imageUrl?: string };
 
-    if (!id || typeof cardIndex !== 'number' || !imageUrl) {
+    if (!id || !Number.isInteger(cardIndex) || !imageUrl) {
       return NextResponse.json({ error: 'Missing required fields: id, cardIndex, imageUrl' }, { status: 400 });
+    }
+
+    const trimmedImageUrl = String(imageUrl).trim();
+    const isLocalUpload = trimmedImageUrl.startsWith('/uploads/');
+    const isHttpsRemote = /^https:\/\/[\w.-]+(?:\:[0-9]{2,5})?(?:\/[^\s]*)?$/i.test(trimmedImageUrl);
+    if (
+      trimmedImageUrl.length > 500 ||
+      (!isLocalUpload && !isHttpsRemote) ||
+      (isLocalUpload && !isSafePublicUploadPath(trimmedImageUrl))
+    ) {
+      return NextResponse.json({ error: 'Invalid imageUrl' }, { status: 400 });
     }
 
     const existing = await caseStudyschema.findById(id);
@@ -24,21 +34,10 @@ export async function POST(req: Request) {
 
     const oldImage = existing.cards[cardIndex]?.cardImage;
 
-    // If old image is a local upload (starts with /uploads/), try to remove it from disk
-    try {
-      if (typeof oldImage === 'string' && oldImage.startsWith('/uploads/')) {
-        const rel = oldImage.replace(/^\//, ''); // uploads/...
-        const filePath = path.join(process.cwd(), 'public', rel);
-        await fs.unlink(filePath).catch(() => {
-          // no-op if file doesn't exist
-        });
-      }
-    } catch (err) {
-      console.warn('Failed to delete old upload file:', err);
-    }
+    await deletePublicUploadIfLocal(typeof oldImage === 'string' ? oldImage : '');
 
     // Update with new image URL (could be external or /uploads/)
-    existing.cards[cardIndex].cardImage = imageUrl;
+    existing.cards[cardIndex].cardImage = trimmedImageUrl;
     await existing.save();
 
     return NextResponse.json({ message: 'Image replaced successfully', data: existing }, { status: 200 });

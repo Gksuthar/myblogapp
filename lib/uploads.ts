@@ -5,6 +5,7 @@ import { promises as fs } from 'fs';
 const MAX_IMAGE_BYTES = 5 * 1024 * 1024; // 5MB
 const ALLOWED_IMAGE_MIMES = ['image/jpeg', 'image/png', 'image/webp'] as const;
 type AllowedImageMime = (typeof ALLOWED_IMAGE_MIMES)[number];
+const UPLOADS_ROOT = path.resolve(process.cwd(), 'public', 'uploads');
 
 function isAllowedImageMime(mime: string): mime is AllowedImageMime {
   return (ALLOWED_IMAGE_MIMES as readonly string[]).includes(mime);
@@ -20,7 +21,32 @@ function normalizeSubdir(subdir: string) {
   if (cleaned.includes('..')) {
     throw new Error('Invalid upload subdir');
   }
+  if (!/^[a-zA-Z0-9/_-]+$/.test(cleaned)) {
+    throw new Error('Invalid upload subdir');
+  }
   return cleaned;
+}
+
+function resolvePathInsideUploads(relativePath: string): string | null {
+  const safeRelative = String(relativePath || '').replace(/\\/g, '/').replace(/^\/+/, '');
+  if (!safeRelative || safeRelative.includes('..') || safeRelative.includes('\u0000')) {
+    return null;
+  }
+
+  const absolute = path.resolve(UPLOADS_ROOT, safeRelative);
+  if (absolute !== UPLOADS_ROOT && !absolute.startsWith(UPLOADS_ROOT + path.sep)) {
+    return null;
+  }
+
+  return absolute;
+}
+
+export function isSafePublicUploadPath(webPath: string) {
+  if (!webPath || typeof webPath !== 'string') return false;
+  if (!webPath.startsWith('/uploads/')) return false;
+
+  const rel = webPath.slice('/uploads/'.length);
+  return resolvePathInsideUploads(rel) !== null;
 }
 
 function detectImageMime(buffer: Buffer): AllowedImageMime | null {
@@ -94,7 +120,10 @@ export async function saveImageFileToPublicUploads(file: File, subdir = '') {
   const ext = extensionForMime(detected);
   const filename = `${crypto.randomUUID()}.${ext}`;
 
-  const uploadDir = path.join(process.cwd(), 'public', 'uploads', normalizedSubdir);
+  const uploadDir = path.resolve(UPLOADS_ROOT, normalizedSubdir);
+  if (uploadDir !== UPLOADS_ROOT && !uploadDir.startsWith(UPLOADS_ROOT + path.sep)) {
+    throw new Error('Invalid upload target');
+  }
   await ensureDir(uploadDir);
 
   const filePath = path.join(uploadDir, filename);
@@ -133,7 +162,10 @@ export async function saveImageDataUrlToPublicUploads(dataUrl: string, subdir = 
   const ext = extensionForMime(detected);
   const filename = `${crypto.randomUUID()}.${ext}`;
 
-  const uploadDir = path.join(process.cwd(), 'public', 'uploads', normalizedSubdir);
+  const uploadDir = path.resolve(UPLOADS_ROOT, normalizedSubdir);
+  if (uploadDir !== UPLOADS_ROOT && !uploadDir.startsWith(UPLOADS_ROOT + path.sep)) {
+    throw new Error('Invalid upload target');
+  }
   await ensureDir(uploadDir);
 
   const filePath = path.join(uploadDir, filename);
@@ -143,10 +175,17 @@ export async function saveImageDataUrlToPublicUploads(dataUrl: string, subdir = 
 }
 
 export async function deletePublicUploadIfLocal(webPath: string) {
-  if (!webPath || typeof webPath !== 'string') return;
-  if (!webPath.startsWith('/uploads/')) return;
+  if (!isSafePublicUploadPath(webPath)) return;
 
-  const rel = webPath.replace(/^\//, '');
-  const filePath = path.join(process.cwd(), 'public', rel);
-  await fs.unlink(filePath).catch(() => {});
+  const rel = webPath.slice('/uploads/'.length);
+  const filePath = resolvePathInsideUploads(rel);
+  if (!filePath) return;
+
+  try {
+    const stat = await fs.lstat(filePath);
+    if (!stat.isFile()) return;
+    await fs.unlink(filePath);
+  } catch {
+    // best effort
+  }
 }

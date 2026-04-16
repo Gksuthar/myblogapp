@@ -2,6 +2,15 @@ import { connectDB } from "@/lib/mongodb";
 import { NextResponse } from "next/server";
 import { ContactModel } from "../model/contact";
 import nodemailer from "nodemailer";
+import { createRateLimiter, getClientIp } from "@/lib/rate-limit";
+
+const contactSubmitLimiter = createRateLimiter({
+  windowMs: 10 * 60 * 1000,
+  max: 8,
+  namespace: 'contact-submit',
+});
+
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 function escapeHtml(value: string) {
   return String(value)
@@ -31,6 +40,18 @@ export async function GET() {
 // POST - Create new contact
 export async function POST(req: Request) {
   try {
+    const ip = getClientIp(req.headers);
+    const limit = contactSubmitLimiter.consume(ip);
+    if (!limit.allowed) {
+      return NextResponse.json(
+        { error: 'Too many requests. Please try again later.' },
+        {
+          status: 429,
+          headers: { 'Retry-After': String(limit.retryAfterSeconds) },
+        }
+      );
+    }
+
     await connectDB();
     type ContactBody = {
       name?: string;
@@ -65,6 +86,14 @@ export async function POST(req: Request) {
         { error: "Missing required fields" },
         { status: 400 }
       );
+    }
+
+    if (fullName.length > 120 || email.length > 254 || phone.length > 30 || message.length > 4000) {
+      return NextResponse.json({ error: 'Invalid input length' }, { status: 400 });
+    }
+
+    if (!EMAIL_RE.test(email)) {
+      return NextResponse.json({ error: 'Invalid email format' }, { status: 400 });
     }
 
     const safeFullName = escapeHtml(fullName);

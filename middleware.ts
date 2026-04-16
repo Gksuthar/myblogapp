@@ -21,8 +21,10 @@ async function verifyToken(token: string): Promise<boolean> {
   }
 }
 
-// Routes that are fully public (no auth for any method)
-const PUBLIC_API_PREFIXES = ['/api/auth', '/api/contact'];
+const PUBLIC_API_RULES: Array<{ prefix: string; methods?: string[] }> = [
+  { prefix: '/api/auth' },
+  { prefix: '/api/contact', methods: ['POST'] },
+];
 
 // API routes that require auth for non-GET requests
 const PROTECTED_API_PREFIXES = [
@@ -45,12 +47,18 @@ const PROTECTED_API_PREFIXES = [
   '/api/why-choose',
   '/api/service',
   '/api/BlogSection',
+  '/api/contact',
+  '/api/upload',
 ];
 
-function isPublicApiRoute(pathname: string): boolean {
-  return PUBLIC_API_PREFIXES.some(
-    (prefix) => pathname === prefix || pathname.startsWith(prefix + '/')
-  );
+function isPublicApiRoute(pathname: string, method: string): boolean {
+  return PUBLIC_API_RULES.some((rule) => {
+    const pathMatches = pathname === rule.prefix || pathname.startsWith(rule.prefix + '/');
+    if (!pathMatches) return false;
+
+    if (!rule.methods || rule.methods.length === 0) return true;
+    return rule.methods.includes(method.toUpperCase());
+  });
 }
 
 function isProtectedApiRoute(pathname: string): boolean {
@@ -93,7 +101,7 @@ export async function middleware(request: NextRequest) {
   }
 
   // Protect API routes (except public routes like /api/auth and /api/contact)
-  if (isProtectedApiRoute(pathname) && !isPublicApiRoute(pathname)) {
+  if (isProtectedApiRoute(pathname) && !isPublicApiRoute(pathname, request.method)) {
     // /api/admin routes require auth for ALL methods
     const isAdminApi = pathname.startsWith('/api/admin');
 
@@ -147,5 +155,7 @@ export const config = {
     '/api/why-choose/:path*',
     '/api/service/:path*',
     '/api/BlogSection/:path*',
+    '/api/contact/:path*',
+    '/api/upload/:path*',
   ],
 };

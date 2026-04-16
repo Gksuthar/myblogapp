@@ -3,6 +3,23 @@ import { connectDB } from "@/lib/mongodb";
 import Admin from "@/app/api/model/admin";
 import crypto from "crypto";
 import nodemailer from 'nodemailer';
+import { createRateLimiter, getClientIp } from "@/lib/rate-limit";
+
+const forgotPasswordLimiter = createRateLimiter({
+  windowMs: 15 * 60 * 1000,
+  max: 5,
+  namespace: 'forgot-password',
+});
+
+const resetPasswordLimiter = createRateLimiter({
+  windowMs: 15 * 60 * 1000,
+  max: 8,
+  namespace: 'reset-password',
+});
+
+function hashResetToken(token: string) {
+  return crypto.createHash('sha256').update(token).digest('hex');
+}
 
 async function sendResetEmail(toEmail: string, resetUrl: string) {
   const user = process.env.SMTP_USER || process.env.MAIL_USER;
@@ -43,6 +60,18 @@ async function sendResetEmail(toEmail: string, resetUrl: string) {
 // POST - Forgot password (generate reset token)
 export async function POST(request: NextRequest) {
   try {
+    const ip = getClientIp(request.headers);
+    const limit = forgotPasswordLimiter.consume(ip);
+    if (!limit.allowed) {
+      return NextResponse.json(
+        { error: 'Too many reset requests. Please try again later.' },
+        {
+          status: 429,
+          headers: { 'Retry-After': String(limit.retryAfterSeconds) },
+        }
+      );
+    }
+
     await connectDB();
     const { username } = await request.json();
     const successResponse = {
@@ -68,11 +97,12 @@ export async function POST(request: NextRequest) {
 
     // Generate reset token
     const resetToken = crypto.randomBytes(32).toString('hex');
+    const resetTokenHash = hashResetToken(resetToken);
     const resetExpires = new Date();
     resetExpires.setHours(resetExpires.getHours() + 1); // Token expires in 1 hour
 
     // Save reset token to admin
-    admin.resetToken = resetToken;
+    admin.resetToken = resetTokenHash;
     admin.resetExpires = resetExpires;
     await admin.save();
 
@@ -104,6 +134,18 @@ export async function POST(request: NextRequest) {
 // PUT - Reset password (with token)
 export async function PUT(request: NextRequest) {
   try {
+    const ip = getClientIp(request.headers);
+    const limit = resetPasswordLimiter.consume(ip);
+    if (!limit.allowed) {
+      return NextResponse.json(
+        { error: 'Too many password reset attempts. Please try again later.' },
+        {
+          status: 429,
+          headers: { 'Retry-After': String(limit.retryAfterSeconds) },
+        }
+      );
+    }
+
     await connectDB();
     const body = await request.json();
     const { token, newPassword } = body;
@@ -125,9 +167,11 @@ export async function PUT(request: NextRequest) {
       );
     }
 
+    const tokenHash = hashResetToken(trimmedToken);
+
     // Find admin with valid reset token
     const admin = await Admin.findOne({
-      resetToken: trimmedToken,
+      resetToken: tokenHash,
       resetExpires: { $gt: Date.now() },
     });
 

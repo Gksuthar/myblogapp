@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import Admin from "../model/admin";
 import { connectDB } from "@/lib/mongodb";
+import { createRateLimiter, getClientIp } from "@/lib/rate-limit";
 
 function getJwtSecret(): string {
   const secret = process.env.JWT_SECRET;
@@ -15,9 +16,28 @@ function getJwtSecret(): string {
   return secret;
 }
 const JWT_SECRET = getJwtSecret();
+const loginRateLimiter = createRateLimiter({
+  windowMs: 15 * 60 * 1000,
+  max: 10,
+  namespace: 'auth-login',
+});
 
 export async function POST(request: NextRequest) {
   try {
+    const ip = getClientIp(request.headers);
+    const limit = loginRateLimiter.consume(ip);
+    if (!limit.allowed) {
+      return NextResponse.json(
+        { error: "Too many login attempts. Please try again later." },
+        {
+          status: 429,
+          headers: {
+            'Retry-After': String(limit.retryAfterSeconds),
+          },
+        }
+      );
+    }
+
     await connectDB();
     const body = await request.json();
     const { username, password } = body;
