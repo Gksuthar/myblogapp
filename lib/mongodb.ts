@@ -23,8 +23,19 @@ const cache = globalForMongoose.mongooseCache ?? {
 globalForMongoose.mongooseCache = cache;
 
 export async function connectDB() {
-  if (cache.conn && mongoose.connection.readyState === 1) {
+  const readyState = mongoose.connection.readyState;
+
+  // 1 = connected
+  if (cache.conn && readyState === 1) {
     return cache.conn;
+  }
+
+  // If the connection dropped after being established, discard the cached promise/conn
+  // so we actually reconnect on the next request.
+  // 0 = disconnected, 3 = disconnecting
+  if (readyState === 0 || readyState === 3) {
+    cache.conn = null;
+    cache.promise = null;
   }
 
   if (!cache.promise) {
@@ -38,6 +49,7 @@ export async function connectDB() {
       })
       .then((mongooseInstance) => mongooseInstance)
       .catch((error) => {
+        cache.conn = null;
         cache.promise = null;
         throw error;
       });

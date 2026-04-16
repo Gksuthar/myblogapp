@@ -1,24 +1,10 @@
 import { connectDB } from '@/lib/mongodb';
 import { parseMultipartFormData } from '@/lib/multipart';
+import { saveImageFileToPublicUploads } from '@/lib/uploads';
 import { NextResponse } from 'next/server';
 import { ServiceModel } from '../model/service';
 import { Types } from 'mongoose';
 import slugify from 'slugify';
-import { writeFile } from 'fs/promises';
-import fs from 'fs';
-import path from 'path';
-async function saveImageToUploads(file: File | null) {
-  if (!file) return '';
-  const bytes = await file.arrayBuffer();
-  const buffer = Buffer.from(bytes);
-  const uploadDir = path.join(process.cwd(), 'public/uploads');
-  if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
-
-  const fileName = `${Date.now()}-${file.name}`;
-  const uploadPath = path.join(uploadDir, fileName);
-  await writeFile(uploadPath, buffer);
-  return `/uploads/${fileName}`; // Accessible URL
-}
 
 const createSlug = (title?: string) =>
   slugify(title || '', { lower: true, strict: true, trim: true });
@@ -30,15 +16,16 @@ export async function GET(req: Request) {
     const { searchParams } = new URL(req.url);
     const categoryId = searchParams.get('categoryId');
 
-    const query: any = {};
+    const query: Record<string, unknown> = {};
     if (categoryId && Types.ObjectId.isValid(categoryId)) {
       query.categoryId = categoryId;
     }
 
     const services = await ServiceModel.find(query).sort({ createdAt: -1 }).lean();
     return NextResponse.json({ data: services });
-  } catch (err: any) {
-    return NextResponse.json({ error: err.message || 'Failed to fetch services' }, { status: 500 });
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : 'Failed to fetch services';
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }
 
@@ -54,12 +41,41 @@ export async function POST(req: Request) {
     const categoryId = formData.get('categoryId') as string;
     const heroTitle = formData.get('heroTitle') as string;
     const heroDescription = formData.get('heroDescription') as string;
-    const heroImage = formData.get('heroImage') as File | null;
-    const cardSections = JSON.parse(formData.get('cardSections') as string || '[]');
-    const content = formData.get('content') as string;
-    const serviceCardView = JSON.parse(formData.get('serviceCardView') as string || '{}');
+    const heroImage = formData.get('heroImage');
 
-    const imagePath = await saveImageToUploads(heroImage);
+    const cardSectionsRaw = (formData.get('cardSections') as string) || '[]';
+    let cardSections: unknown[] = [];
+    try {
+      const parsedCardSections = JSON.parse(cardSectionsRaw);
+      if (!Array.isArray(parsedCardSections)) {
+        return NextResponse.json({ error: 'Invalid cardSections' }, { status: 400 });
+      }
+      cardSections = parsedCardSections;
+    } catch {
+      return NextResponse.json({ error: 'Invalid cardSections JSON' }, { status: 400 });
+    }
+
+    const content = (formData.get('content') as string) || '';
+
+    const serviceCardViewRaw = (formData.get('serviceCardView') as string) || '{}';
+    let serviceCardView: Record<string, unknown> = {};
+    try {
+      const parsedView = JSON.parse(serviceCardViewRaw);
+      if (parsedView && typeof parsedView === 'object' && !Array.isArray(parsedView)) {
+        serviceCardView = parsedView as Record<string, unknown>;
+      }
+    } catch {
+      return NextResponse.json({ error: 'Invalid serviceCardView JSON' }, { status: 400 });
+    }
+
+    let imagePath = '';
+    if (heroImage instanceof File && heroImage.size > 0) {
+      try {
+        imagePath = await saveImageFileToPublicUploads(heroImage, 'services');
+      } catch {
+        return NextResponse.json({ error: 'Invalid image upload' }, { status: 400 });
+      }
+    }
     const slug = createSlug(heroTitle);
 
     const newService = await ServiceModel.create({
@@ -76,7 +92,7 @@ export async function POST(req: Request) {
     });
 
     return NextResponse.json({ data: newService }, { status: 201 });
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error('❌ Create Service Error:', err);
     return NextResponse.json({ error: 'Failed to create service' }, { status: 500 });
   }
@@ -95,32 +111,50 @@ async function updateService(req: Request) {
   const existingService = await ServiceModel.findById(id);
   if (!existingService) return NextResponse.json({ error: 'Service not found' }, { status: 404 });
 
+  type ServiceCardViewLike = { title?: unknown; description?: unknown };
+  type CardLike = { title?: unknown; description?: unknown };
+  type CardSectionLike = { sectionTitle?: unknown; sectionDescription?: unknown; cards?: unknown };
+
   // Ensure serviceCardView is an object, not an array
-  const normalizedServiceCardView = Array.isArray(serviceCardView) && serviceCardView.length > 0
-    ? serviceCardView[0] // Convert old array format to object
-    : (typeof serviceCardView === 'object' && !Array.isArray(serviceCardView) ? serviceCardView : {});
+  const normalizedServiceCardView: ServiceCardViewLike =
+    Array.isArray(serviceCardView) && serviceCardView.length > 0
+      ? (serviceCardView[0] as ServiceCardViewLike) // Convert old array format to object
+      : (serviceCardView && typeof serviceCardView === 'object' && !Array.isArray(serviceCardView)
+          ? (serviceCardView as ServiceCardViewLike)
+          : {});
 
   const slugUpdate =
     heroSection?.title && heroSection.title !== existingService.heroSection?.title
       ? { slug: createSlug(heroSection.title) }
       : {};
 
-  const updatedData: any = {
+  const normalizedSections = (Array.isArray(cardSections) ? (cardSections as unknown[]) : []).map((rawSection) => {
+    const cs: CardSectionLike = rawSection && typeof rawSection === 'object' ? (rawSection as CardSectionLike) : {};
+    const rawCards = Array.isArray(cs.cards) ? (cs.cards as unknown[]) : [];
+
+    return {
+      sectionTitle: typeof cs.sectionTitle === 'string' ? cs.sectionTitle : '',
+      sectionDescription: typeof cs.sectionDescription === 'string' ? cs.sectionDescription : '',
+      cards: rawCards.map((rawCard) => {
+        const c: CardLike = rawCard && typeof rawCard === 'object' ? (rawCard as CardLike) : {};
+        return {
+          title: typeof c.title === 'string' ? c.title : '',
+          description: typeof c.description === 'string' ? c.description : '',
+        };
+      }),
+    };
+  });
+
+  const updatedData: Record<string, unknown> = {
     ...(categoryId && { categoryId }),
     ...(heroSection && { heroSection }),
     serviceCardView: {
-      title: normalizedServiceCardView?.title || '',
-      description: normalizedServiceCardView?.description || '',
+      title: typeof normalizedServiceCardView.title === 'string' ? normalizedServiceCardView.title : '',
+      description:
+        typeof normalizedServiceCardView.description === 'string' ? normalizedServiceCardView.description : '',
     },
     ...slugUpdate,
-    cardSections: (cardSections || []).map((cs: any) => ({
-      sectionTitle: cs.sectionTitle || '',
-      sectionDescription: cs.sectionDescription || '',
-      cards: (cs.cards || []).map((c: any) => ({
-        title: c.title || '',
-        description: c.description || '',
-      })),
-    })),
+    cardSections: normalizedSections,
   };
 
   if (content !== undefined) updatedData.content = content;
@@ -137,8 +171,9 @@ async function updateService(req: Request) {
 export async function PUT(req: Request) {
   try {
     return await updateService(req);
-  } catch (err: any) {
-    return NextResponse.json({ error: 'Failed to update sservice', details: err.message }, { status: 500 });
+  } catch (err: unknown) {
+    const details = err instanceof Error ? err.message : 'Unknown error';
+    return NextResponse.json({ error: 'Failed to update service', details }, { status: 500 });
   }
 }
 
@@ -157,10 +192,33 @@ export async function PATCH(req: Request) {
 
     const heroTitle = formData.get('heroTitle') as string;
     const heroDescription = formData.get('heroDescription') as string;
-    const heroImage = formData.get('heroImage') as File | null;
-    const cardSections = JSON.parse(formData.get('cardSections') as string || '[]');
-    const content = formData.get('content') as string;
-    const serviceCardView = JSON.parse(formData.get('serviceCardView') as string || '{}');
+    const heroImage = formData.get('heroImage');
+
+    const cardSectionsRaw = (formData.get('cardSections') as string) || '[]';
+    let cardSections: unknown[] = [];
+    try {
+      const parsedCardSections = JSON.parse(cardSectionsRaw);
+      if (!Array.isArray(parsedCardSections)) {
+        return NextResponse.json({ error: 'Invalid cardSections' }, { status: 400 });
+      }
+      cardSections = parsedCardSections;
+    } catch {
+      return NextResponse.json({ error: 'Invalid cardSections JSON' }, { status: 400 });
+    }
+
+    const content = (formData.get('content') as string) || '';
+
+    const serviceCardViewRaw = (formData.get('serviceCardView') as string) || '{}';
+    let serviceCardView: Record<string, unknown> = {};
+    try {
+      const parsedView = JSON.parse(serviceCardViewRaw);
+      if (parsedView && typeof parsedView === 'object' && !Array.isArray(parsedView)) {
+        serviceCardView = parsedView as Record<string, unknown>;
+      }
+    } catch {
+      return NextResponse.json({ error: 'Invalid serviceCardView JSON' }, { status: 400 });
+    }
+
     const categoryId = formData.get('categoryId') as string;
 
     const existing = await ServiceModel.findById(id);
@@ -172,8 +230,14 @@ export async function PATCH(req: Request) {
         : existing.slug;
 
     let imagePath = existing.heroSection?.image || '';
-    if (heroImage) {
-      imagePath = await saveImageToUploads(heroImage);
+    if (heroImage instanceof File && heroImage.size > 0) {
+      let newPath = '';
+      try {
+        newPath = await saveImageFileToPublicUploads(heroImage, 'services');
+      } catch {
+        return NextResponse.json({ error: 'Invalid image upload' }, { status: 400 });
+      }
+      imagePath = newPath;
     }
 
     existing.set({
@@ -188,7 +252,7 @@ export async function PATCH(req: Request) {
     await existing.save();
 
     return NextResponse.json({ message: 'Updated successfully', data: existing });
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error('❌ Update Service Error:', err);
     return NextResponse.json({ error: 'Failed to update service' }, { status: 500 });
   }
@@ -210,7 +274,8 @@ export async function DELETE(req: Request) {
 
     await ServiceModel.findByIdAndDelete(id);
     return NextResponse.json({ message: 'Service deleted successfully' });
-  } catch (err: any) {
-    return NextResponse.json({ error: 'Failed to delete service', details: err.message }, { status: 500 });
+  } catch (err: unknown) {
+    const details = err instanceof Error ? err.message : 'Unknown error';
+    return NextResponse.json({ error: 'Failed to delete service', details }, { status: 500 });
   }
 }

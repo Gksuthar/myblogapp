@@ -1,32 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { connectDB } from '@/lib/mongodb';
 import { parseMultipartFormData } from '@/lib/multipart';
+import { deletePublicUploadIfLocal, saveImageFileToPublicUploads } from '@/lib/uploads';
 import About from '@/app/api/model/about'; // ✅ make sure this path matches your folder
-import path from 'path';
-import { promises as fs } from 'fs'; // Use async file system
-
-// === Helper function to save files ===
-const saveFile = async (file: File, folder: string) => {
-  try {
-    const bytes = await file.arrayBuffer();
-    const buffer = Buffer.from(bytes);
-    
-    // Sanitize and create filename
-    const ext = path.extname(file.name) || `.${file.type.split('/')[1] || 'png'}`;
-    const filename = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}${ext}`;
-    
-    const uploadsDir = path.join(process.cwd(), 'public', folder);
-    await fs.mkdir(uploadsDir, { recursive: true });
-    
-    const filePath = path.join(uploadsDir, filename);
-    await fs.writeFile(filePath, buffer);
-    
-    return `/${folder}/${filename}`; // web-accessible path
-  } catch (err) {
-    console.error('File save error:', err);
-    return ''; // Return empty string on failure
-  }
-};
 
 // ==================== GET ====================
 export async function GET() {
@@ -64,7 +40,7 @@ async function handlePostOrPut(request: NextRequest) {
     const formData = parsed.formData;
     
     // 1. Get all simple text fields
-    const dataToUpdate: any = {
+    const dataToUpdate: Record<string, unknown> = {
       title: formData.get('title') as string,
       description: formData.get('description') as string,
       mission: formData.get('mission') as string,
@@ -73,37 +49,77 @@ async function handlePostOrPut(request: NextRequest) {
     };
 
     // 2. Process Team Members
-    const teamDataString = formData.get('teamData') as string;
-    const teamInfo = JSON.parse(teamDataString || '[]');
-    const processedTeam = [];
+    const teamDataString = formData.get('teamData');
+    let teamInfo: unknown[] = [];
+    try {
+      const parsedTeam = JSON.parse(typeof teamDataString === 'string' ? teamDataString : '[]');
+      if (!Array.isArray(parsedTeam)) {
+        return NextResponse.json({ message: 'teamData must be an array' }, { status: 400 });
+      }
+      teamInfo = parsedTeam;
+    } catch {
+      return NextResponse.json({ message: 'Invalid teamData JSON' }, { status: 400 });
+    }
+
+    if (teamInfo.length > 50) {
+      return NextResponse.json({ message: 'Too many team members' }, { status: 400 });
+    }
+
+    const processedTeam: Array<{ name: string; position: string; bio: string; image: string }> = [];
 
     for (let i = 0; i < teamInfo.length; i++) {
-      const memberInfo = teamInfo[i];
-      const file = formData.get(`teamImage_${i}`) as File | null;
-      
-      let imagePath = memberInfo.image || ""; // Keep old image path by default
+      const raw = teamInfo[i];
+      const memberInfo = raw && typeof raw === 'object' ? (raw as Record<string, unknown>) : {};
+      const file = formData.get(`teamImage_${i}`);
 
-      if (file) {
-        // New file uploaded, save it
-        imagePath = await saveFile(file, 'uploads/team');
-        // TODO: Delete old image if it exists and is a path
-        // if (memberInfo.image && memberInfo.image.startsWith('/uploads/')) {
-        //   await fs.unlink(path.join(process.cwd(), 'public', memberInfo.image)).catch(console.error);
-        // }
+      let imagePath = typeof memberInfo.image === 'string' ? memberInfo.image : '';
+      if (imagePath && (imagePath.length > 300 || !imagePath.startsWith('/uploads/'))) {
+        imagePath = '';
       }
-      
+
+      if (file instanceof File && file.size > 0) {
+        let newPath = '';
+        try {
+          newPath = await saveImageFileToPublicUploads(file, 'team');
+        } catch {
+          return NextResponse.json({ message: `Invalid team image upload at index ${i}` }, { status: 400 });
+        }
+
+        await deletePublicUploadIfLocal(imagePath);
+        imagePath = newPath;
+      }
+
+      const name = typeof memberInfo.name === 'string' ? memberInfo.name : '';
+      const position = typeof memberInfo.position === 'string' ? memberInfo.position : '';
+      const bio = typeof memberInfo.bio === 'string' ? memberInfo.bio : '';
+
+      if (name.length > 100 || position.length > 100 || bio.length > 2000) {
+        return NextResponse.json({ message: `Invalid team field length at index ${i}` }, { status: 400 });
+      }
+
       processedTeam.push({
-        name: memberInfo.name,
-        position: memberInfo.position,
-        bio: memberInfo.bio,
-        image: imagePath, // Save the new or existing path
+        name,
+        position,
+        bio,
+        image: imagePath,
       });
     }
     dataToUpdate.team = processedTeam;
 
     // 3. Process Values (they are just JSON, no files)
-    const valuesDataString = formData.get('valuesData') as string;
-    dataToUpdate.values = JSON.parse(valuesDataString || '[]');
+    const valuesDataString = formData.get('valuesData');
+    try {
+      const parsedValues = JSON.parse(typeof valuesDataString === 'string' ? valuesDataString : '[]');
+      if (!Array.isArray(parsedValues)) {
+        return NextResponse.json({ message: 'valuesData must be an array' }, { status: 400 });
+      }
+      if (parsedValues.length > 50) {
+        return NextResponse.json({ message: 'Too many values' }, { status: 400 });
+      }
+      dataToUpdate.values = parsedValues;
+    } catch {
+      return NextResponse.json({ message: 'Invalid valuesData JSON' }, { status: 400 });
+    }
 
     // 4. Update or Create the single document
     // findOneAndUpdate with upsert:true is perfect for this "singleton" model
@@ -134,12 +150,9 @@ export async function DELETE() {
       return NextResponse.json({ message: 'About us data not found' }, { status: 404 });
     }
     
-    // TODO: Clean up all image files from /public/uploads/team
+    // Best-effort cleanup of local uploaded images
     for (const member of deleted.team) {
-      if (member.image && member.image.startsWith('/uploads/')) {
-        const filePath = path.join(process.cwd(), 'public', member.image);
-        await fs.unlink(filePath).catch(err => console.warn(`Failed to delete image: ${filePath}`, err));
-      }
+      await deletePublicUploadIfLocal(member?.image || '');
     }
 
     return NextResponse.json({ message: 'About us data deleted successfully' });

@@ -2,15 +2,16 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { jwtVerify } from 'jose';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
+const JWT_SECRET = process.env.JWT_SECRET;
 
 // Helper function to verify JWT token (Edge-compatible)
 async function verifyToken(token: string): Promise<boolean> {
   try {
+    if (!JWT_SECRET) return false;
     const secret = new TextEncoder().encode(JWT_SECRET);
     await jwtVerify(token, secret);
     return true;
-  } catch (error) {
+  } catch {
     return false;
   }
 }

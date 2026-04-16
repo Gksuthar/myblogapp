@@ -1,9 +1,8 @@
 import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/mongodb";
 import { parseMultipartFormData } from "@/lib/multipart";
+import { deletePublicUploadIfLocal, saveImageFileToPublicUploads } from "@/lib/uploads";
 import hireschema from "../model/hire";
-import { writeFile, mkdir } from "fs/promises";
-import path from "path";
 
 // 🟢 GET – Fetch all heroes
 export async function GET() {
@@ -36,18 +35,12 @@ export async function POST(req: Request) {
 
     let imagePath = "";
 
-    if (imageFile && imageFile.name) {
-      const bytes = await imageFile.arrayBuffer();
-      const buffer = Buffer.from(bytes);
-
-      const uploadDir = path.join(process.cwd(), "public/uploads");
-      await mkdir(uploadDir, { recursive: true });
-
-      const fileName = `${Date.now()}-${imageFile.name}`;
-      const filePath = path.join(uploadDir, fileName);
-
-      await writeFile(filePath, buffer);
-      imagePath = `/uploads/${fileName}`;
+    if (imageFile instanceof File && imageFile.size > 0) {
+      try {
+        imagePath = await saveImageFileToPublicUploads(imageFile, 'hire');
+      } catch {
+        return NextResponse.json({ error: "Invalid image upload" }, { status: 400 });
+      }
     }
 
     const hero = await hireschema.create({
@@ -87,18 +80,16 @@ export async function PATCH(req: Request) {
     if (disc) hero.disc = disc;
     if (author) hero.author = author;
 
-    if (imageFile && imageFile.name) {
-      const bytes = await imageFile.arrayBuffer();
-      const buffer = Buffer.from(bytes);
+    if (imageFile instanceof File && imageFile.size > 0) {
+      let newPath = '';
+      try {
+        newPath = await saveImageFileToPublicUploads(imageFile, 'hire');
+      } catch {
+        return NextResponse.json({ error: "Invalid image upload" }, { status: 400 });
+      }
 
-      const uploadDir = path.join(process.cwd(), "public/uploads");
-      await mkdir(uploadDir, { recursive: true });
-
-      const fileName = `${Date.now()}-${imageFile.name}`;
-      const filePath = path.join(uploadDir, fileName);
-      await writeFile(filePath, buffer);
-
-      hero.image = `/uploads/${fileName}`;
+      await deletePublicUploadIfLocal(hero.image || '');
+      hero.image = newPath;
     }
 
     await hero.save();
@@ -118,6 +109,8 @@ export async function DELETE(req: Request) {
 
     const deleted = await hireschema.findByIdAndDelete(id);
     if (!deleted) return NextResponse.json({ error: "Hero not found" }, { status: 404 });
+
+    await deletePublicUploadIfLocal(deleted.image || '');
 
     return NextResponse.json({ message: "Hero deleted successfully" }, { status: 200 });
   } catch (error) {

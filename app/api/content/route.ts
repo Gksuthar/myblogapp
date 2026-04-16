@@ -1,9 +1,8 @@
 import { connectDB } from "@/lib/mongodb";
 import { parseMultipartFormData } from "@/lib/multipart";
+import { deletePublicUploadIfLocal, saveImageFileToPublicUploads } from "@/lib/uploads";
 import { NextResponse } from "next/server";
 import { Content } from "../model/content";
-import path from "path";
-import { writeFile, mkdir } from "fs/promises";
 
 export async function GET() {
   try {
@@ -31,14 +30,12 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
     }
 
-    const bytes = await imageFile.arrayBuffer();
-    const buffer = Buffer.from(bytes);
-    const uploadDir = path.join(process.cwd(), "public/uploads");
-    await mkdir(uploadDir, { recursive: true });
-    const fileName = `${Date.now()}-${imageFile.name}`;
-    const filePath = path.join(uploadDir, fileName);
-    await writeFile(filePath, buffer);
-    const imagePath = `/uploads/${fileName}`;
+    let imagePath = '';
+    try {
+      imagePath = await saveImageFileToPublicUploads(imageFile, 'content');
+    } catch {
+      return NextResponse.json({ error: "Invalid image upload" }, { status: 400 });
+    }
 
     const newDoc = new Content({ title, disc, image: imagePath });
     await newDoc.save();
@@ -72,15 +69,16 @@ export async function PUT(req: Request) {
     }
 
     let imagePath = existing.image;
-    if (imageFile && imageFile.name) {
-      const bytes = await imageFile.arrayBuffer();
-      const buffer = Buffer.from(bytes);
-      const uploadDir = path.join(process.cwd(), "public/uploads");
-      await mkdir(uploadDir, { recursive: true });
-      const fileName = `${Date.now()}-${imageFile.name}`;
-      const filePath = path.join(uploadDir, fileName);
-      await writeFile(filePath, buffer);
-      imagePath = `/uploads/${fileName}`;
+    if (imageFile instanceof File && imageFile.size > 0) {
+      let newPath = '';
+      try {
+        newPath = await saveImageFileToPublicUploads(imageFile, 'content');
+      } catch {
+        return NextResponse.json({ error: "Invalid image upload" }, { status: 400 });
+      }
+
+      await deletePublicUploadIfLocal(existing.image || '');
+      imagePath = newPath;
     }
 
     const updated = await Content.findByIdAndUpdate(
@@ -112,6 +110,8 @@ export async function DELETE(req: Request) {
     if (!deleted) {
       return NextResponse.json({ error: "Not found" }, { status: 404 });
     }
+
+    await deletePublicUploadIfLocal(deleted.image || '');
 
     return NextResponse.json({ message: "Deleted successfully" }, { status: 200 });
   } catch (error) {

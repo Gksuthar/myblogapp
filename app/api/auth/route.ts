@@ -5,7 +5,7 @@ import bcrypt from "bcryptjs";
 import Admin from "../model/admin";
 import { connectDB } from "@/lib/mongodb";
 
-const JWT_SECRET = process.env.JWT_SECRET || "your-secret-key"; // Use environment variable in production
+const JWT_SECRET = process.env.JWT_SECRET;
 
 export async function POST(request: NextRequest) {
   try {
@@ -47,16 +47,11 @@ export async function POST(request: NextRequest) {
     let isPasswordValid = false;
     if (admin) {
       isPasswordValid = await admin.comparePassword(password);
-      // Log for debugging (remove in production)
-      if (!isPasswordValid) {
-        console.log('Password mismatch for user:', normalizedUsername);
-      }
     } else {
-      // Perform dummy bcrypt comparison to prevent timing attacks
-      // This ensures similar response time whether user exists or not
-      const dummyHash = '$2a$10$dummy.hash.to.prevent.timing.attacks';
+      // Perform dummy bcrypt comparison to reduce user-enumeration timing differences
+      // (Use a valid hash to avoid bcrypt throwing.)
+      const dummyHash = '$2b$10$aSoJt7d865GdhHK4UVtEI.xCZKehRearkN0QUEn6KkNfLwL5iMXL2';
       await bcrypt.compare(password, dummyHash);
-      console.log('Admin not found with username:', normalizedUsername);
     }
     
     // If admin not found or password doesn't match
@@ -65,6 +60,10 @@ export async function POST(request: NextRequest) {
         { error: "Invalid username or password" },
         { status: 401 }
       );
+    }
+
+    if (!JWT_SECRET) {
+      return NextResponse.json({ error: "Server misconfigured" }, { status: 500 });
     }
 
     // Create JWT token with secure payload
@@ -111,10 +110,14 @@ export async function GET() {
   }
 
   try {
+    if (!JWT_SECRET) {
+      return NextResponse.json({ authenticated: false }, { status: 500 });
+    }
+
     // Verify token
     jwt.verify(token, JWT_SECRET);
     return NextResponse.json({ authenticated: true });
-  } catch (error) {
+  } catch {
     return NextResponse.json({ authenticated: false }, { status: 401 });
   }
 }

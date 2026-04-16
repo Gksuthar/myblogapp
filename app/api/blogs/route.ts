@@ -1,9 +1,8 @@
 import { connectDB } from "@/lib/mongodb";
 import { parseMultipartFormData } from "@/lib/multipart";
+import { deletePublicUploadIfLocal, saveImageFileToPublicUploads } from "@/lib/uploads";
 import Blog from "../model/blog";
 import { NextResponse } from "next/server";
-import { writeFile, mkdir } from "fs/promises";
-import path from "path";
 
 // 📌 GET ALL OR SINGLE BLOG
 export async function GET(req: Request) {
@@ -38,23 +37,51 @@ export async function POST(req: Request) {
   try {
     const parsed = await parseMultipartFormData(req);
     if (!parsed.ok) return parsed.response;
-    const formData: any = parsed.formData;
+    const formData = parsed.formData;
 
     // 🧾 Get fields
     const title = formData.get("title");
     const content = formData.get("content");
     const excerpt = formData.get("excerpt");
     const author = formData.get("author");
-    const tags = JSON.parse(formData.get("tags") || "[]");
     const slug = formData.get("slug");
     const published = formData.get("published") === "true";
     const imageFile = formData.get("image");
 
-    if (!title || !content || !excerpt || !author || !slug) {
-      return NextResponse.json(
-        { error: "Missing required fields" },
-        { status: 400 }
-      );
+    const tagsRaw = formData.get("tags");
+    let tags: string[] = [];
+    if (typeof tagsRaw === "string" && tagsRaw.trim() !== "") {
+      try {
+        const parsedTags = JSON.parse(tagsRaw);
+        if (!Array.isArray(parsedTags)) {
+          return NextResponse.json({ error: "Invalid tags" }, { status: 400 });
+        }
+        tags = parsedTags
+          .filter((t: unknown) => typeof t === "string")
+          .map((t: string) => t.slice(0, 50))
+          .slice(0, 30);
+      } catch {
+        return NextResponse.json({ error: "Invalid tags JSON" }, { status: 400 });
+      }
+    }
+
+    if (
+      typeof title !== 'string' ||
+      typeof content !== 'string' ||
+      typeof excerpt !== 'string' ||
+      typeof author !== 'string' ||
+      typeof slug !== 'string' ||
+      title.trim() === '' ||
+      content.trim() === '' ||
+      excerpt.trim() === '' ||
+      author.trim() === '' ||
+      slug.trim() === ''
+    ) {
+      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
+    }
+
+    if (title.length > 200 || excerpt.length > 500 || author.length > 100 || slug.length > 200) {
+      return NextResponse.json({ error: 'Invalid input length' }, { status: 400 });
     }
 
     // 🧩 Check for duplicate slug
@@ -68,19 +95,12 @@ export async function POST(req: Request) {
 
     // 🖼️ Save image if present
     let imagePath = "";
-    if (imageFile && imageFile.name) {
-      const bytes = await imageFile.arrayBuffer();
-      const buffer = Buffer.from(bytes);
-
-      // Ensure uploads folder exists
-      const uploadDir = path.join(process.cwd(), "public", "uploads");
-      await mkdir(uploadDir, { recursive: true });
-
-      const fileName = `${Date.now()}-${imageFile.name}`;
-      const uploadPath = path.join(uploadDir, fileName);
-
-      await writeFile(uploadPath, buffer);
-      imagePath = `/uploads/${fileName}`; // public path
+    if (imageFile instanceof File && imageFile.size > 0) {
+      try {
+        imagePath = await saveImageFileToPublicUploads(imageFile, 'blogs');
+      } catch {
+        return NextResponse.json({ error: 'Invalid image upload' }, { status: 400 });
+      }
     }
 
     // 🗃️ Create blog
@@ -114,17 +134,33 @@ export async function PUT(req: Request) {
   try {
     const parsed = await parseMultipartFormData(req);
     if (!parsed.ok) return parsed.response;
-    const formData: any = parsed.formData;
+    const formData = parsed.formData;
 
     const id = formData.get("id");
     const title = formData.get("title");
     const content = formData.get("content");
     const excerpt = formData.get("excerpt");
     const author = formData.get("author");
-    const tags = JSON.parse(formData.get("tags") || "[]");
     const slug = formData.get("slug");
     const published = formData.get("published") === "true";
     const imageFile = formData.get("image");
+
+    const tagsRaw = formData.get("tags");
+    let tags: string[] = [];
+    if (typeof tagsRaw === "string" && tagsRaw.trim() !== "") {
+      try {
+        const parsedTags = JSON.parse(tagsRaw);
+        if (!Array.isArray(parsedTags)) {
+          return NextResponse.json({ error: "Invalid tags" }, { status: 400 });
+        }
+        tags = parsedTags
+          .filter((t: unknown) => typeof t === "string")
+          .map((t: string) => t.slice(0, 50))
+          .slice(0, 30);
+      } catch {
+        return NextResponse.json({ error: "Invalid tags JSON" }, { status: 400 });
+      }
+    }
 
     if (!id) {
       return NextResponse.json({ error: "Blog ID is required" }, { status: 400 });
@@ -137,29 +173,27 @@ export async function PUT(req: Request) {
     }
 
     // 🖼️ Handle new image upload (optional)
-    let imagePath = existing.image;
-    if (imageFile && imageFile.name) {
-      const bytes = await imageFile.arrayBuffer();
-      const buffer = Buffer.from(bytes);
-
-      const uploadDir = path.join(process.cwd(), "public", "uploads");
-      await mkdir(uploadDir, { recursive: true });
-
-      const fileName = `${Date.now()}-${imageFile.name}`;
-      const uploadPath = path.join(uploadDir, fileName);
-
-      await writeFile(uploadPath, buffer);
-      imagePath = `/uploads/${fileName}`;
+    let imagePath = existing.image || '';
+    if (imageFile instanceof File && imageFile.size > 0) {
+      let newPath = '';
+      try {
+        newPath = await saveImageFileToPublicUploads(imageFile, 'blogs');
+      } catch {
+        return NextResponse.json({ error: 'Invalid image upload' }, { status: 400 });
+      }
+      await deletePublicUploadIfLocal(existing.image || '');
+      imagePath = newPath;
     }
 
     // 🗃️ Update blog
-    existing.title = title;
-    existing.content = content;
-    existing.excerpt = excerpt;
-    existing.author = author;
+    if (typeof title === 'string') existing.title = title;
+    if (typeof content === 'string') existing.content = content;
+    if (typeof excerpt === 'string') existing.excerpt = excerpt;
+    if (typeof author === 'string') existing.author = author;
+    if (typeof slug === 'string') existing.slug = slug;
+
     existing.image = imagePath;
     existing.tags = tags;
-    existing.slug = slug;
     existing.published = published;
 
     await existing.save();
@@ -197,6 +231,8 @@ export async function DELETE(req: Request) {
     if (!deletedBlog) {
       return NextResponse.json({ error: "Blog not found" }, { status: 404 });
     }
+
+    await deletePublicUploadIfLocal(deletedBlog.image || '');
 
     return NextResponse.json({ message: "Blog deleted successfully" });
   } catch (error) {

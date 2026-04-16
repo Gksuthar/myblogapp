@@ -1,9 +1,8 @@
 import { connectDB } from "@/lib/mongodb";
 import { parseMultipartFormData } from "@/lib/multipart";
+import { saveImageFileToPublicUploads } from "@/lib/uploads";
 import { NextResponse } from "next/server";
 import { caseStudyschema } from "@/app/api/model/casestudy";
-import path from 'path';
-import { promises as fs } from 'fs';
 
 // Utility function to create a slug
 const createSlug = (title: string) => {
@@ -15,29 +14,23 @@ const createSlug = (title: string) => {
     .replace(/-+/g, '-');
 };
 
-// *** NEW HELPER for saving File objects ***
-const saveFile = async (file: File, folder = 'uploads') => {
-  try {
-    const bytes = await file.arrayBuffer();
-    const buffer = Buffer.from(bytes);
-
-    // Sanitize and create filename
-    const ext = file.type.split('/')[1] || 'png';
-    const filename = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
-
-    const uploadsDir = path.join(process.cwd(), 'public', folder);
-    await fs.mkdir(uploadsDir, { recursive: true });
-
-    const filePath = path.join(uploadsDir, filename);
-    await fs.writeFile(filePath, buffer);
-
-    return `/${folder}/${filename}`; // web-accessible path
-  } catch (err) {
-    console.error('File save error:', err);
-    return ''; // Return empty string on failure
-  }
+type CaseStudyCardInfo = {
+  cardTitle?: unknown;
+  cardDescription?: unknown;
+  cardImage?: unknown;
 };
 
+async function generateUniqueSlug(baseSlug: string, excludeId?: string) {
+  for (let i = 0; i < 50; i++) {
+    const candidate = i === 0 ? baseSlug : `${baseSlug}-${i}`;
+    const query = excludeId
+      ? ({ slug: candidate, _id: { $ne: excludeId } } as Record<string, unknown>)
+      : ({ slug: candidate } as Record<string, unknown>);
+    const exists = await caseStudyschema.exists(query);
+    if (!exists) return candidate;
+  }
+  throw new Error('Unable to generate unique slug');
+}
 
 // ✅ GET - (No changes needed)
 export async function GET(req: Request) {
@@ -70,21 +63,12 @@ export async function GET(req: Request) {
       const generatedSlug = createSlug(title);
 
       // First try to find by slug or title
-      let caseStudy = await caseStudyschema.findOne({
+      const caseStudy = await caseStudyschema.findOne({
         $or: [{ title }, { slug: generatedSlug }, { slug: title }]
       }).lean();
 
-      // If not found, try to find any case study and check if the title matches when slugified
-      if (!caseStudy) {
-        const allCaseStudies = await caseStudyschema.find().lean();
-        const foundStudy = allCaseStudies.find((cs) => {
-          const csSlug = cs.slug || createSlug(cs.title);
-          return csSlug === generatedSlug || csSlug === title;
-        });
-        if (foundStudy) {
-          caseStudy = foundStudy;
-        }
-      }
+      // Avoid full-collection scans here (can hang the server on large datasets).
+      // If not found by title/slug, return 404.
 
       if (!caseStudy) {
         return NextResponse.json({ error: "case study not found" }, { status: 404 });
@@ -111,46 +95,88 @@ export async function GET(req: Request) {
 
 // ✅ POST - Create new case study (Updated for FormData)
 export async function POST(req: Request) {
-  await connectDB();
-
   try {
+    await connectDB();
     // 1. Read FormData
     const parsed = await parseMultipartFormData(req);
     if (!parsed.ok) return parsed.response;
     const formData = parsed.formData;
 
     // 2. Get text fields
-    const title = formData.get("title") as string;
-    const content = formData.get("content") as string;
-    const headerTitle = formData.get("headerTitle") as string;
-    const headerDescription = formData.get("headerDescription") as string;
-    const cardsDataString = formData.get("cardsData") as string;
+    const title = formData.get("title");
+    const content = formData.get("content");
+    const headerTitle = formData.get("headerTitle");
+    const headerDescription = formData.get("headerDescription");
+    const cardsDataString = formData.get("cardsData");
 
-    if (!title || !content || !headerTitle || !headerDescription || !cardsDataString) {
-      return NextResponse.json({ error: "Missing or invalid fields" }, { status: 400 });
+    if (
+      typeof title !== 'string' ||
+      typeof content !== 'string' ||
+      typeof headerTitle !== 'string' ||
+      typeof headerDescription !== 'string' ||
+      typeof cardsDataString !== 'string' ||
+      title.trim() === '' ||
+      content.trim() === ''
+    ) {
+      return NextResponse.json({ error: 'Missing or invalid fields' }, { status: 400 });
+    }
+
+    if (title.length > 200 || headerTitle.length > 200 || headerDescription.length > 2000 || content.length > 250_000) {
+      return NextResponse.json({ error: 'Invalid input length' }, { status: 400 });
     }
 
     // 3. Parse cards metadata
-    const cardsInfo = JSON.parse(cardsDataString);
-    const processedCards = [];
+    let cardsInfo: unknown[] = [];
+    try {
+      const parsedCards = JSON.parse(cardsDataString);
+      if (!Array.isArray(parsedCards)) {
+        return NextResponse.json({ error: 'cardsData must be an array' }, { status: 400 });
+      }
+      cardsInfo = parsedCards;
+    } catch {
+      return NextResponse.json({ error: 'Invalid cardsData JSON' }, { status: 400 });
+    }
+
+    if (cardsInfo.length > 25) {
+      return NextResponse.json({ error: 'Too many cards' }, { status: 400 });
+    }
+
+    const processedCards: Array<{ cardTitle: string; cardDescription: string; cardImage: string }> = [];
 
     // 4. Process each card
     for (let i = 0; i < cardsInfo.length; i++) {
-      const cardInfo = cardsInfo[i];
+      const raw = cardsInfo[i];
+      const cardInfo: CaseStudyCardInfo = raw && typeof raw === 'object' ? (raw as CaseStudyCardInfo) : {};
       const file = formData.get(`cardImage_${i}`) as File | null;
 
       let imagePath = "";
 
-      if (file) {
-        // Save the new file
-        imagePath = await saveFile(file, 'uploads');
-      } else if (cardInfo.cardImage) {
-        // Use existing path (less likely in POST, but good practice)
+      if (file instanceof File) {
+        try {
+          imagePath = await saveImageFileToPublicUploads(file, 'case-studies');
+        } catch {
+          return NextResponse.json({ error: `Card ${i} has an invalid image upload` }, { status: 400 });
+        }
+      } else if (typeof cardInfo.cardImage === 'string') {
+        // Allow existing local upload paths only.
+        if (cardInfo.cardImage.length > 300 || (cardInfo.cardImage !== '' && !cardInfo.cardImage.startsWith('/uploads/'))) {
+          return NextResponse.json({ error: `Card ${i} has an invalid image path` }, { status: 400 });
+        }
         imagePath = cardInfo.cardImage;
       }
 
-      if (!cardInfo.cardTitle || !cardInfo.cardDescription || !imagePath) {
+      if (
+        typeof cardInfo.cardTitle !== 'string' ||
+        typeof cardInfo.cardDescription !== 'string' ||
+        cardInfo.cardTitle.trim() === '' ||
+        cardInfo.cardDescription.trim() === '' ||
+        !imagePath
+      ) {
         return NextResponse.json({ error: `Card ${i} is missing title, description, or image` }, { status: 400 });
+      }
+
+      if (cardInfo.cardTitle.length > 200 || cardInfo.cardDescription.length > 2000) {
+        return NextResponse.json({ error: `Card ${i} has invalid field length` }, { status: 400 });
       }
 
       processedCards.push({
@@ -160,14 +186,9 @@ export async function POST(req: Request) {
       });
     }
 
-    // 5. Generate unique slug
+    // 5. Generate unique slug (bounded attempts to avoid pathological while-loops)
     const baseSlug = createSlug(title);
-    let counter = 1;
-    let uniqueSlug = baseSlug;
-    while (await caseStudyschema.findOne({ slug: uniqueSlug })) {
-      uniqueSlug = `${baseSlug}-${counter}`;
-      counter++;
-    }
+    const uniqueSlug = await generateUniqueSlug(baseSlug);
 
     // 6. Save to DB
     const newCaseStudy = new caseStudyschema({
@@ -224,26 +245,56 @@ export async function PATCH(req: Request) {
     }
 
     // 3. Process Cards
-    const cardsInfo = JSON.parse(cardsDataString);
-    const processedCards = [];
+    let cardsInfo: unknown[] = [];
+    try {
+      const parsedCards = JSON.parse(cardsDataString || '[]');
+      if (!Array.isArray(parsedCards)) {
+        return NextResponse.json({ error: 'cardsData must be an array' }, { status: 400 });
+      }
+      cardsInfo = parsedCards;
+    } catch {
+      return NextResponse.json({ error: 'Invalid cardsData JSON' }, { status: 400 });
+    }
+
+    if (cardsInfo.length > 25) {
+      return NextResponse.json({ error: 'Too many cards' }, { status: 400 });
+    }
+
+    const processedCards: Array<{ cardTitle: string; cardDescription: string; cardImage: string }> = [];
 
     for (let i = 0; i < cardsInfo.length; i++) {
-      const cardInfo = cardsInfo[i];
-      const file = formData.get(`cardImage_${i}`) as File | null;
+      const raw = cardsInfo[i];
+      const cardInfo: CaseStudyCardInfo = raw && typeof raw === 'object' ? (raw as CaseStudyCardInfo) : {};
+      const file = formData.get(`cardImage_${i}`);
 
-      let imagePath = "";
+      let imagePath = '';
 
-      if (file) {
-        // Save the new file
-        imagePath = await saveFile(file, 'uploads');
-        // TODO: Delete old image (cardInfo.cardImage) from filesystem if it was a file path
-      } else {
-        // No new file, use existing path
+      if (file instanceof File) {
+        try {
+          imagePath = await saveImageFileToPublicUploads(file, 'case-studies');
+        } catch {
+          return NextResponse.json({ error: `Card ${i} has an invalid image upload` }, { status: 400 });
+        }
+      } else if (typeof cardInfo.cardImage === 'string') {
+        // Allow existing local upload paths only.
+        if (cardInfo.cardImage.length > 300 || (cardInfo.cardImage !== '' && !cardInfo.cardImage.startsWith('/uploads/'))) {
+          return NextResponse.json({ error: `Card ${i} has an invalid image path` }, { status: 400 });
+        }
         imagePath = cardInfo.cardImage;
       }
 
-      if (!cardInfo.cardTitle || !cardInfo.cardDescription || !imagePath) {
+      if (
+        typeof cardInfo.cardTitle !== 'string' ||
+        typeof cardInfo.cardDescription !== 'string' ||
+        cardInfo.cardTitle.trim() === '' ||
+        cardInfo.cardDescription.trim() === '' ||
+        !imagePath
+      ) {
         return NextResponse.json({ error: `Card ${i} is missing title, description, or image` }, { status: 400 });
+      }
+
+      if (cardInfo.cardTitle.length > 200 || cardInfo.cardDescription.length > 2000) {
+        return NextResponse.json({ error: `Card ${i} has invalid field length` }, { status: 400 });
       }
 
       processedCards.push({
@@ -263,15 +314,9 @@ export async function PATCH(req: Request) {
     };
 
     // If title changed, regenerate slug
-    if (title !== existing.title) {
+    if (typeof title === 'string' && title !== existing.title) {
       const baseSlug = createSlug(title);
-      let counter = 1;
-      let uniqueSlug = baseSlug;
-      while (await caseStudyschema.findOne({ slug: uniqueSlug, _id: { $ne: id } })) {
-        uniqueSlug = `${baseSlug}-${counter}`;
-        counter++;
-      }
-      updateData.slug = uniqueSlug;
+      updateData.slug = await generateUniqueSlug(baseSlug, id);
     }
 
     // 5. Update in DB

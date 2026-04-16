@@ -3,6 +3,15 @@ import { NextResponse } from "next/server";
 import { ContactModel } from "../model/contact";
 import nodemailer from "nodemailer";
 
+function escapeHtml(value: string) {
+  return String(value)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/\"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
 // GET - Fetch all contacts (for admin)
 export async function GET() {
   try {
@@ -34,7 +43,7 @@ export async function POST(req: Request) {
     let body: ContactBody = {};
     try {
       body = await req.json();
-    } catch (jsonError) {
+    } catch {
       return NextResponse.json(
         { error: "Invalid or missing JSON body" },
         { status: 400 }
@@ -57,6 +66,14 @@ export async function POST(req: Request) {
         { status: 400 }
       );
     }
+
+    const safeFullName = escapeHtml(fullName);
+    const safeEmail = escapeHtml(email);
+    const safePhone = escapeHtml(phone);
+    const safeMessage = escapeHtml(message);
+
+    const emailHref = encodeURIComponent(email);
+    const phoneHref = String(phone).replace(/[^\d+]/g, '');
 
     // Enhanced SMTP HTML Email Template - Professional and Responsive
     const smtpTemplate = `
@@ -97,21 +114,21 @@ export async function POST(req: Request) {
               <table>
                 <tr>
                   <td>👤 Name</td>
-                  <td>${fullName}</td>
+                  <td>${safeFullName}</td>
                 </tr>
                 <tr>
                   <td>📧 Email</td>
-                  <td><a href="mailto:${email}" style="color: #0d6efd; text-decoration: none;">${email}</a></td>
+                  <td><a href="mailto:${emailHref}" style="color: #0d6efd; text-decoration: none;">${safeEmail}</a></td>
                 </tr>
                 <tr>
                   <td>📞 Phone</td>
-                  <td><a href="tel:${phone}" style="color: #0d6efd; text-decoration: none;">${phone}</a></td>
+                  <td><a href="tel:${phoneHref}" style="color: #0d6efd; text-decoration: none;">${safePhone}</a></td>
                 </tr>
               </table>
             </div>
             <div class="message-section">
               <h3>💬 Message</h3>
-              <p>${message}</p>
+              <p>${safeMessage}</p>
             </div>
           </div>
           <div class="footer">
@@ -138,7 +155,6 @@ ${message}
 Submitted on: ${new Date().toLocaleString()}
 This is an automated message from your Contact Form.`;
 
-    console.log("reCAPTCHA Token:", recaptchaToken);
 
     // Optional: verify Google reCAPTCHA if configured (support both RECAPTCHA_SECRET_KEY and RECAPTCHA_SECRET env names)
     const secret = process.env.RECAPTCHA_SECRET_KEY || process.env.RECAPTCHA_SECRET;
@@ -147,11 +163,15 @@ This is an automated message from your Contact Form.`;
         const params = new URLSearchParams();
         params.append('secret', secret);
         params.append('response', recaptchaToken || '');
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 5000);
+
         const verifyRes = await fetch('https://www.google.com/recaptcha/api/siteverify', {
           method: 'POST',
           headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
           body: params.toString(),
-        });
+          signal: controller.signal,
+        }).finally(() => clearTimeout(timeoutId));
         const verifyJson = await verifyRes.json();
         // verifyJson can be the v2 response or v3 response (which includes a `score`)
         if (!verifyJson.success) {

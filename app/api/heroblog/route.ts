@@ -1,10 +1,8 @@
 import { connectDB } from "@/lib/mongodb";
 import { parseMultipartFormData } from "@/lib/multipart";
+import { deletePublicUploadIfLocal, saveImageFileToPublicUploads } from "@/lib/uploads";
 import { BlogHero } from "../model/hero"; // Make sure this path is correct
 import { NextResponse } from "next/server";
-import path from "path";
-import { writeFile, mkdir } from "fs/promises";
-// Note: You might need to run `npm install fs promises path` if not already part of Node
 
 // GET all heroes
 export async function GET() {
@@ -43,21 +41,12 @@ export async function POST(req: Request) {
     }
 
     let imagePath = "";
-    if (imageFile && imageFile.name) {
-      // --- File Upload Logic ---
-      const bytes = await imageFile.arrayBuffer();
-      const buffer = Buffer.from(bytes);
-      // Create a specific directory for hero uploads
-      const uploadDir = path.join(process.cwd(), "public/uploads/hero");
-      await mkdir(uploadDir, { recursive: true });
-
-      // Sanitize filename and make unique
-      const fileName = `${Date.now()}-${imageFile.name.replace(/\s/g, "_")}`;
-      const filePath = path.join(uploadDir, fileName);
-
-      await writeFile(filePath, buffer);
-      imagePath = `/uploads/hero/${fileName}`; // Path to be saved in DB
-      // -------------------------
+    if (imageFile instanceof File && imageFile.size > 0) {
+      try {
+        imagePath = await saveImageFileToPublicUploads(imageFile, 'hero');
+      } catch {
+        return NextResponse.json({ error: 'Invalid image upload' }, { status: 400 });
+      }
     }
 
     const hero = new BlogHero({
@@ -104,20 +93,16 @@ export async function PUT(req: Request) {
     let imagePath = existingHero.image;
 
     // If a new image is uploaded, process it
-    if (imageFile && imageFile.name) {
-      // --- File Upload Logic (same as POST) ---
-      const bytes = await imageFile.arrayBuffer();
-      const buffer = Buffer.from(bytes);
-      const uploadDir = path.join(process.cwd(), "public/uploads/hero");
-      await mkdir(uploadDir, { recursive: true });
-      
-      const fileName = `${Date.now()}-${imageFile.name.replace(/\s/g, "_")}`;
-      const filePath = path.join(uploadDir, fileName);
+    if (imageFile instanceof File && imageFile.size > 0) {
+      let newPath = '';
+      try {
+        newPath = await saveImageFileToPublicUploads(imageFile, 'hero');
+      } catch {
+        return NextResponse.json({ error: 'Invalid image upload' }, { status: 400 });
+      }
 
-      await writeFile(filePath, buffer);
-      imagePath = `/uploads/hero/${fileName}`; // Set to the new path
-      // -------------------------
-      // TODO: Delete old image file from server to save space
+      await deletePublicUploadIfLocal(existingHero.image || '');
+      imagePath = newPath;
     }
 
     const updatedHero = await BlogHero.findByIdAndUpdate(

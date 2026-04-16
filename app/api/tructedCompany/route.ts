@@ -1,10 +1,8 @@
 import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/mongodb";
 import { parseMultipartFormData } from "@/lib/multipart";
+import { deletePublicUploadIfLocal, saveImageFileToPublicUploads } from "@/lib/uploads";
 import { Tructed } from "../model/trusted";
-import { writeFile } from "fs/promises";
-import path from "path";
-import fs from "fs";
 
 // --- GET ---
 export async function GET() {
@@ -35,25 +33,12 @@ export async function POST(req: Request) {
 
     let imagePath = "";
 
-    if (imageFile) {
-      // Convert file to buffer
-      const bytes = await imageFile.arrayBuffer();
-      const buffer = Buffer.from(bytes);
-
-      // Ensure /public/uploads exists
-      const uploadDir = path.join(process.cwd(), "public/uploads");
-      if (!fs.existsSync(uploadDir)) {
-        fs.mkdirSync(uploadDir, { recursive: true });
+    if (imageFile instanceof File && imageFile.size > 0) {
+      try {
+        imagePath = await saveImageFileToPublicUploads(imageFile, 'trusted');
+      } catch {
+        return NextResponse.json({ error: 'Invalid image upload' }, { status: 400 });
       }
-
-      // Generate unique filename
-      const fileName = `${Date.now()}-${imageFile.name}`;
-      const uploadPath = path.join(uploadDir, fileName);
-
-      // Save file to /public/uploads
-      await writeFile(uploadPath, buffer);
-
-      imagePath = `/uploads/${fileName}`; // relative path accessible on frontend
     }
 
     const newTrusted = new Tructed({ name, image: imagePath });
@@ -89,17 +74,16 @@ export async function PATCH(req: Request) {
 
     if (name) trustedCompany.name = name;
 
-    if (imageFile) {
-      const bytes = await imageFile.arrayBuffer();
-      const buffer = Buffer.from(bytes);
-      const uploadDir = path.join(process.cwd(), "public/uploads");
-      if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
+    if (imageFile instanceof File && imageFile.size > 0) {
+      let newPath = '';
+      try {
+        newPath = await saveImageFileToPublicUploads(imageFile, 'trusted');
+      } catch {
+        return NextResponse.json({ error: 'Invalid image upload' }, { status: 400 });
+      }
 
-      const fileName = `${Date.now()}-${imageFile.name}`;
-      const uploadPath = path.join(uploadDir, fileName);
-      await writeFile(uploadPath, buffer);
-
-      trustedCompany.image = `/uploads/${fileName}`;
+      await deletePublicUploadIfLocal(trustedCompany.image || '');
+      trustedCompany.image = newPath;
     }
 
     await trustedCompany.save();

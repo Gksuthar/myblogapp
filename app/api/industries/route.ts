@@ -1,35 +1,19 @@
 import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/mongodb";
 import { parseMultipartFormData } from "@/lib/multipart";
+import { saveImageFileToPublicUploads } from "@/lib/uploads";
 import { IndustryCard } from "../model/IndustryCard";
 import { Types } from "mongoose";
-import { writeFile } from "fs/promises";
-import fs from "fs";
-import path from "path";
-
-async function saveImageToUploads(file: File | null) {
-  if (!file) return "";
-  const bytes = await file.arrayBuffer();
-  const buffer = Buffer.from(bytes);
-
-  const uploadDir = path.join(process.cwd(), "public/uploads");
-  if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
-
-  const fileName = `${Date.now()}-${file.name}`;
-  const uploadPath = path.join(uploadDir, fileName);
-  await writeFile(uploadPath, buffer);
-
-  return `/uploads/${fileName}`;
-}
 
 export async function GET() {
   await connectDB();
   try {
     const items = await IndustryCard.find().sort({ _id: -1 });
     return NextResponse.json({ data: items });
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const details = error instanceof Error ? error.message : "Unknown error";
     return NextResponse.json(
-      { error: "Failed to fetch industries", details: error.message },
+      { error: "Failed to fetch industries", details },
       { status: 500 }
     );
   }
@@ -44,14 +28,35 @@ export async function POST(req: Request) {
 
     const title = formData.get("title")?.toString() || "";
     const description = formData.get("description")?.toString() || "";
-    const tags = JSON.parse(formData.get("tags")?.toString() || "[]");
+
+    const tagsRaw = formData.get("tags")?.toString() || "[]";
+    let tags: string[] = [];
+    try {
+      const parsedTags = JSON.parse(tagsRaw);
+      if (!Array.isArray(parsedTags)) {
+        return NextResponse.json({ error: 'Invalid tags' }, { status: 400 });
+      }
+      tags = parsedTags
+        .filter((t: unknown) => typeof t === 'string')
+        .map((t: string) => t.slice(0, 50))
+        .slice(0, 30);
+    } catch {
+      return NextResponse.json({ error: 'Invalid tags JSON' }, { status: 400 });
+    }
 
     const imageFile = formData.get("image");
     let imagePath = "";
 
     if (imageFile instanceof File) {
-      imagePath = await saveImageToUploads(imageFile);
+      try {
+        imagePath = await saveImageFileToPublicUploads(imageFile, 'industries');
+      } catch {
+        return NextResponse.json({ error: 'Invalid image upload' }, { status: 400 });
+      }
     } else if (typeof imageFile === "string") {
+      if (imageFile.length > 300 || (imageFile !== '' && !imageFile.startsWith('/uploads/'))) {
+        return NextResponse.json({ error: 'Invalid image path' }, { status: 400 });
+      }
       imagePath = imageFile;
     }
 
@@ -73,10 +78,11 @@ export async function POST(req: Request) {
       { message: "Industry created successfully", data: doc },
       { status: 201 }
     );
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("❌ POST error:", error);
+    const details = error instanceof Error ? error.message : "Unknown error";
     return NextResponse.json(
-      { error: "Failed to create industry", details: error.message },
+      { error: "Failed to create industry", details },
       { status: 500 }
     );
   }
@@ -92,14 +98,35 @@ export async function PUT(req: Request) {
     const id = formData.get('id')?.toString() || '';
     const title = formData.get('title')?.toString() || '';
     const description = formData.get('description')?.toString() || '';
-    const tags = JSON.parse(formData.get('tags')?.toString() || '[]');
+
+    const tagsRaw = formData.get('tags')?.toString() || '[]';
+    let tags: string[] = [];
+    try {
+      const parsedTags = JSON.parse(tagsRaw);
+      if (!Array.isArray(parsedTags)) {
+        return NextResponse.json({ error: 'Invalid tags' }, { status: 400 });
+      }
+      tags = parsedTags
+        .filter((t: unknown) => typeof t === 'string')
+        .map((t: string) => t.slice(0, 50))
+        .slice(0, 30);
+    } catch {
+      return NextResponse.json({ error: 'Invalid tags JSON' }, { status: 400 });
+    }
 
     const imageFile = formData.get('image');
     let imagePath = '';
 
     if (imageFile instanceof File) {
-      imagePath = await saveImageToUploads(imageFile);
+      try {
+        imagePath = await saveImageFileToPublicUploads(imageFile, 'industries');
+      } catch {
+        return NextResponse.json({ error: 'Invalid image upload' }, { status: 400 });
+      }
     } else if (typeof imageFile === 'string') {
+      if (imageFile.length > 300 || (imageFile !== '' && !imageFile.startsWith('/uploads/'))) {
+        return NextResponse.json({ error: 'Invalid image path' }, { status: 400 });
+      }
       imagePath = imageFile;
     }
 
@@ -126,10 +153,11 @@ export async function PUT(req: Request) {
     }
 
     return NextResponse.json({ message: 'Industry updated successfully', data: updated });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('❌ PUT error:', error);
+    const details = error instanceof Error ? error.message : "Unknown error";
     return NextResponse.json(
-      { error: 'Failed to update industry', details: error.message },
+      { error: 'Failed to update industry', details },
       { status: 500 }
     );
   }
@@ -152,9 +180,10 @@ export async function DELETE(req: Request) {
       return NextResponse.json({ error: "Industry not found" }, { status: 404 });
     }
     return NextResponse.json({ message: "Industry deleted" });
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const details = error instanceof Error ? error.message : "Unknown error";
     return NextResponse.json(
-      { error: "Failed to delete industry", details: error.message },
+      { error: "Failed to delete industry", details },
       { status: 500 }
     );
   }

@@ -1,11 +1,8 @@
 import { connectDB } from "@/lib/mongodb";
 import { parseMultipartFormData } from "@/lib/multipart";
+import { deletePublicUploadIfLocal, saveImageFileToPublicUploads } from "@/lib/uploads";
 import { Hero } from "../model/hero";
 import { NextResponse } from "next/server";
-import { writeFile, mkdir } from "fs/promises"; // <-- Import async methods
-import path from "path";
-
-const uploadDir = path.join(process.cwd(), "public/uploads");
 
 export async function GET() {
   try {
@@ -35,15 +32,12 @@ export async function POST(req: Request) {
     }
 
     let imagePath = "";
-    if (file) {
-      const bytes = await file.arrayBuffer();
-      const buffer = Buffer.from(bytes);
-      const filename = `${Date.now()}-${file.name.replace(/\s/g, "_")}`;
-      
-      await mkdir(uploadDir, { recursive: true }); // <-- Use async mkdir
-      await writeFile(path.join(uploadDir, filename), buffer); // <-- Use async writeFile
-      
-      imagePath = `/uploads/${filename}`;
+    if (file instanceof File && file.size > 0) {
+      try {
+        imagePath = await saveImageFileToPublicUploads(file, 'hero');
+      } catch {
+        return NextResponse.json({ error: 'Invalid image upload' }, { status: 400 });
+      }
     }
 
     const hero = new Hero({ title, disc, image: imagePath, buttonText });
@@ -76,17 +70,16 @@ export async function PATCH(req: Request) {
     if (buttonText) hero.buttonText = buttonText; // Handles "" (empty string) correctly
 
     // This block only runs if a new file was *actually* uploaded
-    if (file) {
-      const bytes = await file.arrayBuffer();
-      const buffer = Buffer.from(bytes);
-      const filename = `${Date.now()}-${file.name.replace(/\s/g, "_")}`;
-      
-      await mkdir(uploadDir, { recursive: true }); // <-- Use async mkdir
-      await writeFile(path.join(uploadDir, filename), buffer); // <-- Use async writeFile
-      
-      // TODO: Optionally delete old image file (hero.image) from filesystem
-      
-      hero.image = `/uploads/${filename}`;
+    if (file instanceof File && file.size > 0) {
+      let newPath = '';
+      try {
+        newPath = await saveImageFileToPublicUploads(file, 'hero');
+      } catch {
+        return NextResponse.json({ error: 'Invalid image upload' }, { status: 400 });
+      }
+
+      await deletePublicUploadIfLocal(hero.image || '');
+      hero.image = newPath;
     }
 
     await hero.save();
