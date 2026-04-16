@@ -3,9 +3,14 @@ import Admin from '../../model/admin';
 import jwt from 'jsonwebtoken';
 import { connectDB } from '@/lib/mongodb';
 
-function getJwtSecret() {
+function getJwtSecret(): string {
   const secret = process.env.JWT_SECRET;
-  return secret && secret.length > 0 ? secret : null;
+  if (!secret) {
+    throw new Error(
+      'FATAL: JWT_SECRET environment variable is not set. Refusing to start with an insecure default.'
+    );
+  }
+  return secret;
 }
 
 function getAdminToken(req: NextRequest) {
@@ -22,12 +27,6 @@ function requireAdminAuth(req: NextRequest) {
   }
 
   const secret = getJwtSecret();
-  if (!secret) {
-    return {
-      ok: false as const,
-      response: NextResponse.json({ message: 'Server misconfigured' }, { status: 500 }),
-    };
-  }
 
   try {
     jwt.verify(token, secret);

@@ -144,9 +144,8 @@ const TextEditor: React.FC<WpCKEditorProps> = ({
     const tryLoad = async () => {
       try {
         // path relative to this file: components/TextEditor -> project root -> ckeditor5-custom-build
-        // Use dynamic evaluator to avoid TypeScript module resolution errors when the folder doesn't exist.
-        const dynImport = new Function('p', 'return import(p)');
-        const mod = await dynImport("../../ckeditor5-custom-build/build/ckeditor");
+        // @ts-expect-error Optional local custom build may not exist in all environments.
+        const mod = await import('../../ckeditor5-custom-build/build/ckeditor');
         if (mounted) {
           // some custom builds export default, some export ClassicEditor named
           editorRef.current = (mod as any).default ?? (mod as any).ClassicEditor ?? mod;

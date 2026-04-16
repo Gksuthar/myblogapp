@@ -5,7 +5,16 @@ import bcrypt from "bcryptjs";
 import Admin from "../model/admin";
 import { connectDB } from "@/lib/mongodb";
 
-const JWT_SECRET = process.env.JWT_SECRET;
+function getJwtSecret(): string {
+  const secret = process.env.JWT_SECRET;
+  if (!secret) {
+    throw new Error(
+      'FATAL: JWT_SECRET environment variable is not set. Refusing to start with an insecure default.'
+    );
+  }
+  return secret;
+}
+const JWT_SECRET = getJwtSecret();
 
 export async function POST(request: NextRequest) {
   try {
@@ -62,10 +71,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    if (!JWT_SECRET) {
-      return NextResponse.json({ error: "Server misconfigured" }, { status: 500 });
-    }
-
     // Create JWT token with secure payload
     const token = jwt.sign(
       { 
@@ -110,10 +115,6 @@ export async function GET() {
   }
 
   try {
-    if (!JWT_SECRET) {
-      return NextResponse.json({ authenticated: false }, { status: 500 });
-    }
-
     // Verify token
     jwt.verify(token, JWT_SECRET);
     return NextResponse.json({ authenticated: true });

@@ -1,6 +1,7 @@
 import { connectDB } from "@/lib/mongodb";
 import { parseMultipartFormData } from "@/lib/multipart";
-import { deletePublicUploadIfLocal, saveImageFileToPublicUploads } from "@/lib/uploads";
+import { saveUploadedFile } from '@/lib/upload';
+import { deletePublicUploadIfLocal } from "@/lib/uploads";
 import Blog from "../model/blog";
 import { NextResponse } from "next/server";
 
@@ -97,7 +98,7 @@ export async function POST(req: Request) {
     let imagePath = "";
     if (imageFile instanceof File && imageFile.size > 0) {
       try {
-        imagePath = await saveImageFileToPublicUploads(imageFile, 'blogs');
+        imagePath = await saveUploadedFile(imageFile);
       } catch {
         return NextResponse.json({ error: 'Invalid image upload' }, { status: 400 });
       }
@@ -177,7 +178,7 @@ export async function PUT(req: Request) {
     if (imageFile instanceof File && imageFile.size > 0) {
       let newPath = '';
       try {
-        newPath = await saveImageFileToPublicUploads(imageFile, 'blogs');
+        newPath = await saveUploadedFile(imageFile);
       } catch {
         return NextResponse.json({ error: 'Invalid image upload' }, { status: 400 });
       }

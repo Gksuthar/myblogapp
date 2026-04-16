@@ -164,7 +164,7 @@ This is an automated message from your Contact Form.`;
         params.append('secret', secret);
         params.append('response', recaptchaToken || '');
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 5000);
+        const timeoutId = setTimeout(() => controller.abort(), 7000);
 
         const verifyRes = await fetch('https://www.google.com/recaptcha/api/siteverify', {
           method: 'POST',
@@ -187,7 +187,7 @@ This is an automated message from your Contact Form.`;
         }
       } catch (e) {
         console.error('reCAPTCHA verify error', e);
-        return NextResponse.json({ error: 'reCAPTCHA verification error' }, { status: 400 });
+        return NextResponse.json({ error: 'reCAPTCHA verification timed out' }, { status: 400 });
       }
     }
 

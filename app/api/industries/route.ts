@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/mongodb";
 import { parseMultipartFormData } from "@/lib/multipart";
-import { saveImageFileToPublicUploads } from "@/lib/uploads";
+import { saveUploadedFile } from '@/lib/upload';
 import { IndustryCard } from "../model/IndustryCard";
 import { Types } from "mongoose";
 
@@ -49,7 +49,7 @@ export async function POST(req: Request) {
 
     if (imageFile instanceof File) {
       try {
-        imagePath = await saveImageFileToPublicUploads(imageFile, 'industries');
+        imagePath = await saveUploadedFile(imageFile);
       } catch {
         return NextResponse.json({ error: 'Invalid image upload' }, { status: 400 });
       }
@@ -119,7 +119,7 @@ export async function PUT(req: Request) {
 
     if (imageFile instanceof File) {
       try {
-        imagePath = await saveImageFileToPublicUploads(imageFile, 'industries');
+        imagePath = await saveUploadedFile(imageFile);
       } catch {
         return NextResponse.json({ error: 'Invalid image upload' }, { status: 400 });
       }

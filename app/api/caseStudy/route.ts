@@ -1,6 +1,6 @@
 import { connectDB } from "@/lib/mongodb";
 import { parseMultipartFormData } from "@/lib/multipart";
-import { saveImageFileToPublicUploads } from "@/lib/uploads";
+import { saveUploadedFile } from '@/lib/upload';
 import { NextResponse } from "next/server";
 import { caseStudyschema } from "@/app/api/model/casestudy";
 
@@ -153,7 +153,7 @@ export async function POST(req: Request) {
 
       if (file instanceof File) {
         try {
-          imagePath = await saveImageFileToPublicUploads(file, 'case-studies');
+          imagePath = await saveUploadedFile(file);
         } catch {
           return NextResponse.json({ error: `Card ${i} has an invalid image upload` }, { status: 400 });
         }
@@ -271,7 +271,7 @@ export async function PATCH(req: Request) {
 
       if (file instanceof File) {
         try {
-          imagePath = await saveImageFileToPublicUploads(file, 'case-studies');
+          imagePath = await saveUploadedFile(file);
         } catch {
           return NextResponse.json({ error: `Card ${i} has an invalid image upload` }, { status: 400 });
         }

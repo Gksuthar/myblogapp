@@ -2,12 +2,53 @@ import { NextRequest, NextResponse } from "next/server";
 import { connectDB } from "@/lib/mongodb";
 import Admin from "@/app/api/model/admin";
 import crypto from "crypto";
+import nodemailer from 'nodemailer';
+
+async function sendResetEmail(toEmail: string, resetUrl: string) {
+  const user = process.env.SMTP_USER || process.env.MAIL_USER;
+  const pass = process.env.SMTP_PASS || process.env.MAIL_PASS;
+  const host = process.env.SMTP_HOST || process.env.MAIL_HOST || 'smtp.gmail.com';
+  const port = process.env.SMTP_PORT
+    ? Number(process.env.SMTP_PORT)
+    : (process.env.MAIL_PORT ? Number(process.env.MAIL_PORT) : 465);
+  const secure = typeof process.env.SMTP_SECURE !== 'undefined'
+    ? (process.env.SMTP_SECURE === 'true' || process.env.SMTP_SECURE === '1')
+    : (typeof process.env.MAIL_SECURE !== 'undefined'
+      ? (process.env.MAIL_SECURE === 'true' || process.env.MAIL_SECURE === '1')
+      : port === 465);
+
+  if (!user || !pass) {
+    throw new Error('SMTP credentials are not configured');
+  }
+
+  const transporter = nodemailer.createTransport({
+    host,
+    port,
+    secure,
+    auth: { user, pass },
+    connectionTimeout: 10000,
+    greetingTimeout: 5000,
+    socketTimeout: 10000,
+  });
+
+  await transporter.sendMail({
+    from: `"Password Reset" <${user}>`,
+    to: toEmail,
+    subject: 'Reset your password',
+    text: `Use this link to reset your password: ${resetUrl}\n\nThis link expires in 1 hour.`,
+    html: `<p>Use this link to reset your password:</p><p><a href="${resetUrl}">${resetUrl}</a></p><p>This link expires in 1 hour.</p>`,
+  });
+}
 
 // POST - Forgot password (generate reset token)
 export async function POST(request: NextRequest) {
   try {
     await connectDB();
     const { username } = await request.json();
+    const successResponse = {
+      success: true,
+      message: "If the username exists, a reset link has been sent.",
+    };
 
     // Validate input
     if (!username || typeof username !== 'string' || username.trim().length === 0) {
@@ -22,12 +63,7 @@ export async function POST(request: NextRequest) {
 
     // Security: Don't reveal if user exists or not
     if (!admin) {
-      // Return success even if user doesn't exist (security best practice)
-      return NextResponse.json({
-        success: true,
-        message: "If the username exists, a reset link has been generated.",
-        resetUrl: "", // Don't reveal if user exists
-      });
+      return NextResponse.json(successResponse);
     }
 
     // Generate reset token
@@ -43,14 +79,19 @@ export async function POST(request: NextRequest) {
     // Generate reset URL
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || request.nextUrl.origin;
     const resetUrl = `${baseUrl}/reset-password/${resetToken}`;
+    const destination = admin.email || process.env.SMTP_USER || process.env.MAIL_USER || '';
 
-    // In production, you would send an email here instead of returning the URL
-    // For now, return the URL (remove this in production and send email instead)
-    return NextResponse.json({
-      success: true,
-      message: "If the username exists, a reset link has been generated.",
-      resetUrl: resetUrl, // Remove this in production
-    });
+    if (destination) {
+      try {
+        await sendResetEmail(destination, resetUrl);
+      } catch (mailError) {
+        console.error('Forgot password email send error:', mailError);
+      }
+    } else {
+      console.error('Forgot password email skipped: no destination email available');
+    }
+
+    return NextResponse.json(successResponse);
   } catch (error) {
     console.error("Forgot password error:", error);
     return NextResponse.json(

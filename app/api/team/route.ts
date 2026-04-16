@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { connectDB } from '@/lib/mongodb';
 import { parseMultipartFormData } from '@/lib/multipart';
-import { saveImageFileToPublicUploads } from '@/lib/uploads';
+import { saveUploadedFile } from '@/lib/upload';
 import { TeamCategory } from '../model/teamCategory';
 import { Types } from 'mongoose';
 
@@ -67,7 +67,7 @@ async function buildCardsWithUploads(cards: unknown[], images: unknown[]) {
       let imagePath = normalizeExistingImagePath(card.image);
 
       if (imageFile instanceof File && imageFile.size > 0) {
-        imagePath = await saveImageFileToPublicUploads(imageFile, 'team');
+        imagePath = await saveUploadedFile(imageFile);
       }
 
       if (!title || !description || !imagePath) {

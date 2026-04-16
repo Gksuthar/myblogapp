@@ -1,6 +1,6 @@
 import { connectDB } from '@/lib/mongodb';
 import { parseMultipartFormData } from '@/lib/multipart';
-import { saveImageFileToPublicUploads } from '@/lib/uploads';
+import { saveUploadedFile } from '@/lib/upload';
 import { NextResponse } from 'next/server';
 import { ServiceModel } from '../model/service';
 import { Types } from 'mongoose';
@@ -71,7 +71,7 @@ export async function POST(req: Request) {
     let imagePath = '';
     if (heroImage instanceof File && heroImage.size > 0) {
       try {
-        imagePath = await saveImageFileToPublicUploads(heroImage, 'services');
+        imagePath = await saveUploadedFile(heroImage);
       } catch {
         return NextResponse.json({ error: 'Invalid image upload' }, { status: 400 });
       }
@@ -233,7 +233,7 @@ export async function PATCH(req: Request) {
     if (heroImage instanceof File && heroImage.size > 0) {
       let newPath = '';
       try {
-        newPath = await saveImageFileToPublicUploads(heroImage, 'services');
+        newPath = await saveUploadedFile(heroImage);
       } catch {
         return NextResponse.json({ error: 'Invalid image upload' }, { status: 400 });
       }
