@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { ContactModel } from "../model/contact";
 import nodemailer from "nodemailer";
 import { createRateLimiter, getClientIp } from "@/lib/rate-limit";
+import { isAdminRequest } from '@/lib/auth';
 
 const contactSubmitLimiter = createRateLimiter({
   windowMs: 10 * 60 * 1000,
@@ -21,12 +22,15 @@ function escapeHtml(value: string) {
     .replace(/'/g, "&#39;");
 }
 
-// GET - Fetch all contacts (for admin)
-export async function GET() {
+// GET - Fetch all contacts (admin-only: contains PII)
+export async function GET(req: Request) {
+  if (!isAdminRequest(req)) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
   try {
     await connectDB();
     const contacts = await ContactModel.find().sort({ createdAt: -1 });
-    console.log("Fetched Contacts:", contacts);
     return NextResponse.json({ data: contacts, count: contacts.length });
   } catch (error) {
     console.error("GET Contact Error:", error);
@@ -325,6 +329,10 @@ This is an automated message from your Contact Form.`;
 // PATCH - Update contact status (for admin)
 export async function PATCH(req: Request) {
   try {
+    if (!isAdminRequest(req)) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     await connectDB();
     const body = await req.json();
     const { id, status } = body;
@@ -365,6 +373,10 @@ export async function PATCH(req: Request) {
 // DELETE - Delete contact (for admin)
 export async function DELETE(req: Request) {
   try {
+    if (!isAdminRequest(req)) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     await connectDB();
     const { id } = await req.json();
 

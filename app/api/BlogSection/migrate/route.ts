@@ -1,6 +1,7 @@
 import { connectDB } from "@/lib/mongodb";
 import { NextResponse } from "next/server";
 import { BlogSectionlatest } from "../../model/BlogSection";
+import { isAdminRequest } from '@/lib/auth';
 
 // Utility function to create a slug
 const createSlug = (title: string) => {
@@ -13,8 +14,12 @@ const createSlug = (title: string) => {
 };
 
 // Migration endpoint to add slugs to existing blogs
-export async function POST() {
+export async function POST(req: Request) {
   try {
+    if (!isAdminRequest(req)) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     await connectDB();
     
     // Find all blogs without slugs

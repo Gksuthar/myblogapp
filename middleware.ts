@@ -26,6 +26,29 @@ const PUBLIC_API_RULES: Array<{ prefix: string; methods?: string[] }> = [
   { prefix: '/api/contact', methods: ['POST'] },
 ];
 
+// Some API routes are intentionally public for GET (content needed by the site).
+// Everything else under PROTECTED_API_PREFIXES requires admin auth.
+const PUBLIC_GET_API_PREFIXES = [
+  '/api/blogs',
+  '/api/services',
+  '/api/service',
+  '/api/caseStudy',
+  '/api/team',
+  '/api/hire',
+  '/api/hero',
+  '/api/heroblog',
+  '/api/testimonial',
+  '/api/tructedCompany',
+  '/api/industries',
+  '/api/content',
+  '/api/about',
+  '/api/about-hero',
+  '/api/heroabout',
+  '/api/footer',
+  '/api/why-choose',
+  '/api/BlogSection',
+];
+
 // API routes that require auth for non-GET requests
 const PROTECTED_API_PREFIXES = [
   '/api/admin',
@@ -67,6 +90,12 @@ function isProtectedApiRoute(pathname: string): boolean {
   );
 }
 
+function isPublicGetApiRoute(pathname: string): boolean {
+  return PUBLIC_GET_API_PREFIXES.some(
+    (prefix) => pathname === prefix || pathname.startsWith(prefix + '/')
+  );
+}
+
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
@@ -102,11 +131,8 @@ export async function middleware(request: NextRequest) {
 
   // Protect API routes (except public routes like /api/auth and /api/contact)
   if (isProtectedApiRoute(pathname) && !isPublicApiRoute(pathname, request.method)) {
-    // /api/admin routes require auth for ALL methods
-    const isAdminApi = pathname.startsWith('/api/admin');
-
-    // Non-admin API routes: only protect non-GET requests (GET is public)
-    if (!isAdminApi && request.method === 'GET') {
+    // Only allow unauthenticated GET for explicit public content APIs.
+    if (request.method === 'GET' && isPublicGetApiRoute(pathname)) {
       return NextResponse.next();
     }
 

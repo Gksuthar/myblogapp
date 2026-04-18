@@ -2,6 +2,7 @@ import { connectDB } from "@/lib/mongodb";
 import { parseMultipartFormData } from "@/lib/multipart";
 import { saveUploadedFile } from '@/lib/upload';
 import { deletePublicUploadIfLocal } from "@/lib/uploads";
+import { isAdminRequest } from '@/lib/auth';
 import Blog from "../model/blog";
 import { NextResponse } from "next/server";
 
@@ -9,18 +10,21 @@ import { NextResponse } from "next/server";
 export async function GET(req: Request) {
   try {
     await connectDB();
+    const isAdmin = isAdminRequest(req);
     const { searchParams } = new URL(req.url);
     const slug = searchParams.get("slug");
 
     if (slug) {
-      const blog = await Blog.findOne({ slug }).lean();
+      const blog = await Blog.findOne(isAdmin ? { slug } : { slug, published: true }).lean();
       if (!blog) {
         return NextResponse.json({ error: "Blog not found" }, { status: 404 });
       }
       return NextResponse.json(blog);
     }
 
-    const blogs = await Blog.find().sort({ createdAt: -1 }).lean();
+    const blogs = await Blog.find(isAdmin ? {} : { published: true })
+      .sort({ createdAt: -1 })
+      .lean();
     return NextResponse.json(blogs ?? []);
   } catch (error) {
     console.error(error);

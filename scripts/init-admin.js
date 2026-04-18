@@ -4,14 +4,25 @@ const bcrypt = require('bcryptjs');
 require('dotenv').config();
 
 // 1) Configuration
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/appblog';
-const ADMIN_USERNAME = process.env.ADMIN_USERNAME || 'AdminDashboard';
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'Admin@1234';
-const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'admin@example.com';
+const MONGODB_URI = process.env.MONGODB_URI;
+const ADMIN_USERNAME = process.env.ADMIN_USERNAME;
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL;
 const RESET_PASSWORD = (process.env.ADMIN_RESET_PASSWORD || 'false').toLowerCase() === 'true';
 
 if (!MONGODB_URI) {
   console.error('MONGODB_URI is not set. Provide it via environment variable.');
+  process.exit(1);
+}
+
+if (!ADMIN_USERNAME || !ADMIN_PASSWORD) {
+  console.error('ADMIN_USERNAME and ADMIN_PASSWORD must be set explicitly.');
+  console.error('Refusing to use insecure defaults.');
+  process.exit(1);
+}
+
+if (!ADMIN_EMAIL) {
+  console.error('ADMIN_EMAIL must be set explicitly.');
   process.exit(1);
 }
 
