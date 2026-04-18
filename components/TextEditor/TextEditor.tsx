@@ -142,6 +142,7 @@ const TextEditor: React.FC<WpCKEditorProps> = ({
     
     // Try a custom build that includes Alignment plugin first. If it doesn't exist, fall back.
     const tryLoad = async () => {
+      /*
       try {
         // path relative to this file: components/TextEditor -> project root -> ckeditor5-custom-build
         // @ts-expect-error Optional local custom build may not exist in all environments.
@@ -155,6 +156,7 @@ const TextEditor: React.FC<WpCKEditorProps> = ({
       } catch {
         // ignore and fallback to standard build
       }
+      */
 
       try {
         const mod = await import("@ckeditor/ckeditor5-build-classic");

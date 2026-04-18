@@ -10,7 +10,7 @@ export async function POST(req: Request) {
     const body = await req.json();
     const { id, cardIndex, imageUrl } = body as { id?: string; cardIndex?: number; imageUrl?: string };
 
-    if (!id || !Number.isInteger(cardIndex) || !imageUrl) {
+    if (!id || typeof cardIndex !== 'number' || !imageUrl) {
       return NextResponse.json({ error: 'Missing required fields: id, cardIndex, imageUrl' }, { status: 400 });
     }
 
